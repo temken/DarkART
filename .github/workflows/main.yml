@@ -20,6 +20,11 @@ jobs:
     - name: Update apt-get
       run: sudo apt-get update
 
+    # BOOST
+    - name: Install boost
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -yq libboost-all-dev
+      
     # LCOV
     - name: Install lcov
       run: sudo apt-get install lcov
