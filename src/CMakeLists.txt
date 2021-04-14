@@ -29,6 +29,7 @@
 
 	target_link_libraries(libdarkarc
 		PUBLIC
+			${Boost_LIBRARIES}
 			coverage_config
 			libphysica)
 

@@ -9,3 +9,4 @@
 - unit testing with [googletest](https://github.com/google/googletest)
 - code coverage with [codecov](https://codecov.io/).
 - imports the static library [libphysica](https://github.com/temken/libphysica)
+- boost
