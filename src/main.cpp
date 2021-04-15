@@ -3,11 +3,11 @@
 #include <cstring>	 // for strlen
 #include <iostream>
 
-#include "Wavefunctions.hpp"
-#include "version.hpp"
-
 // Headers from libphysica
 #include "Natural_Units.hpp"
+
+#include "Wavefunctions.hpp"
+#include "version.hpp"
 
 using namespace DarkARC;
 using namespace libphysica::natural_units;
@@ -22,9 +22,13 @@ int main()
 		ctime_start[std::strlen(ctime_start) - 1] = '\0';
 	std::cout << "[Started on " << ctime_start << "]" << std::endl;
 	std::cout << PROJECT_NAME << "-" << PROJECT_VERSION << "\tgit:" << GIT_BRANCH << "/" << GIT_COMMIT_HASH << std::endl
-			  << std::endl;
+			  << LOGO << std::endl;
 	////////////////////////////////////////////////////////////////////////
-
+	Initial_Electron_State Xenon_5p("Xe", 5, 1);
+	Xenon_5p.Print_Summary();
+	std::cout << Xenon_5p.Radial_Wavefunction(Bohr_Radius) << std::endl;
+	std::cout << Xenon_5p.Radial_Wavefunction_Derivative(Bohr_Radius) << std::endl;
+	std::cout << Xenon_5p.Normalization() << std::endl;
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output
 	auto time_end		 = std::chrono::system_clock::now();

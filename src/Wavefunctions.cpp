@@ -4,6 +4,7 @@
 #include <complex>
 #include <fstream>
 
+#include <boost/math/quadrature/gauss_kronrod.hpp>
 #include <boost/math/special_functions/factorials.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/hypergeometric_1F1.hpp>
@@ -17,10 +18,12 @@ namespace DarkARC
 {
 using namespace std::complex_literals;
 using namespace libphysica::natural_units;
+using namespace boost::math::quadrature;
 using boost::math::factorial;
 using boost::math::hypergeometric_1F1;
 
 double a0 = Bohr_Radius;
+double au = 27.211386245988 * eV;
 
 // 1. Initial state: Roothaan-Hartree-Fock Ground-State Atomic Wave Functions
 Initial_Electron_State::Initial_Electron_State(const std::string& element, unsigned int N, unsigned int L)
@@ -33,17 +36,18 @@ Initial_Electron_State::Initial_Electron_State(const std::string& element, unsig
 	if(f.is_open())
 	{
 		f >> binding_energy;
+		binding_energy *= au;
 		double C, Z;
-		unsigned int n;
-		while(f >> n >> Z >> C)
+		unsigned int nin;
+		while(f >> nin >> Z >> C)
 		{
-			n_lj.push_back(n);
+			n_lj.push_back(nin);
 			Z_lj.push_back(Z);
 			C_nlj.push_back(C);
 		}
 		f.close();
 	}
-	Z_eff = sqrt(binding_energy / 13.6 * eV) * n;
+	Z_eff = sqrt(-binding_energy / (13.6 * eV)) * n;
 }
 
 std::string Initial_Electron_State::Orbital_Name() const
@@ -67,6 +71,43 @@ double Initial_Electron_State::Radial_Wavefunction_Derivative(double r) const
 		dR_dr += C_nlj[j] * std::pow(2.0 * Z_lj[j], n_lj[j] + 0.5) / sqrt(factorial<double>(2.0 * n_lj[j])) * ((n_lj[j] - 1.0) / a0 * std::pow(r / a0, n_lj[j] - 2.0) - Z_lj[j] / a0 * std::pow(r / a0, n_lj[j] - 1.0)) * std::exp(-Z_lj[j] * r / a0);
 
 	return std::pow(a0, -1.5) * dR_dr;
+}
+
+double Initial_Electron_State::Normalization() const
+{
+	std::function<double(double)> integrand = [this](double r) {
+		double R = Radial_Wavefunction(r);
+		return r * r * R * R;
+	};
+	// Integrate stepwise
+	double stepsize	 = Bohr_Radius;
+	double integral	 = 0.0;
+	double epsilon_1 = 1.0, epsilon_2 = 1.0;
+	double tolerance = 1.0e-6;
+	for(unsigned int i = 0; epsilon_1 > tolerance || epsilon_2 > tolerance; i++)
+	{
+		epsilon_2				= epsilon_1;
+		double new_contribution = gauss_kronrod<double, 31>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
+		integral += new_contribution;
+		epsilon_1 = std::fabs(new_contribution / integral);
+	}
+	return integral;
+}
+
+void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const
+{
+	if(mpi_rank == 0)
+	{
+		std::cout << SEPARATOR
+				  << Orbital_Name() << " - Summary" << std::endl
+				  << std::endl
+				  << "Binding energy [eV]:\t" << In_Units(binding_energy, eV) << std::endl
+				  << "Z_effective:\t\t" << Z_eff << std::endl
+				  << std::endl
+				  << "n_lj\tZ_lj\tC_nlj" << std::endl;
+		for(unsigned int i = 0; i < C_nlj.size(); i++)
+			std::cout << n_lj[i] << "\t" << Z_lj[i] << "\t" << C_nlj[i] << std::endl;
+	}
 }
 
 // 2. Final electron state wavefunction

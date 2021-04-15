@@ -25,6 +25,9 @@ class Initial_Electron_State
 	std::string Orbital_Name() const;
 	double Radial_Wavefunction(double r) const;
 	double Radial_Wavefunction_Derivative(double r) const;
+	double Normalization() const;
+
+	void Print_Summary(unsigned int mpi_rank = 0) const;
 };
 
 // 2. Final state: Positive energy continuum solution of Schroedinger equation with hydrogenic potential
