@@ -29,6 +29,12 @@ int main()
 	std::cout << Xenon_5p.Radial_Wavefunction(Bohr_Radius) << std::endl;
 	std::cout << Xenon_5p.Radial_Wavefunction_Derivative(Bohr_Radius) << std::endl;
 	std::cout << Xenon_5p.Normalization() << std::endl;
+
+	double k_final = keV;
+	int l_final	   = 1;
+	double Z_eff   = 1.0;
+	double r	   = Bohr_Radius;
+	std::cout << Radial_Wavefunction_Final(k_final, l_final, Z_eff, r) << std::endl;
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output
 	auto time_end		 = std::chrono::system_clock::now();
