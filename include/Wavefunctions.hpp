@@ -12,14 +12,14 @@ class Initial_Electron_State
 {
   private:
 	std::string element_name;
-	unsigned int n, l;
-	double binding_energy, Z_eff;
 
 	// RHF coefficients
 	std::vector<double> C_nlj, Z_lj, n_lj;
 	std::vector<std::string> l_orbital_names = {"s", "p", "d", "f", "g"};
 
   public:
+	unsigned int n, l;
+	double binding_energy, Z_eff;
 	Initial_Electron_State(const std::string& element, unsigned int N, unsigned int L);
 
 	std::string Orbital_Name() const;
