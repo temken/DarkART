@@ -3,17 +3,38 @@
 #include <complex>
 
 // Headers from libphysica
+#include "Natural_Units.hpp"
 #include "Statistics.hpp"
 
+#include <boost/math/quadrature/gauss_kronrod.hpp>
+
+#include <gsl/gsl_sf_bessel.h>
 #include <gsl/gsl_sf_coupling.h>
 
 namespace DarkARC
 {
 using namespace std::complex_literals;
+using namespace libphysica::natural_units;
+using namespace boost::math::quadrature;
 
 double Radial_Integral(unsigned int i, double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int l_final, unsigned int L)
 {
-	return 0.0;
+	std::function<double(double)> integrand = [&bound_electron, L, q, k_final, l_final](double r) {
+		return r * r * bound_electron.Radial_Wavefunction(r) * Radial_Wavefunction_Final(k_final, l_final, bound_electron.Z_eff, r) * gsl_sf_bessel_jl(L, q * r);
+	};
+	// Integrate stepwise
+	double stepsize	 = Bohr_Radius;
+	double integral	 = 0.0;
+	double epsilon_1 = 1.0, epsilon_2 = 1.0;
+	double tolerance = 1.0e-6;
+	for(unsigned int i = 0; epsilon_1 > tolerance || epsilon_2 > tolerance; i++)
+	{
+		epsilon_2				= epsilon_1;
+		double new_contribution = gauss_kronrod<double, 31>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
+		integral += new_contribution;
+		epsilon_1 = std::fabs(new_contribution / integral);
+	}
+	return integral;
 }
 
 double Gaunt_Coefficient(int j1, int j2, int j3, int m1, int m2, int m3)
@@ -37,18 +58,32 @@ std::vector<std::complex<double>> Vectorial_Atomic_Formfactor(double q, const In
 	return {};
 }
 
+// double Transition_Response_Function(response,element,n,l,m,kPrime,lPrime,mPrime,q):
+double Transition_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, int m, unsigned int l_final, unsigned int m_final, unsigned int response)
+{
+	double W_12;
+	if(response == 1)
+	{
+		std::complex<double> f_12 = Scalar_Atomic_Formfactor(q, bound_electron, m, k_final, l_final, m_final);
+		W_12					  = std::norm(f_12);
+	}
+	else
+		W_12 = 0.0;
+	return W_12;
+}
+
 double Atomic_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int response)
 {
 	double convergence_level = 0.1;
 	double response_function = 0.0;
 	std::vector<double> terms;
 	bool function_converged = false;
-	unsigned int l_prime	= 0;
+	unsigned int l_final	= 0;
 	while(!function_converged)
 		for(int m = -bound_electron.l; m <= bound_electron.l; m++)
-			for(int m_prime = -l_prime; m_prime <= l_prime; m_prime++)
+			for(int m_final = -l_final; m_final <= l_final; m_final++)
 			{
-				double new_term = 1.0;
+				double new_term = Transition_Response_Function(k_final, q, bound_electron, m, l_final, m_final, response);
 				terms.push_back(new_term);
 				response_function += new_term;
 				// Test for convergence
