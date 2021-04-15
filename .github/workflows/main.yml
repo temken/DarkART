@@ -24,6 +24,11 @@ jobs:
     - name: Install boost
       shell: bash
       run: sudo apt-get update && sudo apt-get install -yq libboost-all-dev
+
+    # GSL
+    - name: Install GSL
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install libgsl-dev
       
     # LCOV
     - name: Install lcov

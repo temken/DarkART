@@ -30,6 +30,8 @@
 	target_link_libraries(libdarkarc
 		PUBLIC
 			${Boost_LIBRARIES}
+			GSL::gsl
+			GSL::gslcblas
 			coverage_config
 			libphysica)
 
