@@ -6,11 +6,10 @@
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 #include <boost/math/special_functions/factorials.hpp>
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/hypergeometric_1F1.hpp>
 
-// Headers from libphysica
-#include "Natural_Units.hpp"
+#include <gsl/gsl_sf_coulomb.h>
+
+#include "libphysica/Natural_Units.hpp"
 
 #include "version.hpp"
 
@@ -20,7 +19,6 @@ using namespace std::complex_literals;
 using namespace libphysica::natural_units;
 using namespace boost::math::quadrature;
 using boost::math::factorial;
-using boost::math::hypergeometric_1F1;
 
 double a0 = Bohr_Radius;
 double au = 27.211386245988 * eV;
@@ -111,26 +109,19 @@ void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const
 }
 
 // 2. Final electron state wavefunction
+double Coulomb_Wave(int L, double eta, double rho)
+{
+	double fc_array[1];
+	double F_exponent[1];
+	gsl_sf_coulomb_wave_F_array(L, 0, eta, rho, fc_array, F_exponent);
+	return fc_array[0];
+}
 
 double Radial_Wavefunction_Final(double k_final, unsigned l_final, double Z_eff, double r)
 {
-	// 1. Compute the hypergeometric function 1F1(l'+ 1 + i Z / k' /a0, 2 l' + 1, 2 i k' r)
-	// 1.1 Compute |Gamma(l' + 1 + i Zeff / k' / a0)|
-	double b		 = Z_eff / k_final / a0;
-	double gamma_sqr = M_PI * b / sinh(M_PI * b);
-	for(int k = 1; k <= l_final; k++)
-		gamma_sqr *= (k * k + b * b);
-	double gamma = sqrt(gamma_sqr);
-	// 1.2 Use 13.4.1 of https://dlmf.nist.gov/13.4#E1 to compute 1F1 exp(-ikr) = |1F1|
-	std::function<double(double)> integrand = [k_final, l_final, Z_eff, r](double t) {
-		std::complex<double> z				   = 1.0 * l_final + 1.0i * Z_eff / k_final / a0;
-		std::complex<double> complex_integrand = std::pow(t, z) * std::pow(1.0 - t, std::conj(z)) * std::exp(2.0i * k_final * r * t - 1.0i * k_final * r);
-		return complex_integrand.real();
-	};
-	double integral				   = gauss_kronrod<double, 31>::integrate(integrand, 0.0, 1.0, 5, 1e-9);
-	double hypergeometric_1F1_norm = tgamma(2.0 * l_final + 2.0) / gamma_sqr * integral;
-	double R_final				   = 4.0 * M_PI * std::pow(2.0 * k_final * r, l_final) * exp(M_PI * Z_eff / 2.0 / k_final / a0) / factorial<double>(2.0 * l_final + 1.0) * gamma * hypergeometric_1F1_norm;
-	return R_final;
+	double eta = -Z_eff / k_final / a0;
+	double rho = k_final * r;
+	return 4.0 * M_PI / rho * Coulomb_Wave(l_final, eta, rho);
 }
 
 }	// namespace DarkARC

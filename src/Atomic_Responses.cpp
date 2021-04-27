@@ -2,9 +2,8 @@
 
 #include <complex>
 
-// Headers from libphysica
-#include "Natural_Units.hpp"
-#include "Statistics.hpp"
+#include "libphysica/Natural_Units.hpp"
+#include "libphysica/Statistics.hpp"
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
@@ -17,7 +16,7 @@ using namespace std::complex_literals;
 using namespace libphysica::natural_units;
 using namespace boost::math::quadrature;
 
-double Radial_Integral(unsigned int i, double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int l_final, unsigned int L)
+double Radial_Integral(unsigned int integral_index, double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int l_final, unsigned int L)
 {
 	std::function<double(double)> integrand = [&bound_electron, L, q, k_final, l_final](double r) {
 		return r * r * bound_electron.Radial_Wavefunction(r) * Radial_Wavefunction_Final(k_final, l_final, bound_electron.Z_eff, r) * gsl_sf_bessel_jl(L, q * r);
