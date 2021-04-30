@@ -38,17 +38,18 @@ double Radial_Integral(unsigned int integral_index, double k_final, double q, co
 
 double Gaunt_Coefficient(int j1, int j2, int j3, int m1, int m2, int m3)
 {
-	return sqrt((2.0 * j1 + 1.0) * (2.0 * j2 + 1.0) * (2.0 * j3 + 1.0)) / sqrt(4.0 * M_PI) * gsl_sf_coupling_3j(j1, j2, j3, 0, 0, 0) * gsl_sf_coupling_3j(j1, j2, j3, m1, m2, m3);
+	return sqrt((2.0 * j1 + 1.0) * (2.0 * j2 + 1.0) * (2.0 * j3 + 1.0)) / sqrt(4.0 * M_PI) * gsl_sf_coupling_3j(2 * j1, 2 * j2, 2 * j3, 0, 0, 0) * gsl_sf_coupling_3j(2 * j1, 2 * j2, 2 * j3, 2 * m1, 2 * m2, 2 * m3);
 }
 
-std::complex<double> Scalar_Atomic_Formfactor(double q, const Initial_Electron_State& bound_electron, int m, double k_final, unsigned int l_final, int m_final)
+std::complex<double> Scalar_Atomic_Formfactor(double q, const Initial_Electron_State& bound_electron, int m, double k_final, int l_final, int m_final)
 {
 	std::complex<double> f_12 = 0.0;
-	for(unsigned int L = std::fabs(bound_electron.l - l_final); L < bound_electron.l + l_final; L++)
-	{
-		double radial_integral = Radial_Integral(1, k_final, q, bound_electron, l_final, L);
-		f_12 += std::pow(1.0i, L) * radial_integral * pow(-1.0, m_final) * sqrt(2.0 * L + 1.0) * Gaunt_Coefficient(bound_electron.l, l_final, L, m, m_final, 0);
-	}
+	for(int L = std::fabs(bound_electron.l - l_final); L <= bound_electron.l + l_final; L++)
+		if(m - m_final == 0 && (bound_electron.l + l_final + L) % 2 == 0)
+		{
+			double radial_integral = Radial_Integral(1, k_final, q, bound_electron, l_final, L);
+			f_12 += std::pow(1.0i, L) * radial_integral * pow(-1.0, m_final) * sqrt(2.0 * L + 1.0) * Gaunt_Coefficient(bound_electron.l, l_final, L, m, -m_final, 0);
+		}
 	return sqrt(4.0 * M_PI) * f_12;
 }
 
@@ -58,7 +59,7 @@ std::vector<std::complex<double>> Vectorial_Atomic_Formfactor(double q, const In
 }
 
 // double Transition_Response_Function(response,element,n,l,m,kPrime,lPrime,mPrime,q):
-double Transition_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, int m, unsigned int l_final, unsigned int m_final, unsigned int response)
+double Transition_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, int m, unsigned int l_final, int m_final, unsigned int response)
 {
 	double W_12;
 	if(response == 1)
@@ -74,26 +75,31 @@ double Transition_Response_Function(double k_final, double q, const Initial_Elec
 double Atomic_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int response)
 {
 	double convergence_level = 0.1;
+	double prefactor		 = 4.0 * std::pow(k_final / 2.0 / M_PI, 3.0);
 	double response_function = 0.0;
 	std::vector<double> terms;
 	bool function_converged = false;
-	unsigned int l_final	= 0;
-	while(!function_converged)
+	int l_final				= 0;
+	for(l_final = 0; l_final < 100; l_final++)
+	{
+		double new_term = 0.0;
 		for(int m = -bound_electron.l; m <= bound_electron.l; m++)
 			for(int m_final = -l_final; m_final <= l_final; m_final++)
-			{
-				double new_term = Transition_Response_Function(k_final, q, bound_electron, m, l_final, m_final, response);
-				terms.push_back(new_term);
-				response_function += new_term;
-				// Test for convergence
-				if(terms.size() >= 2 * (bound_electron.l + 1))
-				{
-					std::vector<double> aux(terms.end() - 2 * (bound_electron.l + 1), terms.end());
-					double mean = libphysica::Arithmetic_Mean(aux);
-					if(mean < convergence_level * response_function / terms.size())
-						function_converged = true;
-				}
-			}
+				new_term += prefactor * Transition_Response_Function(k_final, q, bound_electron, m, l_final, m_final, response);
+		terms.push_back(new_term);
+		response_function += new_term;
+
+		// Test for convergence
+		if(terms.size() >= 2 * (bound_electron.l + 1))
+		{
+			std::vector<double> aux(terms.end() - 2 * (bound_electron.l + 1), terms.end());
+			double mean = libphysica::Arithmetic_Mean(aux);
+			if(mean < convergence_level * response_function / terms.size())
+				break;
+		}
+		// std::cout << l_final << "\t" << response_function << "\t" << new_term << std::endl;
+	}
+	std::cout << l_final << std::endl;
 	return response_function;
 }
 

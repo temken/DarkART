@@ -7,7 +7,10 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 #include <boost/math/special_functions/factorials.hpp>
 
+// #include <arb_hypgeom.h>
 #include <gsl/gsl_sf_coulomb.h>
+
+#include "arb_hypgeom.h"
 
 #include "libphysica/Natural_Units.hpp"
 
@@ -24,7 +27,7 @@ double a0 = Bohr_Radius;
 double au = 27.211386245988 * eV;
 
 // 1. Initial state: Roothaan-Hartree-Fock Ground-State Atomic Wave Functions
-Initial_Electron_State::Initial_Electron_State(const std::string& element, unsigned int N, unsigned int L)
+Initial_Electron_State::Initial_Electron_State(const std::string& element, int N, int L)
 : element_name(element), n(N), l(L)
 {
 	// Import RHF coefficients from file
@@ -45,7 +48,7 @@ Initial_Electron_State::Initial_Electron_State(const std::string& element, unsig
 		}
 		f.close();
 	}
-	Z_eff = sqrt(-binding_energy / (13.6 * eV)) * n;
+	Z_eff = sqrt(-2.0 * binding_energy / au) * n;
 }
 
 std::string Initial_Electron_State::Orbital_Name() const
@@ -109,12 +112,42 @@ void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const
 }
 
 // 2. Final electron state wavefunction
-double Coulomb_Wave(int L, double eta, double rho)
+double Coulomb_Wave_ARB(int L, double eta, double rho)
+{
+	slong prec;
+	prec = 53;
+	arb_t F, l, eta_2, rho_2;
+	arb_init(F);
+	arb_init(l);
+	arb_init(eta_2);
+	arb_init(rho_2);
+	arb_set_d(l, L);
+	arb_set_d(eta_2, eta);
+	arb_set_d(rho_2, rho);
+	arb_hypgeom_coulomb(F, NULL, l, eta_2, rho_2, prec);
+	arb_clear(F);
+	arb_clear(eta_2);
+	arb_clear(rho_2);
+	arb_clear(l);
+	double re = arf_get_d(arb_midref(F), ARF_RND_NEAR);
+	return re;
+}
+
+double Coulomb_Wave_GSL(int L, double eta, double rho, int& status)
 {
 	double fc_array[1];
 	double F_exponent[1];
-	gsl_sf_coulomb_wave_F_array(L, 0, eta, rho, fc_array, F_exponent);
+	status = gsl_sf_coulomb_wave_F_array(L, 0, eta, rho, fc_array, F_exponent);
 	return fc_array[0];
+}
+
+double Coulomb_Wave(int L, double eta, double rho)
+{
+	int status;
+	double cw = Coulomb_Wave_GSL(L, eta, rho, status);
+	if(status != 0)
+		cw = Coulomb_Wave_ARB(L, eta, rho);
+	return cw;
 }
 
 double Radial_Wavefunction_Final(double k_final, unsigned l_final, double Z_eff, double r)

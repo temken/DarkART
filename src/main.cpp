@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "libphysica/Natural_Units.hpp"
+#include "libphysica/Utilities.hpp"
 
 #include "Atomic_Responses.hpp"
 #include "Wavefunctions.hpp"
@@ -37,19 +38,32 @@ int main()
 	// double r	   = Bohr_Radius;
 	// std::cout << Radial_Wavefunction_Final(k_final, l_final, Z_eff, r) << std::endl;
 
-	double l = 10.0, Z = 10.0, k = 100 * keV, r = 100 * Bohr_Radius;
+	// double l = 10.0, Z = 10.0, k = 100 * keV, r = 100 * Bohr_Radius;
 
-	std::cout << Radial_Wavefunction_Final(k, l, Z, r) << std::endl;
+	double r = 12.3594 * Bohr_Radius;
 
-	// std::complex<double> a = l + 1.0 + 1.0i * Z / k / Bohr_Radius;
-	// std::complex<double> b = 2.0 * l + 2.0;
-	// std::complex<double> z = 2.0i * k * r;
-	// std::cout << a << "\t" << b << "\t" << z << std::endl;
-	// std::cout << Hypergeometric_1F1_asymptotic(a, b, z) << std::endl;
-	// std::cout << Hypergeometric_1F1_series(a, b, z) << std::endl;
+	int index = 1;
+	double k  = 40.0 * keV;
+	// double q	= 35.0 * keV;
+	int l_final = 31;
+	int L		= 10;
 
-	// if(status)
-	// 	std::cout << "error" << std::endl;
+	// std::cout << Xenon_5p.Z_eff << std::endl;
+	// std::cout << Radial_Wavefunction_Final(k, l_final, Xenon_5p.Z_eff, r) << std::endl;
+	// std::cout << Radial_Integral(index, k, q, Xenon_5p, l_final, L) << std::endl;
+
+	// std::cout << Coulomb_Wave_GSL(40, -0.425762, 21.1174) << std::endl;
+	// std::cout << Coulomb_Wave_ARB(40, -0.445762, 21.1174) << std::endl;
+
+	// std::cout << Coulomb_Wave_GSL(10, -0.5, 20) << std::endl;
+	// std::cout << Coulomb_Wave_ARB(10, -0.5, 20) << std::endl;
+
+	double q_min		   = 0.1 * keV;
+	double q_max		   = 1000 * keV;
+	std::vector<double> qs = libphysica::Log_Space(q_min, q_max, 50);
+	for(auto& q : qs)
+		std::cout << q / keV << "\t" << Atomic_Response_Function(k, q, Xenon_5p, 1) << std::endl;
+
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output
 	auto time_end		 = std::chrono::system_clock::now();

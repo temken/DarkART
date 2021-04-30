@@ -18,6 +18,9 @@ set(TESTS_DIR     ${PROJECT_SOURCE_DIR}/tests)
 set(EXTERNAL_DIR  ${PROJECT_SOURCE_DIR}/external)
 
 #External projects
+link_directories(/usr/local/Cellar/arb/2.19.0_1/lib/)
+find_library(ARB arb)
+
 find_package(Boost 1.65  REQUIRED )
 find_package(GSL REQUIRED) 
 

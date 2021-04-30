@@ -28,10 +28,12 @@
 	target_compile_options(libdarkarc PUBLIC -Wall -pedantic)
 
 	target_link_libraries(libdarkarc
-		PUBLIC
+		PRIVATE
 			${Boost_LIBRARIES}
 			GSL::gsl
 			GSL::gslcblas
+			"${ARB}"
+		PUBLIC
 			coverage_config
 			libphysica)
 
