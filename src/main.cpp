@@ -6,7 +6,9 @@
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
+// #include "ARB_Wrapper.hpp"
 #include "Atomic_Responses.hpp"
+#include "Special_Functions.hpp"
 #include "Wavefunctions.hpp"
 #include "version.hpp"
 
@@ -25,44 +27,33 @@ int main()
 	std::cout << PROJECT_NAME << "-" << PROJECT_VERSION << "\tgit:" << GIT_BRANCH << "/" << GIT_COMMIT_HASH << std::endl
 			  << LOGO << std::endl;
 	////////////////////////////////////////////////////////////////////////
+
 	Initial_Electron_State Xenon_5p("Xe", 5, 1);
-	// Xenon_5p.Print_Summary();
-	// std::cout << Xenon_5p.Radial_Wavefunction(Bohr_Radius) << std::endl;
-	// std::cout << Xenon_5p.Radial_Wavefunction_Derivative(Bohr_Radius) << std::endl;
-	// std::cout << Xenon_5p.Normalization() << std::endl;
-
-	// double k_final = keV;
-	// double q	   = keV;
-	// int l_final	   = 1;
-	// double Z_eff   = Xenon_5p.Z_eff;
-	// double r	   = Bohr_Radius;
-	// std::cout << Radial_Wavefunction_Final(k_final, l_final, Z_eff, r) << std::endl;
-
-	// double l = 10.0, Z = 10.0, k = 100 * keV, r = 100 * Bohr_Radius;
-
-	double r = 12.3594 * Bohr_Radius;
 
 	int index = 1;
-	double k  = 40.0 * keV;
-	// double q	= 35.0 * keV;
-	int l_final = 31;
-	int L		= 10;
+	double k  = 20.0 * keV;
 
-	// std::cout << Xenon_5p.Z_eff << std::endl;
-	// std::cout << Radial_Wavefunction_Final(k, l_final, Xenon_5p.Z_eff, r) << std::endl;
-	// std::cout << Radial_Integral(index, k, q, Xenon_5p, l_final, L) << std::endl;
-
-	// std::cout << Coulomb_Wave_GSL(40, -0.425762, 21.1174) << std::endl;
-	// std::cout << Coulomb_Wave_ARB(40, -0.445762, 21.1174) << std::endl;
-
-	// std::cout << Coulomb_Wave_GSL(10, -0.5, 20) << std::endl;
-	// std::cout << Coulomb_Wave_ARB(10, -0.5, 20) << std::endl;
-
-	double q_min		   = 0.1 * keV;
+	double q_min		   = 1.0 * keV;
 	double q_max		   = 1000 * keV;
-	std::vector<double> qs = libphysica::Log_Space(q_min, q_max, 50);
+	double k_min		   = 0.1 * keV;
+	double k_max		   = 200.0 * keV;
+	std::vector<double> qs = libphysica::Log_Space(q_min, q_max, 200);
+	// std::vector<double> ks = libphysica::Log_Space(k_min, k_max, 200);
+	// // std::ofstream f;
+	// // f.open("Response_1_Xe_5p.txt");
+	// // for(auto& k : ks)
+	// // 	for(auto& q : qs)
+	// // 	{
+	// // 		double W = Atomic_Response_Function(k, q, Xenon_5p, index);
+	// // 		f << q / keV << "\t" << k / keV << "\t" << W << std::endl;
+	// // 	}
+	// // f.close();
+
 	for(auto& q : qs)
-		std::cout << q / keV << "\t" << Atomic_Response_Function(k, q, Xenon_5p, 1) << std::endl;
+	{
+		double W = Atomic_Response_Function(k, q, Xenon_5p, index);
+		// std::cout << q / keV << "\t" << W << std::endl;
+	}
 
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output

@@ -2,63 +2,17 @@
 
 #include <complex>
 
+#include <boost/math/quadrature/gauss_kronrod.hpp>
+
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Statistics.hpp"
 
-#include <boost/math/quadrature/gauss_kronrod.hpp>
-
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_sf_bessel.h>
-#include <gsl/gsl_sf_coupling.h>
-
-#include "arb_hypgeom.h"
-
-#include "Spherical_Harmonics.hpp"
+#include "Special_Functions.hpp"
 
 namespace DarkARC
 {
 using namespace std::complex_literals;
 using namespace libphysica::natural_units;
-using namespace boost::math::quadrature;
-
-double Spherical_Bessel_jL_arb(int L, double x)
-{
-	double prefactor = sqrt(M_PI / 2.0 / x);
-	double result;
-	slong prec;
-	arb_t J_arb, x_arb, n_arb;
-	arb_init(J_arb);
-	arb_init(x_arb);
-	arb_init(n_arb);
-	arb_set_d(x_arb, x);
-	arb_set_d(n_arb, 1.0 * L + 0.5);
-	for(prec = 80;; prec *= 2)
-	{
-		arb_hypgeom_bessel_j(J_arb, n_arb, x_arb, prec);
-		if(arb_rel_accuracy_bits(J_arb) >= 53)
-		{
-			result = arf_get_d(arb_midref(J_arb), ARF_RND_NEAR);
-			break;
-		}
-		else if(prec > 10000)
-		{
-			result = NAN;
-			break;
-		}
-	}
-	arb_clear(J_arb);
-	arb_clear(n_arb);
-	arb_clear(x_arb);
-	return prefactor * result;
-}
-
-double Spherical_Bessel_jL(int L, double x)
-{
-	if(L < 10)
-		return gsl_sf_bessel_jl(L, x);
-	else
-		return Spherical_Bessel_jL_arb(L, x);
-}
 
 double Radial_Integral(unsigned int integral_index, double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int l_final, unsigned int L)
 {
@@ -85,17 +39,12 @@ double Radial_Integral(unsigned int integral_index, double k_final, double q, co
 	for(i = 0; epsilon_1 > tolerance || epsilon_2 > tolerance; i++)
 	{
 		epsilon_2				= epsilon_1;
-		double new_contribution = gauss_kronrod<double, 31>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
+		double new_contribution = boost::math::quadrature::gauss_kronrod<double, 31>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
 
 		integral += new_contribution;
 		epsilon_1 = std::fabs(new_contribution / integral);
 	}
 	return integral;
-}
-
-double Gaunt_Coefficient(int j1, int j2, int j3, int m1, int m2, int m3)
-{
-	return sqrt((2.0 * j1 + 1.0) * (2.0 * j2 + 1.0) * (2.0 * j3 + 1.0)) / sqrt(4.0 * M_PI) * gsl_sf_coupling_3j(2 * j1, 2 * j2, 2 * j3, 0, 0, 0) * gsl_sf_coupling_3j(2 * j1, 2 * j2, 2 * j3, 2 * m1, 2 * m2, 2 * m3);
 }
 
 std::complex<double> Scalar_Atomic_Formfactor(double q, const Initial_Electron_State& bound_electron, int m, double k_final, int l_final, int m_final)

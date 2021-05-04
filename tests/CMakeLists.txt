@@ -39,24 +39,24 @@ install(TARGETS test_Response_Tabulation DESTINATION ${TESTS_DIR})
 add_test(NAME test_Response_Tabulation COMMAND test_Response_Tabulation
 	WORKING_DIRECTORY ${TESTS_DIR} )
 
-# 3. Unit tests: Spherical_Harmonics
-add_executable(test_Spherical_Harmonics
-test_Spherical_Harmonics.cpp)
+# 3. Unit tests: Special_Functions
+add_executable(test_Special_Functions
+test_Special_Functions.cpp)
 
-target_link_libraries(test_Spherical_Harmonics 
+target_link_libraries(test_Special_Functions 
 PRIVATE
 	libdarkarc
 	gtest_main ) #contains the main function
 
-target_include_directories(test_Spherical_Harmonics
+target_include_directories(test_Special_Functions
 PRIVATE
 	${GENERATED_DIR} )
 
-target_compile_options(test_Spherical_Harmonics PUBLIC -Wall -pedantic)
+target_compile_options(test_Special_Functions PUBLIC -Wall -pedantic)
 
-install(TARGETS test_Spherical_Harmonics DESTINATION ${TESTS_DIR})
+install(TARGETS test_Special_Functions DESTINATION ${TESTS_DIR})
 
-add_test(NAME test_Spherical_Harmonics COMMAND test_Spherical_Harmonics
+add_test(NAME test_Special_Functions COMMAND test_Special_Functions
 WORKING_DIRECTORY ${TESTS_DIR} )
 
 # 4. Unit tests: Wavefunctions

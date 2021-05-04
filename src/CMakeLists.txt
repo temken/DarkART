@@ -20,7 +20,7 @@
 	add_library(libdarkarc STATIC
 	    Atomic_Responses.cpp
 	    Response_Tabulation.cpp
-	    Spherical_Harmonics.cpp
+	    Special_Functions.cpp
 	    Wavefunctions.cpp)
 
 	set_target_properties(libdarkarc PROPERTIES PREFIX "")

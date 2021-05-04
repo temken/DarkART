@@ -5,15 +5,10 @@
 #include <fstream>
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
-#include <boost/math/special_functions/factorials.hpp>
-
-// #include <arb_hypgeom.h>
-#include <gsl/gsl_sf_coulomb.h>
-
-#include "arb_hypgeom.h"
 
 #include "libphysica/Natural_Units.hpp"
 
+#include "Special_Functions.hpp"
 #include "version.hpp"
 
 namespace DarkARC
@@ -112,56 +107,6 @@ void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const
 }
 
 // 2. Final electron state wavefunction
-double Coulomb_Wave_ARB(int L, double eta, double rho)
-{
-	double result;
-	slong prec;
-	arb_t F, l, eta_2, rho_2;
-	arb_init(F);
-	arb_init(l);
-	arb_init(eta_2);
-	arb_init(rho_2);
-	arb_set_d(l, L);
-	arb_set_d(eta_2, eta);
-	arb_set_d(rho_2, rho);
-	for(prec = 80;; prec *= 2)
-	{
-		arb_hypgeom_coulomb(F, NULL, l, eta_2, rho_2, prec);
-		if(arb_rel_accuracy_bits(F) >= 53)
-		{
-			result = arf_get_d(arb_midref(F), ARF_RND_NEAR);
-			break;
-		}
-		else if(prec > 10000)
-		{
-			result = NAN;
-			break;
-		}
-	}
-	arb_clear(F);
-	arb_clear(eta_2);
-	arb_clear(rho_2);
-	arb_clear(l);
-	return result;
-}
-
-double Coulomb_Wave_GSL(int L, double eta, double rho, int& status)
-{
-	double fc_array[1];
-	double F_exponent[1];
-	status = gsl_sf_coulomb_wave_F_array(L, 0, eta, rho, fc_array, F_exponent);
-	return fc_array[0];
-}
-
-double Coulomb_Wave(int L, double eta, double rho)
-{
-	int status;
-	double cw = Coulomb_Wave_GSL(L, eta, rho, status);
-	if(status != 0 || std::isnan(cw))
-		cw = Coulomb_Wave_ARB(L, eta, rho);
-	return cw;
-}
-
 double Radial_Wavefunction_Final(double k_final, unsigned l_final, double Z_eff, double r)
 {
 	double eta = -Z_eff / k_final / a0;

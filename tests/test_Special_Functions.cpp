@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
 
-#include "Spherical_Harmonics.hpp"
+#include "Special_Functions.hpp"
 
 using namespace DarkARC;
