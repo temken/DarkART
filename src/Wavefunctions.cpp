@@ -114,8 +114,8 @@ void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const
 // 2. Final electron state wavefunction
 double Coulomb_Wave_ARB(int L, double eta, double rho)
 {
+	double result;
 	slong prec;
-	prec = 53;
 	arb_t F, l, eta_2, rho_2;
 	arb_init(F);
 	arb_init(l);
@@ -124,13 +124,25 @@ double Coulomb_Wave_ARB(int L, double eta, double rho)
 	arb_set_d(l, L);
 	arb_set_d(eta_2, eta);
 	arb_set_d(rho_2, rho);
-	arb_hypgeom_coulomb(F, NULL, l, eta_2, rho_2, prec);
+	for(prec = 80;; prec *= 2)
+	{
+		arb_hypgeom_coulomb(F, NULL, l, eta_2, rho_2, prec);
+		if(arb_rel_accuracy_bits(F) >= 53)
+		{
+			result = arf_get_d(arb_midref(F), ARF_RND_NEAR);
+			break;
+		}
+		else if(prec > 10000)
+		{
+			result = NAN;
+			break;
+		}
+	}
 	arb_clear(F);
 	arb_clear(eta_2);
 	arb_clear(rho_2);
 	arb_clear(l);
-	double re = arf_get_d(arb_midref(F), ARF_RND_NEAR);
-	return re;
+	return result;
 }
 
 double Coulomb_Wave_GSL(int L, double eta, double rho, int& status)
@@ -145,7 +157,7 @@ double Coulomb_Wave(int L, double eta, double rho)
 {
 	int status;
 	double cw = Coulomb_Wave_GSL(L, eta, rho, status);
-	if(status != 0)
+	if(status != 0 || std::isnan(cw))
 		cw = Coulomb_Wave_ARB(L, eta, rho);
 	return cw;
 }

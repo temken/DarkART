@@ -31,10 +31,7 @@ class Initial_Electron_State
 };
 
 // 2. Final state: Positive energy continuum solution of Schroedinger equation with hydrogenic potential
-// extern double Coulomb_Wave_GSL(int L, double eta, double rho);
-// extern double Coulomb_Wave_GSL(int L, double eta, double rho);
 extern double Coulomb_Wave(int L, double eta, double rho);
-
 extern double Radial_Wavefunction_Final(double k_final, unsigned l_prime, double Z_eff, double r);
 
 }	// namespace DarkARC
