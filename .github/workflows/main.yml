@@ -30,6 +30,11 @@ jobs:
       shell: bash
       run: sudo apt-get update && sudo apt-get install libgsl-dev
       
+    # ARB
+    - name: Install ARB
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install libflint-arb-dev
+
     # LCOV
     - name: Install lcov
       run: sudo apt-get install lcov

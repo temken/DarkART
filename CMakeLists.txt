@@ -18,8 +18,10 @@ set(TESTS_DIR     ${PROJECT_SOURCE_DIR}/tests)
 set(EXTERNAL_DIR  ${PROJECT_SOURCE_DIR}/external)
 
 #External projects
-link_directories(/usr/local/Cellar/arb/2.19.0_1/lib/)
-find_library(ARB arb)
+# link_directories(/usr/local/Cellar/arb/2.19.0_1/lib/ /usr/local/lib/ /usr/lib/)
+find_library(ARB
+  NAMES arb libarb flint-arb
+  PATHS  /usr/local/lib /usr/lib/ /usr/share/)
 
 find_package(Boost 1.65  REQUIRED )
 find_package(GSL REQUIRED) 
@@ -71,7 +73,7 @@ configure_file(
 # Source and include directories
 include_directories( 
   ${INCLUDE_DIR}
-  ${Boost_INCLUDE_DIR} )
+  ${Boost_INCLUDE_DIR})
 add_subdirectory( ${SRC_DIR} )
 
 # Code Coverage Configuration
