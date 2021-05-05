@@ -174,6 +174,7 @@ double Spherical_Bessel_jL(int L, double x)
 		return Spherical_Bessel_jL_arb(L, x);
 }
 
+//3. Coulomb wave
 double Coulomb_Wave_ARB(int L, double eta, double rho)
 {
 	double result;
@@ -207,7 +208,6 @@ double Coulomb_Wave_ARB(int L, double eta, double rho)
 	return result;
 }
 
-//3. Coulomb wave
 double Coulomb_Wave_GSL(int L, double eta, double rho, int& status)
 {
 	double fc_array[1];
