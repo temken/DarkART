@@ -39,7 +39,7 @@ double Radial_Integral(unsigned int integral_index, double k_final, double q, co
 	for(i = 0; epsilon_1 > tolerance || epsilon_2 > tolerance; i++)
 	{
 		epsilon_2				= epsilon_1;
-		double new_contribution = boost::math::quadrature::gauss_kronrod<double, 31>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
+		double new_contribution = boost::math::quadrature::gauss_kronrod<double, 41>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
 
 		integral += new_contribution;
 		epsilon_1 = std::fabs(new_contribution / integral);
