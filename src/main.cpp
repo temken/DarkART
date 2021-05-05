@@ -31,13 +31,30 @@ int main()
 	// Input
 	int num_threads								  = 4;
 	std::vector<int> responses					  = {1};
-	std::vector<Initial_Electron_State> electrons = {Initial_Electron_State("Xe", 5, 1)};
-	double k_min								  = 0.1 * keV;
-	double k_max								  = 100.0 * keV;
-	double q_min								  = 1.0 * keV;
-	double q_max								  = 1000 * keV;
-	int k_points								  = 100;
-	int q_points								  = 100;
+	std::vector<Initial_Electron_State> electrons = {
+		Initial_Electron_State("Xe", 5, 1),
+		// Initial_Electron_State("Xe", 5, 0),
+		// Initial_Electron_State("Xe", 4, 2),
+		// Initial_Electron_State("Xe", 4, 1),
+		// Initial_Electron_State("Xe", 4, 0),
+		// Initial_Electron_State("Xe", 3, 2),
+		// Initial_Electron_State("Xe", 3, 1),
+		// Initial_Electron_State("Xe", 3, 0),
+		// Initial_Electron_State("Xe", 2, 1),
+		// Initial_Electron_State("Xe", 2, 0),
+		// Initial_Electron_State("Xe", 1, 0),
+		// Initial_Electron_State("Ar", 3, 1),
+		// Initial_Electron_State("Ar", 3, 0),
+		// Initial_Electron_State("Ar", 2, 1),
+		// Initial_Electron_State("Ar", 2, 0),
+		// Initial_Electron_State("Ar", 1, 0),
+	};
+	double k_min = 0.1 * keV;
+	double k_max = 100.0 * keV;
+	double q_min = 1.0 * keV;
+	double q_max = 1000 * keV;
+	int k_points = 10;
+	int q_points = 10;
 
 	Response_Tabulator tabulator(q_min, q_max, k_min, k_max);
 	tabulator.Resize_Grid(k_points, q_points);
