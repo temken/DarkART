@@ -28,24 +28,28 @@ int main()
 			  << LOGO << std::endl;
 	////////////////////////////////////////////////////////////////////////
 
-	Initial_Electron_State Xenon_5p("Xe", 5, 1);
-	int response = 1;
-
-	double q_min = 1.0 * keV;
-	double q_max = 1000 * keV;
-	double k_min = 0.1 * keV;
-	double k_max = 100.0 * keV;
+	// Input
+	int num_threads								  = 4;
+	std::vector<int> responses					  = {1};
+	std::vector<Initial_Electron_State> electrons = {Initial_Electron_State("Xe", 5, 1)};
+	double k_min								  = 0.1 * keV;
+	double k_max								  = 100.0 * keV;
+	double q_min								  = 1.0 * keV;
+	double q_max								  = 1000 * keV;
+	int k_points								  = 100;
+	int q_points								  = 100;
 
 	Response_Tabulator tabulator(q_min, q_max, k_min, k_max);
-	tabulator.Resize_Grid(100);
-	tabulator.Tabulate(response, Xenon_5p);
-	tabulator.Export_Tables(TOP_LEVEL_DIR "results/");
-
-	// for(auto& q : qs)
-	// {
-	// 	double W = Atomic_Response_Function(k, q, Xenon_5p, index);
-	// 	// std::cout << q / keV << "\t" << W << std::endl;
-	// }
+	tabulator.Resize_Grid(k_points, q_points);
+	int counter		  = 1;
+	int num_responses = responses.size() * electrons.size();
+	for(auto& electron : electrons)
+		for(auto& response : responses)
+		{
+			std::cout << counter++ << "/" << num_responses << ")" << std::endl;
+			tabulator.Tabulate(response, electron, num_threads);
+			tabulator.Export_Tables(TOP_LEVEL_DIR "results/");
+		}
 
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output

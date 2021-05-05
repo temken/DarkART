@@ -23,7 +23,7 @@ class Response_Tabulator
 
 	void Resize_Grid(int k_points, int q_points = 0);
 
-	void Tabulate(int response, const Initial_Electron_State& bound_electron);
+	void Tabulate(int response, const Initial_Electron_State& bound_electron, int threads = 1);
 
 	void Export_Tables(const std::string& path);
 };

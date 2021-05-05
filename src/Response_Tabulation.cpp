@@ -1,5 +1,7 @@
 #include "Response_Tabulation.hpp"
 
+#include <omp.h>
+
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Numerics.hpp"
 #include "libphysica/Utilities.hpp"
@@ -34,7 +36,7 @@ void Response_Tabulator::Resize_Grid(int k_points, int q_points)
 	Initialize_Lists(k_points, q_points);
 }
 
-void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bound_electron)
+void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bound_electron, int threads)
 {
 	tabulated_response = response;
 	electron_orbital   = bound_electron.Orbital_Name();
@@ -45,19 +47,22 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 			  << "\t- Final momentum k'[keV]:\t[" << libphysica::Round(In_Units(k_min, keV)) << "," << libphysica::Round(In_Units(k_max, keV)) << "]" << std::endl
 			  << "\t- Momentum transfer q[keV]:\t[" << libphysica::Round(In_Units(q_min, keV)) << "," << libphysica::Round(In_Units(q_max, keV)) << "]" << std::endl
 			  << "\t- Grid size:\t\t\t" << k_grid.size() << "x" << q_grid.size() << std::endl
+			  << "\t- Number of threads:\t\t" << threads << std::endl
 			  << std::endl;
 
 	int counter		= 0;
 	int counter_max = k_grid.size() * q_grid.size();
+#pragma omp parallel for num_threads(threads) collapse(2)
 	for(unsigned int ki = 0; ki < k_grid.size(); ki++)
 	{
+		int ID	 = omp_get_thread_num();
 		double k = k_grid[ki];
 		for(unsigned int qi = 0; qi < q_grid.size(); qi++)
 		{
 			double q			   = q_grid[qi];
 			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response);
 			counter++;
-			libphysica::Print_Progress_Bar(1.0 * counter / counter_max);
+			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, ID);
 		}
 	}
 }

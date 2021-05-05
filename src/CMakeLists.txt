@@ -33,6 +33,7 @@
 			GSL::gsl
 			GSL::gslcblas
 			"${ARB}"
+			OpenMP::OpenMP_CXX
 		PUBLIC
 			coverage_config
 			libphysica)

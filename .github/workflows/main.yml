@@ -20,6 +20,11 @@ jobs:
     - name: Update apt-get
       run: sudo apt-get update
 
+    # OPENMP
+    - name: Install openmp
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -yq libomp-dev 
+
     # BOOST
     - name: Install boost
       shell: bash

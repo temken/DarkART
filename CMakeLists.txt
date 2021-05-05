@@ -18,13 +18,17 @@ set(TESTS_DIR     ${PROJECT_SOURCE_DIR}/tests)
 set(EXTERNAL_DIR  ${PROJECT_SOURCE_DIR}/external)
 
 #External projects
-# link_directories(/usr/local/Cellar/arb/2.19.0_1/lib/ /usr/local/lib/ /usr/lib/)
 find_library(ARB
   NAMES arb libarb flint-arb
   PATHS  /usr/local/lib /usr/lib/ /usr/share/)
-
 find_package(Boost 1.65  REQUIRED )
 find_package(GSL REQUIRED) 
+find_package(OpenMP REQUIRED)
+if(OPENMP_FOUND)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
 
 include(FetchContent)
 # libphysica
