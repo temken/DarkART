@@ -67,7 +67,7 @@ std::complex<double> Vectorial_Atomic_Formfactor(int component, double q, const 
 		{
 			double radial_integral_2 = Radial_Integral(2, k_final, q, bound_electron, l_final, L);
 			double radial_integral_3 = Radial_Integral(3, k_final, q, bound_electron, l_final, L);
-			for(int m_hat = m - 1; m_hat < m + 2; m++)
+			for(int m_hat = m - 1; m_hat < m + 2; m_hat++)
 				f_12 += std::pow(1.0i, L) * (VSH_Y_Component(component, bound_electron.l, m, l_hat, m_hat) * radial_integral_2 + VSH_Psi_Component(component, bound_electron.l, m, l_hat, m_hat) * radial_integral_3) * std::pow(-1.0, m_final) * sqrt(4.0 * M_PI * (2.0 * L + 1.0)) * Gaunt_Coefficient(l_hat, l_final, L, m_hat, -m_final, 0);
 		}
 	return 1.0i / mElectron * f_12;
@@ -140,8 +140,6 @@ double Atomic_Response_Function(double k_final, double q, const Initial_Electron
 		if(correction < 0.0)
 			response_function += correction;
 	}
-	// std::cout << "\t" << l_final << std::endl;
-	std::cout << q / keV << "\t" << k_final / keV << "\t" << response_function << "\t" << l_final << std::endl;
 	return response_function;
 }
 
