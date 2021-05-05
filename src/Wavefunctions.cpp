@@ -7,6 +7,7 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include "libphysica/Natural_Units.hpp"
+#include "libphysica/Numerics.hpp"
 
 #include "Special_Functions.hpp"
 #include "version.hpp"
@@ -44,6 +45,13 @@ Initial_Electron_State::Initial_Electron_State(const std::string& element, int N
 		f.close();
 	}
 	Z_eff = sqrt(-2.0 * binding_energy / au) * n;
+
+	double norm = Normalization();
+	if(libphysica::Relative_Difference(1.0, norm) > 0.01)
+	{
+		std::cout << "Error in Initial_Electron_State(): Normalization of " << element_name << " = " << norm << " != 1.0" << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
 }
 
 std::string Initial_Electron_State::Orbital_Name() const
