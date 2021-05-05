@@ -6,8 +6,8 @@
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
-// #include "ARB_Wrapper.hpp"
 #include "Atomic_Responses.hpp"
+#include "Response_Tabulation.hpp"
 #include "Special_Functions.hpp"
 #include "Wavefunctions.hpp"
 #include "version.hpp"
@@ -29,31 +29,23 @@ int main()
 	////////////////////////////////////////////////////////////////////////
 
 	Initial_Electron_State Xenon_5p("Xe", 5, 1);
+	int response = 1;
 
-	int index = 1;
-	double k  = 20.0 * keV;
+	double q_min = 1.0 * keV;
+	double q_max = 1000 * keV;
+	double k_min = 0.1 * keV;
+	double k_max = 100.0 * keV;
 
-	double q_min		   = 1.0 * keV;
-	double q_max		   = 1000 * keV;
-	double k_min		   = 0.1 * keV;
-	double k_max		   = 200.0 * keV;
-	std::vector<double> qs = libphysica::Log_Space(q_min, q_max, 200);
-	// std::vector<double> ks = libphysica::Log_Space(k_min, k_max, 200);
-	// // std::ofstream f;
-	// // f.open("Response_1_Xe_5p.txt");
-	// // for(auto& k : ks)
-	// // 	for(auto& q : qs)
-	// // 	{
-	// // 		double W = Atomic_Response_Function(k, q, Xenon_5p, index);
-	// // 		f << q / keV << "\t" << k / keV << "\t" << W << std::endl;
-	// // 	}
-	// // f.close();
+	Response_Tabulator tabulator(q_min, q_max, k_min, k_max);
+	tabulator.Resize_Grid(100);
+	tabulator.Tabulate(response, Xenon_5p);
+	tabulator.Export_Tables(TOP_LEVEL_DIR "results/");
 
-	for(auto& q : qs)
-	{
-		double W = Atomic_Response_Function(k, q, Xenon_5p, index);
-		// std::cout << q / keV << "\t" << W << std::endl;
-	}
+	// for(auto& q : qs)
+	// {
+	// 	double W = Atomic_Response_Function(k, q, Xenon_5p, index);
+	// 	// std::cout << q / keV << "\t" << W << std::endl;
+	// }
 
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output
