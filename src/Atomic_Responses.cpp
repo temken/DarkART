@@ -31,7 +31,7 @@ double Radial_Integral(unsigned int integral_index, double k_final, double q, co
 		}
 	};
 	// Integrate stepwise
-	double stepsize	 = Bohr_Radius;
+	double stepsize	 = 0.5 * Bohr_Radius;
 	double integral	 = 0.0;
 	double epsilon_1 = 1.0, epsilon_2 = 1.0;
 	double tolerance = 1.0e-6;

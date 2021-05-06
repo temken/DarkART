@@ -52,8 +52,8 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 
 	int counter		= 0;
 	int counter_max = k_grid.size() * q_grid.size();
-#pragma omp parallel for num_threads(threads) collapse(2)
-	for(unsigned int ki = 0; ki < k_grid.size(); ki++)
+#pragma omp parallel for schedule(dynamic) num_threads(threads) collapse(2)
+	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
 	{
 		int ID	 = omp_get_thread_num();
 		double k = k_grid[ki];
@@ -75,8 +75,8 @@ void Response_Tabulator::Export_Tables(const std::string& path)
 		std::exit(EXIT_FAILURE);
 	}
 	std::ofstream f_table, f_list;
-	std::string path_table = path + "Atomic_Response_W_" + std::to_string(tabulated_response) + "_" + electron_orbital + "_Table.txt";
-	std::string path_list  = path + "Atomic_Response_W_" + std::to_string(tabulated_response) + "_" + electron_orbital + "_List.txt";
+	std::string path_table = path + electron_orbital + std::to_string(tabulated_response) + "_Table.txt";
+	std::string path_list  = path + electron_orbital + std::to_string(tabulated_response) + "_List.txt";
 	f_table.open(path_table);
 	f_list.open(path_list);
 
