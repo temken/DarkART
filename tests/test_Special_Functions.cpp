@@ -71,4 +71,6 @@ TEST(TestSpecialFunction, TestCoulombWave)
 	// ACT
 	//ASSERT
 	EXPECT_FLOAT_EQ(Coulomb_Wave(L, eta, rho), result);
+	EXPECT_FLOAT_EQ(Coulomb_Wave(L, eta, 0.0), 0.0);
+	EXPECT_FLOAT_EQ(Coulomb_Wave(0, 0.0, rho), sin(rho));
 }
