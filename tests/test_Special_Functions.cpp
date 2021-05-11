@@ -81,6 +81,18 @@ TEST(TestSpecialFunction, TestVectorialSphericalHarmonicsOrthogonality)
 	EXPECT_NEAR((Y[0] * Psi[0] + Y[1] * Psi[1] + Y[2] * Psi[2]).imag(), 0.0, 1e-16);
 }
 
+TEST(TestSpecialFunction, TestVectorialSphericalHarmonicsYFailure)
+{
+	// ACT & ASSERT
+	ASSERT_DEATH({ auto comp = VSH_Y_Component(5, 5, 3, 5, 3); }, "");
+}
+
+TEST(TestSpecialFunction, TestVectorialSphericalHarmonicsPsiFailure)
+{
+	// ACT & ASSERT
+	ASSERT_DEATH({ auto comp = VSH_Psi_Component(5, 5, 3, 5, 3); }, "");
+}
+
 TEST(TestSpecialFunction, TestGauntCoefficients)
 {
 	// ARRANGE
