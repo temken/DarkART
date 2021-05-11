@@ -30,12 +30,21 @@ int main()
 
 	// Initial_Electron_State Xenon_5p("Xe", 5, 1);
 	// double k_final = 1.0 * keV;
-	// double q	   = 100.0 * keV;
+	// // double q	   = 100.0 * keV;
+	// double q_min = 1.0 * keV;
+	// double q_max = 1000 * keV;
+	// auto q_grid	 = libphysica::Log_Space(q_min, q_max, 100);
+
+	// std::ofstream f;
+	// f.open("test_3.txt");
+	// for(auto& q : q_grid)
+	// 	f << Atomic_Response_Function(k_final, q, Xenon_5p, 1) << std::endl;
+	// f.close();
 	// std::cout << Atomic_Response_Function(k_final, q, Xenon_5p, 1) << std::endl;
 
 	// Input
 	int num_threads								  = 4;
-	std::vector<int> responses					  = {2, 3, 4};
+	std::vector<int> responses					  = {1, 2, 3, 4};
 	std::vector<Initial_Electron_State> electrons = {
 		Initial_Electron_State("Xe", 5, 1),
 		Initial_Electron_State("Xe", 5, 0),
@@ -72,9 +81,13 @@ int main()
 		for(auto& response : responses)
 		{
 			std::cout << counter++ << "/" << num_responses << ")" << std::endl;
-			// electron.Print_Summary();
-			tabulator.Tabulate(response, electron, num_threads);
-			tabulator.Export_Tables(TOP_LEVEL_DIR "results/");
+			if(libphysica::File_Exists(TOP_LEVEL_DIR "results/" + electron.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt"))
+				std::cout << "\tResponse " << response << " of " << electron.Orbital_Name() << " was already tabulated.\n\tTo re-calculate this response, remove the corresponding files from the /results/ folder." << std::endl;
+			else
+			{
+				tabulator.Tabulate(response, electron, num_threads);
+				tabulator.Export_Tables(TOP_LEVEL_DIR "results/");
+			}
 		}
 
 	////////////////////////////////////////////////////////////////////////

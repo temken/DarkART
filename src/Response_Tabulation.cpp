@@ -60,7 +60,7 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 			double q			   = q_grid[qi];
 			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response);
 			counter++;
-			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, omp_get_thread_num());
+			libphysica::Print_Progress_Bar(1.0 * counter / counter_max);
 		}
 	std::cout << std::endl
 			  << std::endl;
