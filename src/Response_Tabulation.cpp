@@ -23,7 +23,7 @@ void Response_Tabulator::Initialize_Lists(int k_points, int q_points)
 	electron_orbital   = "";
 }
 
-Response_Tabulator::Response_Tabulator(double qmin, double qmax, double kmin, double kmax)
+Response_Tabulator::Response_Tabulator(double kmin, double kmax, double qmin, double qmax)
 : k_min(kmin), k_max(kmax), q_min(qmin), q_max(qmax)
 {
 	Initialize_Lists(100, 100);
@@ -52,19 +52,18 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 
 	int counter		= 0;
 	int counter_max = k_grid.size() * q_grid.size();
-#pragma omp parallel for num_threads(threads) collapse(2)
-	for(unsigned int ki = 0; ki < k_grid.size(); ki++)
-	{
-		int ID	 = omp_get_thread_num();
-		double k = k_grid[ki];
+#pragma omp parallel for schedule(dynamic) num_threads(threads) collapse(2)
+	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
 		for(unsigned int qi = 0; qi < q_grid.size(); qi++)
 		{
+			double k			   = k_grid[ki];
 			double q			   = q_grid[qi];
 			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response);
 			counter++;
-			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, ID);
+			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, omp_get_thread_num());
 		}
-	}
+	std::cout << std::endl
+			  << std::endl;
 }
 
 void Response_Tabulator::Export_Tables(const std::string& path)
@@ -75,8 +74,8 @@ void Response_Tabulator::Export_Tables(const std::string& path)
 		std::exit(EXIT_FAILURE);
 	}
 	std::ofstream f_table, f_list;
-	std::string path_table = path + "Atomic_Response_W_" + std::to_string(tabulated_response) + "_" + electron_orbital + "_Table.txt";
-	std::string path_list  = path + "Atomic_Response_W_" + std::to_string(tabulated_response) + "_" + electron_orbital + "_List.txt";
+	std::string path_table = path + electron_orbital + "_" + std::to_string(tabulated_response) + "_Table.txt";
+	std::string path_list  = path + electron_orbital + "_" + std::to_string(tabulated_response) + "_List.txt";
 	f_table.open(path_table);
 	f_list.open(path_list);
 

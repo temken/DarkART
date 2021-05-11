@@ -42,12 +42,17 @@ jobs:
 
     # LCOV
     - name: Install lcov
-      run: sudo apt-get install lcov
+      run: sudo apt-get update && sudo apt-get install lcov
     
     # CODECOV
     - name: Install codecov
       shell: bash
       run: sudo pip install codecov
+
+      # Finding flint
+    - name: Install flint 
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install libflint-dev
 
     # BUILD
     - name: Create Build Environment

@@ -31,7 +31,7 @@ double Radial_Integral(unsigned int integral_index, double k_final, double q, co
 		}
 	};
 	// Integrate stepwise
-	double stepsize	 = Bohr_Radius;
+	double stepsize	 = 0.5 * Bohr_Radius;
 	double integral	 = 0.0;
 	double epsilon_1 = 1.0, epsilon_2 = 1.0;
 	double tolerance = 1.0e-6;
@@ -39,7 +39,7 @@ double Radial_Integral(unsigned int integral_index, double k_final, double q, co
 	for(i = 0; epsilon_1 > tolerance || epsilon_2 > tolerance; i++)
 	{
 		epsilon_2				= epsilon_1;
-		double new_contribution = boost::math::quadrature::gauss_kronrod<double, 31>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
+		double new_contribution = boost::math::quadrature::gauss_kronrod<double, 41>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
 
 		integral += new_contribution;
 		epsilon_1 = std::fabs(new_contribution / integral);
@@ -59,11 +59,11 @@ std::complex<double> Scalar_Atomic_Formfactor(double q, const Initial_Electron_S
 	return sqrt(4.0 * M_PI) * f_12;
 }
 
-std::complex<double> Vectorial_Atomic_Formfactor(int component, double q, const Initial_Electron_State& bound_electron, int m, double k_final, unsigned int l_final, int m_final)
+std::complex<double> Vectorial_Atomic_Formfactor(int component, double q, const Initial_Electron_State& bound_electron, int m, double k_final, int l_final, int m_final)
 {
 	std::complex<double> f_12 = 0.0;
 	for(int l_hat : {bound_electron.l - 1, bound_electron.l + 1})
-		for(int L = std::fabs(bound_electron.l - l_final); L <= bound_electron.l + l_final; L++)
+		for(int L = std::fabs(l_hat - l_final); L <= l_hat + l_final; L++)
 		{
 			double radial_integral_2 = Radial_Integral(2, k_final, q, bound_electron, l_final, L);
 			double radial_integral_3 = Radial_Integral(3, k_final, q, bound_electron, l_final, L);

@@ -19,7 +19,7 @@ class Response_Tabulator
 	void Initialize_Lists(int k_points, int q_points);
 
   public:
-	Response_Tabulator(double qmin, double qmax, double kmin, double kmax);
+	Response_Tabulator(double kmin, double kmax, double qmin, double qmax);
 
 	void Resize_Grid(int k_points, int q_points = 0);
 
