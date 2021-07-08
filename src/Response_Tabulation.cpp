@@ -3,7 +3,7 @@
 #include <omp.h>
 
 #include "libphysica/Natural_Units.hpp"
-#include "libphysica/Numerics.hpp"
+#include "libphysica/Special_Functions.hpp"
 #include "libphysica/Utilities.hpp"
 
 #include "Atomic_Responses.hpp"
