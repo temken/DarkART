@@ -128,8 +128,8 @@ double Atomic_Response_Function(double k_final, double q, const Initial_Electron
 			double mean = libphysica::Arithmetic_Mean(aux);
 			if(mean < convergence_level * response_function / terms.size())
 			{
-				break;
 				l_convergence = l_final;
+				break;
 			}
 		}
 	}

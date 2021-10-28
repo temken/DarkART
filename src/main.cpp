@@ -59,36 +59,48 @@ int main(int argc, char* argv[])
 	}
 	else if(cfg.run_modus == "Evaluation")
 	{
+		std::cout << "Evaluate atomic responses for k' = " << cfg.k_prime / keV << " and q = " << cfg.q / keV << " keV" << std::endl;
+		for(auto& atomic_shell_name : cfg.atomic_shell_list)
+		{
+			std::cout << std::endl;
+			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
+			for(auto& response : cfg.atomic_responses)
+			{
+				int l_convergence;
+				double W = Atomic_Response_Function(cfg.k_prime, cfg.q, initial_state, response, l_convergence);
+				std::cout << "\t" << initial_state.Orbital_Name() << "\tW_" << response << "(k',q) = " << W << "\t(maximum l' = " << l_convergence << ")" << std::endl;
+			}
+		}
 	}
 	else
 	{
-		// std::vector<Initial_Electron_State> electrons = {
-		// 	Initial_Electron_State("Xe", 5, 1),
-		// 	Initial_Electron_State("Xe", 5, 0),
-		// 	Initial_Electron_State("Xe", 4, 2),
-		// 	Initial_Electron_State("Xe", 4, 1),
-		// 	Initial_Electron_State("Xe", 4, 0),
-		// 	Initial_Electron_State("Xe", 3, 2),
-		// 	Initial_Electron_State("Xe", 3, 1),
-		// 	Initial_Electron_State("Xe", 3, 0),
-		// 	Initial_Electron_State("Xe", 2, 1),
-		// 	Initial_Electron_State("Xe", 2, 0),
-		// 	Initial_Electron_State("Xe", 1, 0),
-		// 	// Initial_Electron_State("Ar", 3, 1),
-		// 	// Initial_Electron_State("Ar", 3, 0),
-		// 	// Initial_Electron_State("Ar", 2, 1),
-		// 	// Initial_Electron_State("Ar", 2, 0),
-		// 	// Initial_Electron_State("Ar", 1, 0),
-		// };
-		// auto r_list = libphysica::Log_Space(1e-3 * Bohr_Radius, 1e2 * Bohr_Radius, 100);
-		// for(auto r : r_list)
-		// {
-		// 	double sum = 0.0;
-		// 	for(auto& electron : electrons)
-		// 		sum += 2.0 * (2.0 * electron.l + 1) * electron.Radial_Integral(r);
-		// 	double Z_eff = 54.0 - sum + electrons.back().Radial_Integral(r);
-		// 	std::cout << r / Bohr_Radius << "\t" << Z_eff << std::endl;
-		// }
+		std::vector<Initial_Electron_State> electrons = {
+			Initial_Electron_State("Xe", 5, 1),
+			Initial_Electron_State("Xe", 5, 0),
+			Initial_Electron_State("Xe", 4, 2),
+			Initial_Electron_State("Xe", 4, 1),
+			Initial_Electron_State("Xe", 4, 0),
+			Initial_Electron_State("Xe", 3, 2),
+			Initial_Electron_State("Xe", 3, 1),
+			Initial_Electron_State("Xe", 3, 0),
+			Initial_Electron_State("Xe", 2, 1),
+			Initial_Electron_State("Xe", 2, 0),
+			Initial_Electron_State("Xe", 1, 0),
+			// Initial_Electron_State("Ar", 3, 1),
+			// Initial_Electron_State("Ar", 3, 0),
+			// Initial_Electron_State("Ar", 2, 1),
+			// Initial_Electron_State("Ar", 2, 0),
+			// Initial_Electron_State("Ar", 1, 0),
+		};
+		auto r_list = libphysica::Log_Space(1e-3 * Bohr_Radius, 1e2 * Bohr_Radius, 100);
+		for(auto r : r_list)
+		{
+			double sum = 0.0;
+			for(auto& electron : electrons)
+				sum += 2.0 * (2.0 * electron.l + 1) * electron.Radial_Integral(r);
+			double Z_eff = 54.0 - sum + electrons.back().Radial_Integral(r);
+			std::cout << r / Bohr_Radius << "\t" << Z_eff << std::endl;
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////
