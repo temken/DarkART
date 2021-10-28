@@ -23,8 +23,9 @@ class Configuration
 
   public:
 	std::string ID, results_path, run_modus, element;
-	std::vector<std::string> atomic_shells;
-	std::vector<int> responses;
+	std::vector<std::string> atomic_shell_list;
+	std::vector<int> atomic_responses;
+	bool overwrite_old_tables;
 	double k_min, k_max, q_min, q_max, k_prime, q;
 	int k_gridpoints, q_gridpoints, threads;
 
