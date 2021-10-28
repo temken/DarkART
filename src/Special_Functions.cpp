@@ -1,4 +1,4 @@
-#include "Special_Functions.hpp"
+#include "DarkARC/Special_Functions.hpp"
 
 #include <iostream>
 
@@ -134,7 +134,7 @@ double Gaunt_Coefficient(int j1, int j2, int j3, int m1, int m2, int m3)
 	return sqrt((2.0 * j1 + 1.0) * (2.0 * j2 + 1.0) * (2.0 * j3 + 1.0)) / sqrt(4.0 * M_PI) * gsl_sf_coupling_3j(2 * j1, 2 * j2, 2 * j3, 0, 0, 0) * gsl_sf_coupling_3j(2 * j1, 2 * j2, 2 * j3, 2 * m1, 2 * m2, 2 * m3);
 }
 
-//2. Spherical Bessel function j_L
+// 2. Spherical Bessel function j_L
 double Spherical_Bessel_jL_arb(int L, double x)
 {
 	double prefactor = sqrt(M_PI / 2.0 / x);
@@ -174,7 +174,7 @@ double Spherical_Bessel_jL(int L, double x)
 		return Spherical_Bessel_jL_arb(L, x);
 }
 
-//3. Coulomb wave
+// 3. Coulomb wave
 double Coulomb_Wave_ARB(int L, double eta, double rho)
 {
 	double result;

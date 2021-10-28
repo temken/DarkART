@@ -1,11 +1,11 @@
 #include "gtest/gtest.h"
 
-#include "Response_Tabulation.hpp"
+#include "DarkARC/Response_Tabulation.hpp"
 
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions.hpp"
 #include "version.hpp"
 
 using namespace DarkARC;

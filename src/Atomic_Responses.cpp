@@ -1,4 +1,4 @@
-#include "Atomic_Responses.hpp"
+#include "DarkARC/Atomic_Responses.hpp"
 
 #include <complex>
 
@@ -7,7 +7,7 @@
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Statistics.hpp"
 
-#include "Special_Functions.hpp"
+#include "DarkARC/Special_Functions.hpp"
 
 namespace DarkARC
 {
@@ -108,7 +108,7 @@ double Transition_Response_Function(double k_final, double q, const Initial_Elec
 
 double Atomic_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int response)
 {
-	double convergence_level = 0.1;
+	double convergence_level = 0.01;
 	double prefactor		 = 4.0 * std::pow(k_final / 2.0 / M_PI, 3.0);
 	double response_function = 0.0;
 	std::vector<double> terms;
@@ -130,6 +130,7 @@ double Atomic_Response_Function(double k_final, double q, const Initial_Electron
 			if(mean < convergence_level * response_function / terms.size())
 				break;
 		}
+		// std::cout << l_final << "\t" << response_function << "\t" << new_term << std::endl;
 	}
 	// One correction
 	if(response == 1)

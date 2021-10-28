@@ -26,6 +26,7 @@ class Initial_Electron_State
 	double Radial_Wavefunction(double r) const;
 	double Radial_Wavefunction_Derivative(double r) const;
 	double Normalization() const;
+	double Radial_Integral(double r) const;
 
 	void Print_Summary(unsigned int mpi_rank = 0) const;
 };

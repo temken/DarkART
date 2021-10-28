@@ -1,4 +1,4 @@
-#include "Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions.hpp"
 
 #include <cmath>
 #include <complex>
@@ -8,7 +8,7 @@
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "Special_Functions.hpp"
+#include "DarkARC/Special_Functions.hpp"
 #include "version.hpp"
 
 namespace DarkARC
@@ -95,6 +95,15 @@ double Initial_Electron_State::Normalization() const
 		epsilon_1 = std::fabs(new_contribution / integral);
 	}
 	return integral;
+}
+
+double Initial_Electron_State::Radial_Integral(double r) const
+{
+	std::function<double(double)> integrand = [this](double rprime) {
+		double R = Radial_Wavefunction(rprime);
+		return rprime * rprime * R * R;
+	};
+	return gauss_kronrod<double, 31>::integrate(integrand, 0.0, r, 5, 1e-9);
 }
 
 void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const

@@ -1,4 +1,4 @@
-#include "Response_Tabulation.hpp"
+#include "DarkARC/Response_Tabulation.hpp"
 
 #include <omp.h>
 
@@ -6,7 +6,7 @@
 #include "libphysica/Special_Functions.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "Atomic_Responses.hpp"
+#include "DarkARC/Atomic_Responses.hpp"
 #include "version.hpp"
 
 namespace DarkARC
