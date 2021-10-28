@@ -3,6 +3,7 @@
 #include <cmath>
 #include <complex>
 #include <fstream>
+#include <stdlib.h>
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
@@ -22,10 +23,9 @@ double a0 = Bohr_Radius;
 double au = 27.211386245988 * eV;
 
 // 1. Initial state: Roothaan-Hartree-Fock Ground-State Atomic Wave Functions
-Initial_Electron_State::Initial_Electron_State(const std::string& element, int N, int L)
-: element_name(element), n(N), l(L)
+
+void Initial_Electron_State::Import_RHF_Coefficients()
 {
-	// Import RHF coefficients from file
 	std::string filepath = TOP_LEVEL_DIR "data/" + Orbital_Name() + ".txt";
 	std::ifstream f;
 	f.open(filepath);
@@ -51,6 +51,22 @@ Initial_Electron_State::Initial_Electron_State(const std::string& element, int N
 		std::cout << "Error in Initial_Electron_State(): Normalization of " << element_name << " = " << norm << " != 1.0" << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
+}
+
+Initial_Electron_State::Initial_Electron_State(const std::string& element, int N, int L)
+: element_name(element), n(N), l(L)
+{
+	Import_RHF_Coefficients();
+}
+
+Initial_Electron_State::Initial_Electron_State(const std::string& element, std::string shell_name)
+: element_name(element)
+{
+	n = shell_name[0] - '0';
+	for(l = 0; l < l_orbital_names.size(); l++)
+		if(shell_name[1] == l_orbital_names[l][0])
+			break;
+	Import_RHF_Coefficients();
 }
 
 std::string Initial_Electron_State::Orbital_Name() const
