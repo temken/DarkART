@@ -106,14 +106,13 @@ double Transition_Response_Function(double k_final, double q, const Initial_Elec
 	return W_12;
 }
 
-double Atomic_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int response)
+double Atomic_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int response, int& l_convergence)
 {
 	double convergence_level = 0.01;
 	double prefactor		 = 4.0 * std::pow(k_final / 2.0 / M_PI, 3.0);
 	double response_function = 0.0;
 	std::vector<double> terms;
-	int l_final = 0;
-	for(l_final = 0; l_final < 1000; l_final++)
+	for(int l_final = 0; l_final < 1000; l_final++)
 	{
 		double new_term = 0.0;
 		for(int m = -bound_electron.l; m <= bound_electron.l; m++)
@@ -128,9 +127,11 @@ double Atomic_Response_Function(double k_final, double q, const Initial_Electron
 			std::vector<double> aux(terms.end() - 2 * (bound_electron.l + 1), terms.end());
 			double mean = libphysica::Arithmetic_Mean(aux);
 			if(mean < convergence_level * response_function / terms.size())
+			{
 				break;
+				l_convergence = l_final;
+			}
 		}
-		// std::cout << l_final << "\t" << response_function << "\t" << new_term << std::endl;
 	}
 	// One correction
 	if(response == 1)
@@ -142,6 +143,12 @@ double Atomic_Response_Function(double k_final, double q, const Initial_Electron
 			response_function += correction;
 	}
 	return response_function;
+}
+
+double Atomic_Response_Function(double k_final, double q, const Initial_Electron_State& bound_electron, unsigned int response)
+{
+	int l_convergence;
+	return Atomic_Response_Function(k_final, q, bound_electron, response, l_convergence);
 }
 
 }	// namespace DarkARC

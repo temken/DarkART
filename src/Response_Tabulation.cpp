@@ -56,9 +56,10 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
 		for(unsigned int qi = 0; qi < q_grid.size(); qi++)
 		{
-			double k			   = k_grid[ki];
-			double q			   = q_grid[qi];
-			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response);
+			double k = k_grid[ki];
+			double q = q_grid[qi];
+			int l_convergence;
+			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response, l_convergence);
 			counter++;
 			libphysica::Print_Progress_Bar(1.0 * counter / counter_max);
 		}
