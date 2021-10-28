@@ -19,6 +19,7 @@
 	# Static library
 	add_library(libdarkarc STATIC
 	    Atomic_Responses.cpp
+	    Configuration.cpp
 	    Response_Tabulation.cpp
 	    Special_Functions.cpp
 	    Wavefunctions.cpp)
@@ -27,6 +28,18 @@
 
 	target_compile_options(libdarkarc PUBLIC -Wall -pedantic)
 
+	# Find and include libconfig
+	find_path(LIBCONFIG_INCLUDE_DIRs libconfig.h++
+		/usr/local/include
+		/usr/include
+		~/libs/include
+		~/include )
+	find_library(LIBCONFIGPP_LIBRARY config++
+		/usr/local/lib
+		/usr/lib
+		~/libs/lib
+		~/lib )
+
 	target_link_libraries(libdarkarc
 		PRIVATE
 			${Boost_LIBRARIES}
@@ -34,6 +47,7 @@
 			GSL::gslcblas
 			"${ARB}"
 			OpenMP::OpenMP_CXX
+			${LIBCONFIGPP_LIBRARY}
 		PUBLIC
 			coverage_config
 			libphysica)
@@ -41,6 +55,7 @@
 	target_include_directories(libdarkarc
 		PRIVATE
 			${GENERATED_DIR}
+			${LIBCONFIG_INCLUDE_DIRs}
 		PUBLIC
 			${CMAKE_CURRENT_SOURCE_DIR}
 			${INCLUDE_DIR})
