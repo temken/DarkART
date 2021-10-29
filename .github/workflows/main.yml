@@ -20,6 +20,14 @@ jobs:
     - name: Update apt-get
       run: sudo apt-get update
 
+    # LIBCONFIG
+    - name: Download libconfig
+      run: wget https://hyperrealm.github.io/libconfig/dist/libconfig-1.7.2.tar.gz 
+    - name: Unpack libconfig
+      run: tar -xvzf libconfig-1.7.2.tar.gz
+    - name: Install libconfig
+      run: pushd libconfig-1.7.2 && ./configure && make && sudo make install && popd
+
     # OPENMP
     - name: Install openmp
       shell: bash

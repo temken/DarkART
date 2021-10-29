@@ -1,15 +1,15 @@
-#include "Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions.hpp"
 
 #include <cmath>
 #include <complex>
 #include <fstream>
+#include <stdlib.h>
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
 #include "libphysica/Natural_Units.hpp"
-#include "libphysica/Numerics.hpp"
 
-#include "Special_Functions.hpp"
+#include "DarkARC/Special_Functions.hpp"
 #include "version.hpp"
 
 namespace DarkARC
@@ -23,10 +23,9 @@ double a0 = Bohr_Radius;
 double au = 27.211386245988 * eV;
 
 // 1. Initial state: Roothaan-Hartree-Fock Ground-State Atomic Wave Functions
-Initial_Electron_State::Initial_Electron_State(const std::string& element, int N, int L)
-: element_name(element), n(N), l(L)
+
+void Initial_Electron_State::Import_RHF_Coefficients()
 {
-	// Import RHF coefficients from file
 	std::string filepath = TOP_LEVEL_DIR "data/" + Orbital_Name() + ".txt";
 	std::ifstream f;
 	f.open(filepath);
@@ -47,11 +46,27 @@ Initial_Electron_State::Initial_Electron_State(const std::string& element, int N
 	Z_eff = sqrt(-2.0 * binding_energy / au) * n;
 
 	double norm = Normalization();
-	if(libphysica::Relative_Difference(1.0, norm) > 0.01)
+	if(std::fabs(1.0 - norm) > 0.01)
 	{
 		std::cout << "Error in Initial_Electron_State(): Normalization of " << element_name << " = " << norm << " != 1.0" << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
+}
+
+Initial_Electron_State::Initial_Electron_State(const std::string& element, int N, int L)
+: element_name(element), n(N), l(L)
+{
+	Import_RHF_Coefficients();
+}
+
+Initial_Electron_State::Initial_Electron_State(const std::string& element, std::string shell_name)
+: element_name(element)
+{
+	n = shell_name[0] - '0';
+	for(l = 0; l < l_orbital_names.size(); l++)
+		if(shell_name[1] == l_orbital_names[l][0])
+			break;
+	Import_RHF_Coefficients();
 }
 
 std::string Initial_Electron_State::Orbital_Name() const
@@ -96,6 +111,15 @@ double Initial_Electron_State::Normalization() const
 		epsilon_1 = std::fabs(new_contribution / integral);
 	}
 	return integral;
+}
+
+double Initial_Electron_State::Radial_Integral(double r) const
+{
+	std::function<double(double)> integrand = [this](double rprime) {
+		double R = Radial_Wavefunction(rprime);
+		return rprime * rprime * R * R;
+	};
+	return gauss_kronrod<double, 31>::integrate(integrand, 0.0, r, 5, 1e-9);
 }
 
 void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const

@@ -1,12 +1,12 @@
-#include "Response_Tabulation.hpp"
+#include "DarkARC/Response_Tabulation.hpp"
 
 #include <omp.h>
 
 #include "libphysica/Natural_Units.hpp"
-#include "libphysica/Numerics.hpp"
+#include "libphysica/Special_Functions.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "Atomic_Responses.hpp"
+#include "DarkARC/Atomic_Responses.hpp"
 #include "version.hpp"
 
 namespace DarkARC
@@ -19,6 +19,7 @@ void Response_Tabulator::Initialize_Lists(int k_points, int q_points)
 	k_grid			   = libphysica::Log_Space(k_min, k_max, k_points);
 	q_grid			   = libphysica::Log_Space(q_min, q_max, q_points);
 	response_table	   = std::vector<std::vector<double>>(k_points, std::vector<double>(q_points, 0.0));
+	l_prime_table	   = std::vector<std::vector<int>>(k_points, std::vector<int>(q_points, 0));
 	tabulated_response = -1;
 	electron_orbital   = "";
 }
@@ -56,11 +57,13 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
 		for(unsigned int qi = 0; qi < q_grid.size(); qi++)
 		{
-			double k			   = k_grid[ki];
-			double q			   = q_grid[qi];
-			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response);
+			double k = k_grid[ki];
+			double q = q_grid[qi];
+			int l_convergence;
+			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response, l_convergence);
+			l_prime_table[ki][qi]  = l_convergence;
 			counter++;
-			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, omp_get_thread_num());
+			libphysica::Print_Progress_Bar(1.0 * counter / counter_max);
 		}
 	std::cout << std::endl
 			  << std::endl;
@@ -83,7 +86,8 @@ void Response_Tabulator::Export_Tables(const std::string& path)
 			<< "// Rows correspond to values of k' [keV] in [" << In_Units(k_min, keV) << "," << In_Units(k_max, keV) << "] (log steps)" << std::endl
 			<< "// Columns correspond to values of q [keV] in [" << In_Units(q_min, keV) << "," << In_Units(q_max, keV) << "] (log steps)" << std::endl;
 	f_list << "// W_" << tabulated_response << "(k',q) for " + electron_orbital << std::endl
-		   << "// k'[keV]\tq[keV]\tW_" << tabulated_response << std::endl;
+		   << "// k'[keV]\tq[keV]\tW_" << tabulated_response << "\t"
+		   << "l' for convergence" << std::endl;
 
 	for(unsigned int ki = 0; ki < k_grid.size(); ki++)
 	{
@@ -96,7 +100,7 @@ void Response_Tabulator::Export_Tables(const std::string& path)
 				f_table << std::endl;
 			else
 				f_table << "\t";
-			f_list << In_Units(k, keV) << "\t" << In_Units(q, keV) << "\t" << response_table[ki][qi] << std::endl;
+			f_list << In_Units(k, keV) << "\t" << In_Units(q, keV) << "\t" << response_table[ki][qi] << "\t" << l_prime_table[ki][qi] << std::endl;
 		}
 	}
 

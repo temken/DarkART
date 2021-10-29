@@ -13,6 +13,7 @@ class Response_Tabulator
 	std::vector<double> k_grid;
 	std::vector<double> q_grid;
 	std::vector<std::vector<double>> response_table;
+	std::vector<std::vector<int>> l_prime_table;
 	std::string electron_orbital;
 	int tabulated_response;
 

@@ -19,6 +19,7 @@
 	# Static library
 	add_library(libdarkarc STATIC
 	    Atomic_Responses.cpp
+	    Configuration.cpp
 	    Response_Tabulation.cpp
 	    Special_Functions.cpp
 	    Wavefunctions.cpp)

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "Special_Functions.hpp"
+#include "DarkARC/Special_Functions.hpp"
 
 #include "libphysica/Natural_Units.hpp"
 
@@ -40,7 +40,7 @@ TEST(TestSpecialFunction, TestVectorialSphericalHarmonicsY)
 	// ACT
 	auto Y	= Vector_Spherical_Harmonics_Y(l, m, theta, phi);
 	auto Ym = Vector_Spherical_Harmonics_Y(l, -m, theta, phi);
-	//ASSERT
+	// ASSERT
 	for(int i = 0; i < 3; i++)
 	{
 		EXPECT_NEAR(Ym[i].real(), std::pow(-1.0, m) * std::conj(Y[i]).real(), 1.0e-6);
@@ -58,7 +58,7 @@ TEST(TestSpecialFunction, TestVectorialSphericalHarmonicsPsi)
 	// ACT
 	auto Psi  = Vector_Spherical_Harmonics_Psi(l, m, theta, phi);
 	auto Psim = Vector_Spherical_Harmonics_Psi(l, -m, theta, phi);
-	//ASSERT
+	// ASSERT
 	for(int i = 0; i < 3; i++)
 	{
 		EXPECT_NEAR(Psim[i].real(), std::pow(-1.0, m) * std::conj(Psi[i]).real(), 1.0e-6);
@@ -102,7 +102,7 @@ TEST(TestSpecialFunction, TestGauntCoefficients)
 	int m_1 = 0;
 	int m_2 = -1;
 	int m_3 = +1;
-	//ACT & ASSERT
+	// ACT & ASSERT
 	EXPECT_FLOAT_EQ(Gaunt_Coefficient(l_1, l_2, l_3, m_1, m_2, m_3), -sqrt(6.0 / 35.0 / M_PI));
 	EXPECT_FLOAT_EQ(Gaunt_Coefficient(l_1, l_2, l_3, 0, 1, 1), 0.0);
 	EXPECT_FLOAT_EQ(Gaunt_Coefficient(l_1, l_2, l_3, 0, 0, 0), 3.0 / 2.0 * sqrt(3.0 / 35.0 / M_PI));
@@ -113,7 +113,7 @@ TEST(TestSpecialFunction, TestSphericalBessel)
 {
 	// ARRANGE
 	double x = 1.5;
-	//ACT & ASSERT
+	// ACT & ASSERT
 	EXPECT_FLOAT_EQ(Spherical_Bessel_jL(0, x), sin(x) / x);
 	EXPECT_FLOAT_EQ(Spherical_Bessel_jL(1, x), sin(x) / x / x - cos(x) / x);
 	EXPECT_FLOAT_EQ(Spherical_Bessel_jL(10, x), 3.99344e-9);
@@ -127,7 +127,7 @@ TEST(TestSpecialFunction, TestCoulombWave)
 	double rho	  = 20.0;
 	double result = 1.0587974;
 	// ACT
-	//ASSERT
+	// ASSERT
 	EXPECT_FLOAT_EQ(Coulomb_Wave(L, eta, rho), result);
 	EXPECT_FLOAT_EQ(Coulomb_Wave(L, eta, 0.0), 0.0);
 	EXPECT_FLOAT_EQ(Coulomb_Wave(0, 0.0, rho), sin(rho));

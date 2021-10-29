@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
 
-#include "Atomic_Responses.hpp"
+#include "DarkARC/Atomic_Responses.hpp"
 
 #include <cmath>
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions.hpp"
 
 using namespace DarkARC;
 using namespace libphysica::natural_units;

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions.hpp"
 
 #include <cmath>
 
