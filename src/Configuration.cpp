@@ -131,10 +131,13 @@ void Configuration::Print_Summary(int MPI_rank)
 		std::cout << SEPARATOR << std::endl
 				  << "DarkARC++ configuration summary" << std::endl
 				  << "ID:\t" << ID << std::endl
-				  << "\nElement:\t" << element << std::endl
-				  << "Atomic shells:\t";
+				  << "\nElement:\t\t" << element << std::endl
+				  << "Atomic shells:\t\t";
 		for(unsigned int i = 0; i < atomic_shell_list.size(); i++)
 			std::cout << atomic_shell_list[i] << ((i < atomic_shell_list.size() - 1) ? ", " : "\n");
+		std::cout << "Atomic responses:\t";
+		for(unsigned int i = 0; i < atomic_responses.size(); i++)
+			std::cout << atomic_responses[i] << ((i < atomic_responses.size() - 1) ? ", " : "\n");
 		std::cout << "\nRun modus:\t" << run_modus << std::endl;
 		if(run_modus != "Evaluation")
 			std::cout << "Threads:\t" << threads << std::endl
