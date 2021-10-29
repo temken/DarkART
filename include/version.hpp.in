@@ -1,22 +1,34 @@
 #ifndef VERSION_HPP
 #define VERSION_HPP
 
-#define AUTHOR "Timon Emken"
-#define YEAR "2020"
+#define LOGO " ____          _   _____ _____ _____   _     _   \n|    \\ ___ ___| |_|  _  | __  |     |_| |_ _| |_ \n|  |  | .'|  _| '_|     |    -|   --|_   _|_   _|\n|____/|__,|_| |_,_|__|__|__|__|_____| |_|   |_|  \n                            by Timon Emken (2021)"
+#define SEPARATOR "_________________________________________________\n"
 
+#define AUTHOR "Timon Emken"
+#define YEAR "2021"
+
+// Project level variables
 #define PROJECT_NAME "@PROJECT_NAME@"
 #define PROJECT_VERSION "@PROJECT_VERSION@"
+#define PROJECT_DIR "@PROJECT_SOURCE_DIR@/"
+
 #define PROJECT_VERSION_MAJOR "@PROJECT_VERSION_MAJOR@"
 #define PROJECT_VERSION_MINOR "@PROJECT_VERSION_MINOR@"
 #define PROJECT_VERSION_PATCH "@PROJECT_VERSION_PATCH@"
 
 #define GIT_BRANCH "@GIT_BRANCH@"
 #define GIT_COMMIT_HASH "@GIT_COMMIT_HASH@"
-#define PROJECT_DIR "@PROJECT_SOURCE_DIR@/"
+
+// Top level variables
+#define TOP_LEVEL_PROJECT_NAME "@CMAKE_PROJECT_NAME@"
+#define TOP_LEVEL_PROJECT_VERSION "@CMAKE_PROJECT_VERSION@"
 #define TOP_LEVEL_DIR "@CMAKE_SOURCE_DIR@/"
 
-#define LOGO " ____          _   _____ _____ _____   _     _   \n|    \\ ___ ___| |_|  _  | __  |     |_| |_ _| |_ \n|  |  | .'|  _| '_|     |    -|   --|_   _|_   _|\n|____/|__,|_| |_,_|__|__|__|__|_____| |_|   |_|  \n                            by Timon Emken (2021)"
+#define TOP_LEVEL_PROJECT_VERSION_MAJOR "@CMAKE_PROJECT_VERSION_MAJOR@"
+#define TOP_LEVEL_PROJECT_VERSION_MINOR "@CMAKE_PROJECT_VERSION_MINOR@"
+#define TOP_LEVEL_PROJECT_VERSION_PATCH "@CMAKE_PROJECT_VERSION_PATCH@"
 
-#define SEPARATOR "_________________________________________________\n"
+#define TOP_LEVEL_GIT_BRANCH "@CMAKE_GIT_BRANCH@"
+#define TOP_LEVEL_GIT_COMMIT_HASH "@CMAKE_GIT_COMMIT_HASH@"
 
 #endif
