@@ -41,11 +41,10 @@ int main(int argc, char* argv[])
 		tabulator.Resize_Grid(cfg.k_gridpoints, cfg.q_gridpoints);
 		int counter		  = 1;
 		int num_responses = cfg.atomic_responses.size() * cfg.atomic_shell_list.size();
-		for(auto& atomic_shell_name : cfg.atomic_shell_list)
-		{
-			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
-			for(auto& response : cfg.atomic_responses)
+		for(auto& response : cfg.atomic_responses)
+			for(auto& atomic_shell_name : cfg.atomic_shell_list)
 			{
+				Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
 				std::cout << counter++ << "/" << num_responses << ")" << std::endl;
 				if(!cfg.overwrite_old_tables && libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt"))
 					std::cout << "\tResponse " << response << " of " << initial_state.Orbital_Name() << " was already tabulated.\n\tTo re-calculate this response, remove the corresponding files from the /results/ folder." << std::endl;
@@ -55,7 +54,6 @@ int main(int argc, char* argv[])
 					tabulator.Export_Tables(cfg.results_path);
 				}
 			}
-		}
 	}
 	else if(cfg.run_modus == "Evaluation")
 	{
