@@ -51,8 +51,10 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 			  << "\t- Number of threads:\t\t" << threads << std::endl
 			  << std::endl;
 
-	int counter		= 0;
-	int counter_max = k_grid.size() * q_grid.size();
+	int counter		  = 0;
+	int counter_max	  = k_grid.size() * q_grid.size();
+	double start_time = omp_get_wtime();
+	int thread_id	  = omp_get_thread_num();
 #pragma omp parallel for schedule(dynamic) num_threads(threads) collapse(2)
 	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
 		for(unsigned int qi = 0; qi < q_grid.size(); qi++)
@@ -63,7 +65,11 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response, l_convergence);
 			l_prime_table[ki][qi]  = l_convergence;
 			counter++;
-			libphysica::Print_Progress_Bar(1.0 * counter / counter_max);
+			if(thread_id == 0)
+			{
+				libphysica::Print_Progress_Bar(1.0 * counter / counter_max, thread_id, 50, omp_get_wtime() - start_time);
+				std::cout << " [" << counter << " / " << counter_max << "] [" << ki << "," << qi << "] (l' <= " << l_convergence << ")" << std::flush;
+			}
 		}
 	std::cout << std::endl
 			  << std::endl;
