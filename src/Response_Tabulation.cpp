@@ -55,22 +55,29 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 	int counter_max	  = k_grid.size() * q_grid.size();
 	double start_time = omp_get_wtime();
 	int thread_id	  = omp_get_thread_num();
-#pragma omp parallel for schedule(dynamic) num_threads(threads) collapse(2)
-	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
-		for(unsigned int qi = 0; qi < q_grid.size(); qi++)
+	unsigned int Nq	  = q_grid.size();
+	unsigned int Nk	  = k_grid.size();
+
+	// #pragma omp parallel for schedule(dynamic) num_threads(threads) collapse(2)
+	// 	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
+	// 		for(unsigned int qi = 0; qi < q_grid.size(); qi++)
+#pragma omp parallel for schedule(dynamic) num_threads(threads)	  // the option collapse(2) caused trouble on the cluster for some reason
+	for(unsigned int kiqi = 0; kiqi < Nk * Nq; kiqi++)
+	{
+		int ki	 = kiqi / Nq;
+		int qi	 = kiqi % Nq;
+		double k = k_grid[ki];
+		double q = q_grid[qi];
+		int l_convergence;
+		response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response, l_convergence);
+		l_prime_table[ki][qi]  = l_convergence;
+		counter++;
+		if(thread_id == 0 && counter % 5 == 0)
 		{
-			double k = k_grid[ki];
-			double q = q_grid[qi];
-			int l_convergence;
-			response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response, l_convergence);
-			l_prime_table[ki][qi]  = l_convergence;
-			counter++;
-			if(thread_id == 0 && counter % 5 == 0)
-			{
-				libphysica::Print_Progress_Bar(1.0 * counter / counter_max, thread_id, 40, omp_get_wtime() - start_time);
-				std::cout << " [" << counter << " / " << counter_max << "] [" << ki << "," << qi << "] (l' <= " << l_convergence << ")" << std::flush;
-			}
+			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, thread_id, 40, omp_get_wtime() - start_time);
+			std::cout << " [" << counter << " / " << counter_max << "] [" << ki << "," << qi << "] (l' <= " << l_convergence << ")" << std::flush;
 		}
+	}
 	std::cout << std::endl
 			  << std::endl;
 }
