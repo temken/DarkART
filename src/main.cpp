@@ -58,12 +58,12 @@ int main(int argc, char* argv[])
 	else if(cfg.run_modus == "Evaluation")
 	{
 		std::cout << "Evaluate atomic responses for k' = " << cfg.k_prime / keV << " and q = " << cfg.q / keV << " keV" << std::endl;
-		for(auto& atomic_shell_name : cfg.atomic_shell_list)
+		for(auto& response : cfg.atomic_responses)
 		{
 			std::cout << std::endl;
-			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
-			for(auto& response : cfg.atomic_responses)
+			for(auto& atomic_shell_name : cfg.atomic_shell_list)
 			{
+				Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
 				int l_convergence;
 				double W = Atomic_Response_Function(cfg.k_prime, cfg.q, initial_state, response, l_convergence);
 				std::cout << "\t" << initial_state.Orbital_Name() << "\tW_" << response << "(k',q) = " << W << "\t(maximum l' = " << l_convergence << ")" << std::endl;
