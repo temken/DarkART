@@ -19,7 +19,27 @@ add_test(NAME test_Atomic_Responses COMMAND test_Atomic_Responses
 	WORKING_DIRECTORY ${TESTS_DIR} )
 
 
-# 2. Unit tests: Response_Tabulation
+# 2. Unit tests: Radial_Integrator
+add_executable(test_Radial_Integrator
+	test_Radial_Integrator.cpp)
+
+target_link_libraries(test_Radial_Integrator 
+	PRIVATE
+		libdarkarc
+		gtest_main ) #contains the main function
+
+target_include_directories(test_Radial_Integrator
+	PRIVATE
+		${GENERATED_DIR} )
+
+target_compile_options(test_Radial_Integrator PUBLIC -Wall -pedantic)
+
+install(TARGETS test_Radial_Integrator DESTINATION ${TESTS_DIR})
+
+add_test(NAME test_Radial_Integrator COMMAND test_Radial_Integrator
+	WORKING_DIRECTORY ${TESTS_DIR} )
+
+# 3. Unit tests: Response_Tabulation
 add_executable(test_Response_Tabulation
 	test_Response_Tabulation.cpp)
 
@@ -39,7 +59,7 @@ install(TARGETS test_Response_Tabulation DESTINATION ${TESTS_DIR})
 add_test(NAME test_Response_Tabulation COMMAND test_Response_Tabulation
 	WORKING_DIRECTORY ${TESTS_DIR} )
 
-# 3. Unit tests: Special_Functions
+# 4. Unit tests: Special_Functions
 add_executable(test_Special_Functions
 test_Special_Functions.cpp)
 
@@ -59,7 +79,7 @@ install(TARGETS test_Special_Functions DESTINATION ${TESTS_DIR})
 add_test(NAME test_Special_Functions COMMAND test_Special_Functions
 WORKING_DIRECTORY ${TESTS_DIR} )
 
-# 4. Unit tests: Wavefunctions
+# 5. Unit tests: Wavefunctions
 add_executable(test_Wavefunctions
 	test_Wavefunctions.cpp)
 
