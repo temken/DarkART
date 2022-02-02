@@ -21,11 +21,11 @@ double Radial_Integral(unsigned int integral_index, double k_final, double q, co
 		switch(integral_index)
 		{
 			case 1:
-				return r * r * bound_electron.Radial_Wavefunction(r) * Radial_Wavefunction_Final(k_final, l_final, bound_electron.Z_eff, r) * Spherical_Bessel_jL(L, q * r);
+				return r * r * bound_electron.Radial_Wavefunction(r) * Radial_Wavefunction_Hydrogenic(k_final, l_final, bound_electron.Z_eff, r) * Spherical_Bessel_jL(L, q * r);
 			case 2:
-				return r * r * bound_electron.Radial_Wavefunction_Derivative(r) * Radial_Wavefunction_Final(k_final, l_final, bound_electron.Z_eff, r) * Spherical_Bessel_jL(L, q * r);
+				return r * r * bound_electron.Radial_Wavefunction_Derivative(r) * Radial_Wavefunction_Hydrogenic(k_final, l_final, bound_electron.Z_eff, r) * Spherical_Bessel_jL(L, q * r);
 			case 3:
-				return r * bound_electron.Radial_Wavefunction(r) * Radial_Wavefunction_Final(k_final, l_final, bound_electron.Z_eff, r) * Spherical_Bessel_jL(L, q * r);
+				return r * bound_electron.Radial_Wavefunction(r) * Radial_Wavefunction_Hydrogenic(k_final, l_final, bound_electron.Z_eff, r) * Spherical_Bessel_jL(L, q * r);
 			default:
 				std::cerr << "Error in Radial_Integral(): Integral I_" << integral_index << " not defined." << std::endl;
 				std::exit(EXIT_FAILURE);
