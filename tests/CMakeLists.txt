@@ -79,22 +79,42 @@ install(TARGETS test_Special_Functions DESTINATION ${TESTS_DIR})
 add_test(NAME test_Special_Functions COMMAND test_Special_Functions
 WORKING_DIRECTORY ${TESTS_DIR} )
 
-# 5. Unit tests: Wavefunctions
-add_executable(test_Wavefunctions
-	test_Wavefunctions.cpp)
+# 5. Unit tests: Wavefunctions_Final
+add_executable(test_Wavefunctions_Final
+	test_Wavefunctions_Final.cpp)
 
-target_link_libraries(test_Wavefunctions 
+target_link_libraries(test_Wavefunctions_Final 
 	PRIVATE
 		libdarkarc
 		gtest_main ) #contains the main function
 
-target_include_directories(test_Wavefunctions
+target_include_directories(test_Wavefunctions_Final
 	PRIVATE
 		${GENERATED_DIR} )
 
-target_compile_options(test_Wavefunctions PUBLIC -Wall -pedantic)
+target_compile_options(test_Wavefunctions_Final PUBLIC -Wall -pedantic)
 
-install(TARGETS test_Wavefunctions DESTINATION ${TESTS_DIR})
+install(TARGETS test_Wavefunctions_Final DESTINATION ${TESTS_DIR})
 
-add_test(NAME test_Wavefunctions COMMAND test_Wavefunctions
+add_test(NAME test_Wavefunctions_Final COMMAND test_Wavefunctions_Final
+	WORKING_DIRECTORY ${TESTS_DIR} )
+
+# 6. Unit tests: Wavefunctions_Initial
+add_executable(test_Wavefunctions_Initial
+	test_Wavefunctions_Initial.cpp)
+
+target_link_libraries(test_Wavefunctions_Initial 
+	PRIVATE
+		libdarkarc
+		gtest_main ) #contains the main function
+
+target_include_directories(test_Wavefunctions_Initial
+	PRIVATE
+		${GENERATED_DIR} )
+
+target_compile_options(test_Wavefunctions_Initial PUBLIC -Wall -pedantic)
+
+install(TARGETS test_Wavefunctions_Initial DESTINATION ${TESTS_DIR})
+
+add_test(NAME test_Wavefunctions_Initial COMMAND test_Wavefunctions_Initial
 	WORKING_DIRECTORY ${TESTS_DIR} )

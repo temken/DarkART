@@ -23,7 +23,8 @@
 	    Radial_Integrator.cpp
 	    Response_Tabulation.cpp
 	    Special_Functions.cpp
-	    Wavefunctions.cpp)
+	    Wavefunctions_Final.cpp
+	    Wavefunctions_Initial.cpp)
 
 	set_target_properties(libdarkarc PROPERTIES PREFIX "")
 

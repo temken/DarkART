@@ -8,6 +8,7 @@
 #include "libphysica/Statistics.hpp"
 
 #include "DarkARC/Special_Functions.hpp"
+#include "DarkARC/Wavefunctions_Final.hpp"
 
 namespace DarkARC
 {

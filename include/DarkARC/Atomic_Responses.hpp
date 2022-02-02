@@ -1,7 +1,7 @@
 #ifndef __Atomic_Responses_hpp_
 #define __Atomic_Responses_hpp_
 
-#include "Wavefunctions.hpp"
+#include "Wavefunctions_Initial.hpp"
 
 namespace DarkARC
 {

@@ -5,7 +5,7 @@
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "DarkARC/Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions_Initial.hpp"
 #include "version.hpp"
 
 using namespace DarkARC;

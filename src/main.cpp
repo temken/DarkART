@@ -10,7 +10,7 @@
 #include "DarkARC/Configuration.hpp"
 #include "DarkARC/Response_Tabulation.hpp"
 #include "DarkARC/Special_Functions.hpp"
-#include "DarkARC/Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions_Initial.hpp"
 #include "version.hpp"
 
 using namespace DarkARC;

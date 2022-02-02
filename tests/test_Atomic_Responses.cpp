@@ -6,7 +6,7 @@
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "DarkARC/Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions_Initial.hpp"
 
 using namespace DarkARC;
 using namespace libphysica::natural_units;

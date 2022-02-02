@@ -1,7 +1,7 @@
 #ifndef __Response_Tabulation_hpp_
 #define __Response_Tabulation_hpp_
 
-#include "Wavefunctions.hpp"
+#include "Wavefunctions_Initial.hpp"
 
 namespace DarkARC
 {
