@@ -8,8 +8,10 @@
 
 #include "DarkARC/Atomic_Responses.hpp"
 #include "DarkARC/Configuration.hpp"
+#include "DarkARC/Radial_Integrator.hpp"
 #include "DarkARC/Response_Tabulation.hpp"
 #include "DarkARC/Special_Functions.hpp"
+#include "DarkARC/Wavefunctions_Final.hpp"
 #include "DarkARC/Wavefunctions_Initial.hpp"
 #include "version.hpp"
 
@@ -72,33 +74,18 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		std::vector<Initial_Electron_State> electrons = {
-			Initial_Electron_State("Xe", 5, 1),
-			Initial_Electron_State("Xe", 5, 0),
-			Initial_Electron_State("Xe", 4, 2),
-			Initial_Electron_State("Xe", 4, 1),
-			Initial_Electron_State("Xe", 4, 0),
-			Initial_Electron_State("Xe", 3, 2),
-			Initial_Electron_State("Xe", 3, 1),
-			Initial_Electron_State("Xe", 3, 0),
-			Initial_Electron_State("Xe", 2, 1),
-			Initial_Electron_State("Xe", 2, 0),
-			Initial_Electron_State("Xe", 1, 0),
-			// Initial_Electron_State("Ar", 3, 1),
-			// Initial_Electron_State("Ar", 3, 0),
-			// Initial_Electron_State("Ar", 2, 1),
-			// Initial_Electron_State("Ar", 2, 0),
-			// Initial_Electron_State("Ar", 1, 0),
-		};
-		auto r_list = libphysica::Log_Space(1e-3 * Bohr_Radius, 1e2 * Bohr_Radius, 100);
-		for(auto r : r_list)
-		{
-			double sum = 0.0;
-			for(auto& electron : electrons)
-				sum += 2.0 * (2.0 * electron.l + 1) * electron.Radial_Integral(r);
-			double Z_eff = 54.0 - sum + electrons.back().Radial_Integral(r);
-			std::cout << r / Bohr_Radius << "\t" << Z_eff << std::endl;
-		}
+
+		Initial_Electron_State Xe_5p("Xe", 5, 1);
+		Final_Electron_State_Hydrogenic hydrogenic_state(Xe_5p.Z_eff);
+		hydrogenic_state.Fit_Zeff(Xe_5p.n, Xe_5p.binding_energy);
+		Radial_Integrator integrator(Xe_5p, hydrogenic_state);
+
+		int index	   = 1;
+		double k_final = keV;
+		double q	   = keV;
+		int l_final	   = 1;
+		int L		   = 1;
+		std::cout << integrator.Radial_Integral(index, k_final, q, l_final, L) << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////
