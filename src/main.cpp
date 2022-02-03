@@ -79,13 +79,10 @@ int main(int argc, char* argv[])
 		Final_Electron_State_Hydrogenic hydrogenic_state(Xe_5p.Z_eff);
 		Radial_Integrator integrator(Xe_5p, hydrogenic_state);
 
-		int index	   = 1;
-		double k_final = keV;
-		double q	   = keV;
-		int l_final	   = 1;
-		int L		   = 1;
-		std::cout << integrator.Radial_Integral(index, k_final, q, l_final, L) << std::endl;
-		std::cout << Radial_Integral(1, k_final, q, Xe_5p, l_final, L) << std::endl;
+		auto k_grid = libphysica::Log_Space(cfg.k_min, cfg.k_max, 10);	 // cfg.k_gridpoints);
+		auto q_grid = libphysica::Log_Space(cfg.q_min, cfg.q_max, 10);	 // cfg.q_gridpoints);
+
+		integrator.Tabulate_Functions(10, k_grid, q_grid);
 	}
 
 	////////////////////////////////////////////////////////////////////////
