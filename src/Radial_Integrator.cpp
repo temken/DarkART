@@ -55,7 +55,7 @@ double Radial_Integrator::Radial_Integral_Table(unsigned int integral_index, dou
 Radial_Integrator::Radial_Integrator(const Initial_Electron_State& ini_state, const Final_Electron_State& fin_state)
 : initial_state(ini_state), using_function_tabulation(false)
 {
-	final_state = new Final_Electron_State(fin_state);
+	final_state = fin_state.Clone();
 }
 
 void Radial_Integrator::Tabulate_Functions()

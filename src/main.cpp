@@ -77,7 +77,6 @@ int main(int argc, char* argv[])
 
 		Initial_Electron_State Xe_5p("Xe", 5, 1);
 		Final_Electron_State_Hydrogenic hydrogenic_state(Xe_5p.Z_eff);
-		hydrogenic_state.Fit_Zeff(Xe_5p.n, Xe_5p.binding_energy);
 		Radial_Integrator integrator(Xe_5p, hydrogenic_state);
 
 		int index	   = 1;
@@ -86,6 +85,7 @@ int main(int argc, char* argv[])
 		int l_final	   = 1;
 		int L		   = 1;
 		std::cout << integrator.Radial_Integral(index, k_final, q, l_final, L) << std::endl;
+		std::cout << Radial_Integral(1, k_final, q, Xe_5p, l_final, L) << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////////////////

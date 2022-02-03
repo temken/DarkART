@@ -11,7 +11,7 @@ class Radial_Integrator
 {
   protected:
 	Initial_Electron_State initial_state;
-	Final_Electron_State* final_state = {nullptr};
+	Final_Electron_State* final_state;
 
 	bool using_function_tabulation;
 

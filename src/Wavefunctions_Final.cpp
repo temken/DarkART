@@ -9,6 +9,13 @@ namespace DarkARC
 {
 using namespace libphysica::natural_units;
 
+// 1. Base class for final state wave function
+
+Final_Electron_State* Final_Electron_State::Clone() const
+{
+	return new Final_Electron_State(*this);
+}
+
 // 2. Positive energy continuum solution of Schroedinger equation with hydrogenic potential
 double Radial_Wavefunction_Hydrogenic(double k_final, unsigned l_final, double Z_eff, double r)
 {
@@ -22,15 +29,14 @@ Final_Electron_State_Hydrogenic::Final_Electron_State_Hydrogenic(double Z_eff)
 {
 }
 
-void Final_Electron_State_Hydrogenic::Fit_Zeff(int n, double binding_energy)
-{
-	double au	= 27.211386245988 * eV;
-	Z_effective = sqrt(-2.0 * binding_energy / au) * n;
-}
-
 double Final_Electron_State_Hydrogenic::Radial_Wavefunction(double r, double k_final, unsigned int l_final)
 {
 	return Radial_Wavefunction_Hydrogenic(k_final, l_final, Z_effective, r);
+}
+
+Final_Electron_State_Hydrogenic* Final_Electron_State_Hydrogenic::Clone() const
+{
+	return new Final_Electron_State_Hydrogenic(*this);
 }
 
 }	// namespace DarkARC
