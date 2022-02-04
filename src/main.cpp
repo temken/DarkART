@@ -82,9 +82,11 @@ int main(int argc, char* argv[])
 		auto k_grid = libphysica::Log_Space(0.1 * keV, 100 * keV, 100);	  // cfg.k_gridpoints);
 		auto q_grid = libphysica::Log_Space(keV, 1000 * keV, 100);		  // cfg.q_gridpoints);
 
-		// unsigned int l_final = 25;
-		unsigned int L = 24;
-		integrator.Tabulate_Functions(100, k_grid, q_grid, cfg.threads);
+		unsigned int l_final = 2;
+		unsigned int L		 = 3;
+		integrator.Use_Tabulated_Functions(10000, k_grid, q_grid, cfg.threads);
+		std::cout << integrator.Radial_Integral_Adaptive(1, k_grid[40], q_grid[40], l_final, L) << std::endl;
+		std::cout << integrator.Radial_Integral(1, k_grid[40], q_grid[40], l_final, L) << std::endl;
 		// for(int l_final = 0; l_final <= 150; l_final++)
 		// {
 		// 	std::cout << std::endl
