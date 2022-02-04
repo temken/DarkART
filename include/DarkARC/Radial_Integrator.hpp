@@ -11,7 +11,7 @@ class Radial_Integrator
 {
   protected:
 	Initial_Electron_State initial_state;
-	Final_Electron_State* final_state;
+	Final_Electron_State* final_state = nullptr;
 
 	// 1. Method: Adaptive integration using boost.
 	double Radial_Integral_Adaptive(unsigned int integral_index, double k_final, double q, unsigned int l_final, unsigned int L);
@@ -20,7 +20,7 @@ class Radial_Integrator
 	bool using_function_tabulation;
 	std::vector<double> r_grid, k_grid, q_grid;
 	double r_max, delta_r;
-	std::vector<double> initial_radial_wavefunction_list;
+	std::vector<double> initial_radial_wavefunction_list, initial_radial_wavefunction_derivative_list;
 
 	unsigned int l_final_max, L_max;
 	std::vector<std::vector<std::vector<double>>> final_radial_wavefunction_list;
