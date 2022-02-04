@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
 
 		Response_Tabulator tabulator(cfg.k_min, cfg.k_max, cfg.q_min, cfg.q_max);
 		tabulator.Resize_Grid(cfg.k_gridpoints, cfg.q_gridpoints);
+
 		int counter		  = 1;
 		int num_responses = cfg.atomic_responses.size() * cfg.atomic_shell_list.size();
 		for(auto& response : cfg.atomic_responses)
@@ -74,20 +75,24 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-
 		Initial_Electron_State Xe_5p("Xe", 5, 1);
 		Final_Electron_State_Hydrogenic hydrogenic_state(Xe_5p.Z_eff);
 		Radial_Integrator integrator(Xe_5p, hydrogenic_state);
 
-		auto k_grid = libphysica::Log_Space(0.1 * keV, 100 * keV, 2);	// cfg.k_gridpoints);
-		auto q_grid = libphysica::Log_Space(keV, 100 * keV, 2);			// cfg.q_gridpoints);
+		auto k_grid = libphysica::Log_Space(0.1 * keV, 100 * keV, 100);	  // cfg.k_gridpoints);
+		auto q_grid = libphysica::Log_Space(keV, 1000 * keV, 100);		  // cfg.q_gridpoints);
 
-		unsigned int l_final = 2;
-		unsigned int L		 = 2;
-		std::cout << integrator.Radial_Integral(1, k_grid[1], q_grid[1], l_final, L) << std::endl;
-		integrator.Tabulate_Functions(5000, k_grid, q_grid);
-		std::cout << std::endl
-				  << integrator.Radial_Integral(1, k_grid[0], q_grid[0], l_final, L) << std::endl;
+		// unsigned int l_final = 25;
+		unsigned int L = 24;
+		integrator.Tabulate_Functions(100, k_grid, q_grid, cfg.threads);
+		// for(int l_final = 0; l_final <= 150; l_final++)
+		// {
+		// 	std::cout << std::endl
+		// 			  << l_final << "\t" << integrator.Radial_Integral_Adaptive(1, k_grid[0], q_grid[0], l_final, l_final) << "\t" << std::flush;
+		// 	std::cout << integrator.Radial_Integral(1, k_grid[0], q_grid[0], l_final, l_final) << "\t" << std::flush;
+		// 	std::cout << "\t" << integrator.Radial_Integral_Adaptive(1, k_grid[1], q_grid[1], l_final, l_final) << "\t" << std::flush;
+		// 	std::cout << integrator.Radial_Integral(1, k_grid[1], q_grid[1], l_final, l_final) << std::endl;
+		// }
 	}
 
 	////////////////////////////////////////////////////////////////////////

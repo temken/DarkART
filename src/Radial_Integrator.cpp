@@ -51,19 +51,21 @@ double Radial_Integrator::Radial_Integral_Adaptive(unsigned int integral_index, 
 double Radial_Integrator::Radial_Integral_Table(unsigned int integral_index, double k_final, double q, unsigned int l_final, unsigned int L)
 {
 	// Identify ki and qi
-	int ki = 1;
-	int qi = 1;
+	int ki = Locate_Closest_Location(k_grid, k_final);
+	int qi = Locate_Closest_Location(q_grid, q);
 	// Sum up the integral
 	double integral = 0.0;
-	for(unsigned int ri = 0; ri < r_grid.size(); ri++)
+	for(unsigned int ri = 0; ri < r_values_and_weights.size(); ri++)
 	{
-		double r = r_grid[ri];
+		double r	  = r_values_and_weights[ri][0];
+		double weight = r_values_and_weights[ri][1];
+
 		if(integral_index == 1)
-			integral += delta_r * r * r * initial_radial_wavefunction_list[ri] * final_radial_wavefunction_list[ki][l_final][ri] * bessel_function_list[qi][L][ri];
+			integral += weight * r * r * initial_radial_wavefunction_list[ri] * final_radial_wavefunction_list[ki][l_final][ri] * bessel_function_list[qi][L][ri];
 		else if(integral_index == 2)
-			integral += delta_r * r * r * initial_radial_wavefunction_derivative_list[ri] * final_radial_wavefunction_list[ki][l_final][ri] * bessel_function_list[qi][L][ri];
+			integral += weight * r * r * initial_radial_wavefunction_derivative_list[ri] * final_radial_wavefunction_list[ki][l_final][ri] * bessel_function_list[qi][L][ri];
 		else if(integral_index == 3)
-			integral += delta_r * r * r * initial_radial_wavefunction_list[ri] * final_radial_wavefunction_list[ki][l_final][ri] * bessel_function_list[qi][L][ri];
+			integral += weight * r * initial_radial_wavefunction_list[ri] * final_radial_wavefunction_list[ki][l_final][ri] * bessel_function_list[qi][L][ri];
 		else
 		{
 			std::cerr << "Radial_Integrator::Radial_Integral_Table(): Integral I_" << integral_index << " not defined." << std::endl;
@@ -79,31 +81,30 @@ Radial_Integrator::Radial_Integrator(const Initial_Electron_State& ini_state, co
 	final_state = fin_state.Clone();
 }
 
-void Radial_Integrator::Tabulate_Functions(unsigned int r_points, const std::vector<double>& k_list, const std::vector<double>& q_list)
+void Radial_Integrator::Tabulate_Functions(unsigned int r_points, const std::vector<double>& k_list, const std::vector<double>& q_list, int threads)
 {
 	using_function_tabulation = true;
 
 	k_grid = k_list;
 	q_grid = q_list;
 
-	double r_min = 1.0e-10 * Bohr_Radius;
-	r_max		 = 30.0 * Bohr_Radius;
-	r_grid		 = libphysica::Linear_Space(r_min, r_max, r_points);
-	delta_r		 = r_grid[1] - r_grid[0];
-	l_final_max	 = 150;
-	L_max		 = initial_state.l + 1 + l_final_max;
+	r_max = 100.0 * Bohr_Radius;
 
-	initial_radial_wavefunction_list			= std::vector<double>(r_grid.size(), 0.0);
-	initial_radial_wavefunction_derivative_list = std::vector<double>(r_grid.size(), 0.0);
-	final_radial_wavefunction_list				= std::vector<std::vector<std::vector<double>>>(k_grid.size(), std::vector<std::vector<double>>(l_final_max + 1, std::vector<double>(r_grid.size(), 0.0)));
-	bessel_function_list						= std::vector<std::vector<std::vector<double>>>(q_grid.size(), std::vector<std::vector<double>>(L_max + 1, std::vector<double>(r_grid.size(), 0.0)));
+	r_values_and_weights = Compute_Gauss_Legendre_Roots_and_Weights(r_points, 0.0, r_max);
+
+	L_max = initial_state.l + 1 + l_final_max;
+
+	initial_radial_wavefunction_list			= std::vector<double>(r_points, 0.0);
+	initial_radial_wavefunction_derivative_list = std::vector<double>(r_points, 0.0);
+	final_radial_wavefunction_list				= std::vector<std::vector<std::vector<double>>>(k_grid.size(), std::vector<std::vector<double>>(l_final_max + 1, std::vector<double>(r_values_and_weights.size(), 0.0)));
+	bessel_function_list						= std::vector<std::vector<std::vector<double>>>(q_grid.size(), std::vector<std::vector<double>>(L_max + 1, std::vector<double>(r_values_and_weights.size(), 0.0)));
 
 	// 1.  Tabulate initial radial wavefunctions
 	std::cout << "\nTabulate initial radial wavefunctions..." << std::endl;
-	for(unsigned int ri = 0; ri < r_grid.size(); ri++)
+	for(unsigned int ri = 0; ri < r_points; ri++)
 	{
-		initial_radial_wavefunction_list[ri]			= initial_state.Radial_Wavefunction(r_grid[ri]);
-		initial_radial_wavefunction_derivative_list[ri] = initial_state.Radial_Wavefunction_Derivative(r_grid[ri]);
+		initial_radial_wavefunction_list[ri]			= initial_state.Radial_Wavefunction(r_values_and_weights[ri][0]);
+		initial_radial_wavefunction_derivative_list[ri] = initial_state.Radial_Wavefunction_Derivative(r_values_and_weights[ri][0]);
 	}
 
 	// 2. Tabulate final radial wavefunctions
@@ -112,8 +113,8 @@ void Radial_Integrator::Tabulate_Functions(unsigned int r_points, const std::vec
 	{
 		libphysica::Print_Progress_Bar(1.0 * ki / k_grid.size());
 		for(unsigned int li = 0; li <= l_final_max; li++)
-			for(unsigned int ri = 0; ri < r_grid.size(); ri++)
-				final_radial_wavefunction_list[ki][li][ri] = final_state->Radial_Wavefunction(r_grid[ri], k_grid[ki], li);
+			for(unsigned int ri = 0; ri < r_points; ri++)
+				final_radial_wavefunction_list[ki][li][ri] = final_state->Radial_Wavefunction(r_values_and_weights[ri][0], k_grid[ki], li);
 	}
 	// 3. Tabulate spherical Bessel functions
 	std::cout << "\nTabulate bessel functions..." << std::endl;
@@ -122,8 +123,8 @@ void Radial_Integrator::Tabulate_Functions(unsigned int r_points, const std::vec
 		libphysica::Print_Progress_Bar(1.0 * qi / q_grid.size());
 
 		for(unsigned int L = 0; L <= L_max; L++)
-			for(unsigned int ri = 0; ri < r_grid.size(); ri++)
-				bessel_function_list[qi][L][ri] = Spherical_Bessel_jL(L, q_grid[qi] * r_grid[ri]);
+			for(unsigned int ri = 0; ri < r_values_and_weights.size(); ri++)
+				bessel_function_list[qi][L][ri] = Spherical_Bessel_jL(L, q_grid[qi] * r_values_and_weights[ri][0]);
 	}
 }
 
