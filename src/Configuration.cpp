@@ -83,6 +83,26 @@ void Configuration::Initialize_Parameters()
 
 	try
 	{
+		tabulate_radial_functions = config.lookup("tabulate_radial_functions");
+	}
+	catch(const SettingNotFoundException& nfex)
+	{
+		std::cerr << "Error in Configuration::Initialize_Parameters(): No 'tabulate_radial_functions' setting in configuration file." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	try
+	{
+		r_gridpoints = config.lookup("r_points");
+	}
+	catch(const SettingNotFoundException& nfex)
+	{
+		std::cerr << "Error in Configuration::Initialize_Parameters(): No 'r_points' setting in configuration file." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	try
+	{
 		k_min		 = config.lookup("k_min");
 		k_max		 = config.lookup("k_max");
 		k_gridpoints = config.lookup("k_points");

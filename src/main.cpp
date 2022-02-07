@@ -44,34 +44,47 @@ int main(int argc, char* argv[])
 
 		int counter		  = 1;
 		int num_responses = cfg.atomic_responses.size() * cfg.atomic_shell_list.size();
-		for(auto& response : cfg.atomic_responses)
-			for(auto& atomic_shell_name : cfg.atomic_shell_list)
+
+		for(auto& atomic_shell_name : cfg.atomic_shell_list)
+		{
+			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
+			Final_Electron_State_Hydrogenic final_state(initial_state.Z_eff);
+			Radial_Integrator radial_integrator(initial_state, final_state);
+
+			if(cfg.tabulate_radial_functions)
+				radial_integrator.Use_Tabulated_Functions(cfg.r_gridpoints, {cfg.k_prime}, {cfg.q});
+
+			for(auto& response : cfg.atomic_responses)
 			{
-				Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
-				Final_Electron_State* final_state = new Final_Electron_State_Hydrogenic(initial_state.Z_eff);
 				std::cout << counter++ << "/" << num_responses << ")" << std::endl;
 				if(!cfg.overwrite_old_tables && libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt"))
 					std::cout << "\tResponse " << response << " of " << initial_state.Orbital_Name() << " was already tabulated.\n\tTo re-calculate this response, remove the corresponding files from the /results/ folder." << std::endl;
 				else
 				{
-					tabulator.Tabulate(response, initial_state, *final_state, cfg.threads);
+					tabulator.Tabulate(response, initial_state, final_state, cfg.threads);
 					tabulator.Export_Tables(cfg.results_path);
 				}
 			}
+		}
 	}
 	else if(cfg.run_modus == "Evaluation")
 	{
 		std::cout << "Evaluate atomic responses for k' = " << cfg.k_prime / keV << " and q = " << cfg.q / keV << " keV" << std::endl;
-		for(auto& response : cfg.atomic_responses)
+		for(auto& atomic_shell_name : cfg.atomic_shell_list)
 		{
 			std::cout << std::endl;
-			for(auto& atomic_shell_name : cfg.atomic_shell_list)
-			{
-				Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
-				Final_Electron_State_Hydrogenic final_state(initial_state.Z_eff);
 
+			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
+			Final_Electron_State_Hydrogenic final_state(initial_state.Z_eff);
+			Radial_Integrator radial_integrator(initial_state, final_state);
+
+			if(cfg.tabulate_radial_functions)
+				radial_integrator.Use_Tabulated_Functions(cfg.r_gridpoints, {cfg.k_prime}, {cfg.q});
+
+			for(auto& response : cfg.atomic_responses)
+			{
 				int l_convergence;
-				double W = Atomic_Response_Function(response, cfg.k_prime, cfg.q, initial_state, final_state, l_convergence);
+				double W = Atomic_Response_Function(response, cfg.k_prime, cfg.q, radial_integrator, l_convergence);
 				std::cout << "\t" << initial_state.Orbital_Name() << "\tW_" << response << "(k',q) = " << W << "\t(maximum l' = " << l_convergence << ")" << std::endl;
 			}
 		}
