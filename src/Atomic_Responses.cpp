@@ -18,7 +18,7 @@ using namespace libphysica::natural_units;
 std::complex<double> Scalar_Atomic_Formfactor(double q, Radial_Integrator& radial_integrator, int m, double k_final, int l_final, int m_final)
 {
 	std::complex<double> f_12 = 0.0;
-	int l					  = radial_integrator.Initial_State_Quantum_Numbers()[1];
+	int l					  = radial_integrator.initial_state.l;
 	for(int L = std::fabs(l - l_final); L <= l + l_final; L++)
 		if(m - m_final == 0 && (l + l_final + L) % 2 == 0)
 		{
@@ -31,7 +31,7 @@ std::complex<double> Scalar_Atomic_Formfactor(double q, Radial_Integrator& radia
 std::complex<double> Vectorial_Atomic_Formfactor(int component, double q, Radial_Integrator& radial_integrator, int m, double k_final, int l_final, int m_final)
 {
 	std::complex<double> f_12 = 0.0;
-	int l					  = radial_integrator.Initial_State_Quantum_Numbers()[1];
+	int l					  = radial_integrator.initial_state.l;
 
 	for(int l_hat : {l - 1, l + 1})
 		for(int L = std::fabs(l_hat - l_final); L <= l_hat + l_final; L++)
@@ -83,7 +83,7 @@ extern double Atomic_Response_Function(unsigned int response, double k_final, do
 	double prefactor		 = 4.0 * std::pow(k_final / 2.0 / M_PI, 3.0);
 	double response_function = 0.0;
 	std::vector<double> terms;
-	int l = radial_integrator.Initial_State_Quantum_Numbers()[1];
+	int l = radial_integrator.initial_state.l;
 	for(int l_final = 0; l_final < 1000; l_final++)
 	{
 		double new_term = 0.0;

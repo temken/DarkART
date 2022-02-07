@@ -1,6 +1,7 @@
 #ifndef __Response_Tabulation_hpp_
 #define __Response_Tabulation_hpp_
 
+#include "Radial_Integrator.hpp"
 #include "Wavefunctions_Final.hpp"
 #include "Wavefunctions_Initial.hpp"
 
@@ -25,6 +26,7 @@ class Response_Tabulator
 
 	void Resize_Grid(int k_points, int q_points = 0);
 
+	void Tabulate(int response, Radial_Integrator& radial_integrator, int threads = 1);
 	void Tabulate(int response, const Initial_Electron_State& bound_electron, Final_Electron_State& final_state, bool use_tables = false, int threads = 1);
 
 	void Export_Tables(const std::string& path);

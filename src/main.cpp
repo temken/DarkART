@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 			Radial_Integrator radial_integrator(initial_state, final_state);
 
 			if(cfg.tabulate_radial_functions)
-				radial_integrator.Use_Tabulated_Functions(cfg.r_gridpoints, {cfg.k_prime}, {cfg.q});
+				radial_integrator.Use_Tabulated_Functions(cfg.r_gridpoints, k_grid, q_grid);
 
 			for(auto& response : cfg.atomic_responses)
 			{
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 					std::cout << "\tResponse " << response << " of " << initial_state.Orbital_Name() << " was already tabulated.\n\tTo re-calculate this response, remove the corresponding files from the /results/ folder." << std::endl;
 				else
 				{
-					tabulator.Tabulate(response, initial_state, final_state, cfg.threads);
+					tabulator.Tabulate(response, radial_integrator, cfg.threads);
 					tabulator.Export_Tables(cfg.results_path);
 				}
 			}

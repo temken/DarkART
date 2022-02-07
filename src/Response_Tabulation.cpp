@@ -37,13 +37,13 @@ void Response_Tabulator::Resize_Grid(int k_points, int q_points)
 	Initialize_Lists(k_points, q_points);
 }
 
-void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bound_electron, Final_Electron_State& final_state, bool use_tables, int threads)
+void Response_Tabulator::Tabulate(int response, Radial_Integrator& radial_integrator, int threads)
 {
 	tabulated_response = response;
-	electron_orbital   = bound_electron.Orbital_Name();
+	electron_orbital   = radial_integrator.initial_state.Orbital_Name();
 
 	std::cout << "\nTabulation of atomic response" << std::endl
-			  << "\t- Electron orbital:\t\t" << bound_electron.Orbital_Name() << std::endl
+			  << "\t- Electron orbital:\t\t" << electron_orbital << std::endl
 			  << "\t- Response:\t\t\t" << response << std::endl
 			  << "\t- Final momentum k'[keV]:\t[" << libphysica::Round(In_Units(k_min, keV)) << "," << libphysica::Round(In_Units(k_max, keV)) << "]" << std::endl
 			  << "\t- Momentum transfer q[keV]:\t[" << libphysica::Round(In_Units(q_min, keV)) << "," << libphysica::Round(In_Units(q_max, keV)) << "]" << std::endl
@@ -57,12 +57,6 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 	int thread_id	  = omp_get_thread_num();
 	unsigned int Nq	  = q_grid.size();
 	unsigned int Nk	  = k_grid.size();
-	Radial_Integrator radial_integrator(bound_electron, final_state);
-	if(use_tables)
-	{
-		int r_points = 1000;
-		radial_integrator.Use_Tabulated_Functions(r_points, k_grid, q_grid);
-	}
 
 	// #pragma omp parallel for schedule(dynamic) num_threads(threads) collapse(2)
 	// 	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
@@ -86,6 +80,14 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 	}
 	std::cout << std::endl
 			  << std::endl;
+}
+
+void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bound_electron, Final_Electron_State& final_state, bool use_tables, int threads)
+{
+	Radial_Integrator radial_integrator(bound_electron, final_state);
+	if(use_tables)
+		radial_integrator.Use_Tabulated_Functions(10000, k_grid, q_grid);
+	return Tabulate(response, radial_integrator, threads);
 }
 
 void Response_Tabulator::Export_Tables(const std::string& path)

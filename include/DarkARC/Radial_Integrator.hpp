@@ -10,9 +10,6 @@ namespace DarkARC
 class Radial_Integrator
 {
   protected:
-	Initial_Electron_State initial_state;
-	Final_Electron_State* final_state = nullptr;
-
 	// 1. Method: Adaptive integration using boost.
 	double Radial_Integral_Adaptive(unsigned int integral_index, double k_final, double q, int l_final, int L);
 
@@ -34,13 +31,14 @@ class Radial_Integrator
 	double Radial_Integral_Table(unsigned int integral_index, double k_final, double q, int l_final, int L);
 
   public:
+	Initial_Electron_State initial_state;
+	Final_Electron_State* final_state = nullptr;
+
 	Radial_Integrator(const Initial_Electron_State& ini_state, const Final_Electron_State& fin_state);
 
 	void Use_Tabulated_Functions(unsigned int rpoints, const std::vector<double>& k_list, const std::vector<double>& q_list);
 
 	double Radial_Integral(int integral_index, double k_final, double q, int l_final, int L);
-
-	std::vector<int> Initial_State_Quantum_Numbers();
 };
 
 }	// namespace DarkARC

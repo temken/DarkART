@@ -83,7 +83,7 @@ double Radial_Integrator::Radial_Integral_Table(unsigned int integral_index, dou
 }
 
 Radial_Integrator::Radial_Integrator(const Initial_Electron_State& ini_state, const Final_Electron_State& fin_state)
-: initial_state(ini_state), using_function_tabulation(false)
+: using_function_tabulation(false), initial_state(ini_state)
 {
 	final_state = fin_state.Clone();
 }
@@ -142,11 +142,6 @@ double Radial_Integrator::Radial_Integral(int integral_index, double k_final, do
 		return Radial_Integral_Table(integral_index, k_final, q, l_final, L);
 	else
 		return Radial_Integral_Adaptive(integral_index, k_final, q, l_final, L);
-}
-
-std::vector<int> Radial_Integrator::Initial_State_Quantum_Numbers()
-{
-	return {initial_state.n, initial_state.l};
 }
 
 }	// namespace DarkARC

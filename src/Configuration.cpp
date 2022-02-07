@@ -158,6 +158,10 @@ void Configuration::Print_Summary(int MPI_rank)
 		std::cout << "Atomic responses:\t";
 		for(unsigned int i = 0; i < atomic_responses.size(); i++)
 			std::cout << atomic_responses[i] << ((i < atomic_responses.size() - 1) ? ", " : "\n");
+		std::cout << "\nTabulate radial functions:\t" << ((tabulate_radial_functions) ? "[x]" : "[ ]") << std::endl;
+		if(tabulate_radial_functions)
+			std::cout << "\tR grid points:\t\t" << r_gridpoints << std::endl;
+		std::cout << "Overwrite old files:\t\t" << ((overwrite_old_tables) ? "[x]" : "[ ]") << std::endl;
 		std::cout << "\nRun modus:\t" << run_modus << std::endl;
 		if(run_modus != "Evaluation")
 			std::cout << "Threads:\t" << threads << std::endl
