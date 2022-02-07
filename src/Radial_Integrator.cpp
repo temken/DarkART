@@ -111,14 +111,13 @@ void Radial_Integrator::Tabulate_Bessel_Function(int Lmax, int qi)
 	L_max[qi] = Lmax;
 }
 
-void Radial_Integrator::Use_Tabulated_Functions(unsigned int rpoints, const std::vector<double>& k_list, const std::vector<double>& q_list, int threads)
+void Radial_Integrator::Use_Tabulated_Functions(unsigned int rpoints, const std::vector<double>& k_list, const std::vector<double>& q_list)
 {
 	using_function_tabulation = true;
-
-	k_grid		= k_list;
-	q_grid		= q_list;
-	l_final_max = std::vector<int>(k_grid.size(), -1);
-	L_max		= std::vector<int>(q_grid.size(), -1);
+	k_grid					  = k_list;
+	q_grid					  = q_list;
+	l_final_max				  = std::vector<int>(k_grid.size(), -1);
+	L_max					  = std::vector<int>(q_grid.size(), -1);
 
 	r_points			 = rpoints;
 	r_max				 = 100.0 * Bohr_Radius;
@@ -143,6 +142,11 @@ double Radial_Integrator::Radial_Integral(int integral_index, double k_final, do
 		return Radial_Integral_Table(integral_index, k_final, q, l_final, L);
 	else
 		return Radial_Integral_Adaptive(integral_index, k_final, q, l_final, L);
+}
+
+std::vector<int> Radial_Integrator::Initial_State_Quantum_Numbers()
+{
+	return {initial_state.n, initial_state.l};
 }
 
 }	// namespace DarkARC

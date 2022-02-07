@@ -48,12 +48,13 @@ int main(int argc, char* argv[])
 			for(auto& atomic_shell_name : cfg.atomic_shell_list)
 			{
 				Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
+				Final_Electron_State* final_state = new Final_Electron_State_Hydrogenic(initial_state.Z_eff);
 				std::cout << counter++ << "/" << num_responses << ")" << std::endl;
 				if(!cfg.overwrite_old_tables && libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt"))
 					std::cout << "\tResponse " << response << " of " << initial_state.Orbital_Name() << " was already tabulated.\n\tTo re-calculate this response, remove the corresponding files from the /results/ folder." << std::endl;
 				else
 				{
-					tabulator.Tabulate(response, initial_state, cfg.threads);
+					tabulator.Tabulate(response, initial_state, *final_state, cfg.threads);
 					tabulator.Export_Tables(cfg.results_path);
 				}
 			}
@@ -67,8 +68,10 @@ int main(int argc, char* argv[])
 			for(auto& atomic_shell_name : cfg.atomic_shell_list)
 			{
 				Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
+				Final_Electron_State_Hydrogenic final_state(initial_state.Z_eff);
+
 				int l_convergence;
-				double W = Atomic_Response_Function(cfg.k_prime, cfg.q, initial_state, response, l_convergence);
+				double W = Atomic_Response_Function(response, cfg.k_prime, cfg.q, initial_state, final_state, l_convergence);
 				std::cout << "\t" << initial_state.Orbital_Name() << "\tW_" << response << "(k',q) = " << W << "\t(maximum l' = " << l_convergence << ")" << std::endl;
 			}
 		}
@@ -84,8 +87,8 @@ int main(int argc, char* argv[])
 
 		unsigned int l_final = 2;
 		unsigned int L		 = 3;
-		integrator.Use_Tabulated_Functions(10000, k_grid, q_grid, cfg.threads);
-		std::cout << integrator.Radial_Integral_Adaptive(1, k_grid[40], q_grid[40], l_final, L) << std::endl;
+		integrator.Use_Tabulated_Functions(10000, k_grid, q_grid);
+		// std::cout << integrator.Radial_Integral_Adaptive(1, k_grid[40], q_grid[40], l_final, L) << std::endl;
 		std::cout << integrator.Radial_Integral(1, k_grid[40], q_grid[40], l_final, L) << std::endl;
 		// for(int l_final = 0; l_final <= 150; l_final++)
 		// {

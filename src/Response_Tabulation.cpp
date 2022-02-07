@@ -37,7 +37,7 @@ void Response_Tabulator::Resize_Grid(int k_points, int q_points)
 	Initialize_Lists(k_points, q_points);
 }
 
-void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bound_electron, int threads)
+void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bound_electron, Final_Electron_State& final_state, bool use_tables, int threads)
 {
 	tabulated_response = response;
 	electron_orbital   = bound_electron.Orbital_Name();
@@ -57,6 +57,12 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 	int thread_id	  = omp_get_thread_num();
 	unsigned int Nq	  = q_grid.size();
 	unsigned int Nk	  = k_grid.size();
+	Radial_Integrator radial_integrator(bound_electron, final_state);
+	if(use_tables)
+	{
+		int r_points = 1000;
+		radial_integrator.Use_Tabulated_Functions(r_points, k_grid, q_grid);
+	}
 
 	// #pragma omp parallel for schedule(dynamic) num_threads(threads) collapse(2)
 	// 	for(unsigned int ki = k_grid.size() - 1; ki >= 0; ki--)
@@ -69,7 +75,7 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 		double k = k_grid[ki];
 		double q = q_grid[qi];
 		int l_convergence;
-		response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response, l_convergence);
+		response_table[ki][qi] = Atomic_Response_Function(response, k, q, radial_integrator, l_convergence);
 		l_prime_table[ki][qi]  = l_convergence;
 		counter++;
 		if(thread_id == 0 && counter % 5 == 0)
