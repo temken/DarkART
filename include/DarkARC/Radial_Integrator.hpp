@@ -22,6 +22,7 @@ class Radial_Integrator
 	std::vector<std::vector<double>> r_values_and_weights;
 	double r_max;
 
+	unsigned int l_final_max_max = 400;
 	std::vector<double> initial_radial_wavefunction_list, initial_radial_wavefunction_derivative_list;
 	std::vector<std::vector<std::vector<double>>> final_radial_wavefunction_list;
 	std::vector<std::vector<std::vector<double>>> bessel_function_list;
