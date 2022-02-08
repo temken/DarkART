@@ -49,21 +49,35 @@ int main(int argc, char* argv[])
 		{
 			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
 			Final_Electron_State_Hydrogenic final_state(initial_state.Z_eff);
-			Radial_Integrator radial_integrator(initial_state, final_state);
 
+			// Check if tables exist already
+			if(!cfg.overwrite_old_tables)
+			{
+				bool all_tables_exist = true;
+				for(auto& response : cfg.atomic_responses)
+				{
+					bool table_exists = libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt");
+					all_tables_exist *= table_exists;
+					if(table_exists)
+						counter++;
+				}
+				if(all_tables_exist)
+				{
+					std::cout << "\nResponses for " << initial_state.Orbital_Name() << " were already tabulated." << std::endl;
+					continue;
+				}
+			}
+
+			Radial_Integrator radial_integrator(initial_state, final_state);
 			if(cfg.tabulate_radial_functions)
 				radial_integrator.Use_Tabulated_Functions(cfg.r_gridpoints, k_grid, q_grid);
 
 			for(auto& response : cfg.atomic_responses)
 			{
-				std::cout << counter++ << "/" << num_responses << ")" << std::endl;
-				if(!cfg.overwrite_old_tables && libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt"))
-					std::cout << "\tResponse " << response << " of " << initial_state.Orbital_Name() << " was already tabulated.\n\tTo re-calculate this response, remove the corresponding files from the /results/ folder." << std::endl;
-				else
-				{
-					tabulator.Tabulate(response, radial_integrator, cfg.threads);
-					tabulator.Export_Tables(cfg.results_path);
-				}
+				std::cout << std::endl
+						  << counter++ << "/" << num_responses << ")" << std::endl;
+				tabulator.Tabulate(response, radial_integrator, cfg.threads);
+				tabulator.Export_Tables(cfg.results_path);
 			}
 		}
 	}
@@ -91,26 +105,6 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		Initial_Electron_State Xe_5p("Xe", 5, 1);
-		Final_Electron_State_Hydrogenic hydrogenic_state(Xe_5p.Z_eff);
-		Radial_Integrator integrator(Xe_5p, hydrogenic_state);
-
-		auto k_grid = libphysica::Log_Space(0.1 * keV, 100 * keV, 100);	  // cfg.k_gridpoints);
-		auto q_grid = libphysica::Log_Space(keV, 1000 * keV, 100);		  // cfg.q_gridpoints);
-
-		unsigned int l_final = 2;
-		unsigned int L		 = 3;
-		integrator.Use_Tabulated_Functions(10000, k_grid, q_grid);
-		// std::cout << integrator.Radial_Integral_Adaptive(1, k_grid[40], q_grid[40], l_final, L) << std::endl;
-		std::cout << integrator.Radial_Integral(1, k_grid[40], q_grid[40], l_final, L) << std::endl;
-		// for(int l_final = 0; l_final <= 150; l_final++)
-		// {
-		// 	std::cout << std::endl
-		// 			  << l_final << "\t" << integrator.Radial_Integral_Adaptive(1, k_grid[0], q_grid[0], l_final, l_final) << "\t" << std::flush;
-		// 	std::cout << integrator.Radial_Integral(1, k_grid[0], q_grid[0], l_final, l_final) << "\t" << std::flush;
-		// 	std::cout << "\t" << integrator.Radial_Integral_Adaptive(1, k_grid[1], q_grid[1], l_final, l_final) << "\t" << std::flush;
-		// 	std::cout << integrator.Radial_Integral(1, k_grid[1], q_grid[1], l_final, l_final) << std::endl;
-		// }
 	}
 
 	////////////////////////////////////////////////////////////////////////
