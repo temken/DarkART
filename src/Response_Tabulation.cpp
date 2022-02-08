@@ -72,7 +72,7 @@ void Response_Tabulator::Tabulate(int response, Radial_Integrator& radial_integr
 		response_table[ki][qi] = Atomic_Response_Function(response, k, q, radial_integrator, l_convergence);
 		l_prime_table[ki][qi]  = l_convergence;
 		counter++;
-		if(thread_id == 0 && counter % 5 == 0)
+		if(thread_id == 0 && counter % 10 == 0)
 		{
 			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, thread_id, 40, omp_get_wtime() - start_time);
 			std::cout << " [" << counter << " / " << counter_max << "] [" << ki << "," << qi << "] (l' <= " << l_convergence << ")" << std::flush;

@@ -91,27 +91,19 @@ Radial_Integrator::Radial_Integrator(const Initial_Electron_State& ini_state, co
 void Radial_Integrator::Tabulate_Final_Wavefunction(int l_final, int ki)
 {
 	for(int li = l_final_max[ki] + 1; li <= l_final; li++)
-	{
-		std::vector<double> aux(r_points, 0.0);
 		for(unsigned int ri = 0; ri < r_points; ri++)
-			aux[ri] = final_state->Radial_Wavefunction(r_values_and_weights[ri][0], k_grid[ki], li);
-		final_radial_wavefunction_list[ki].push_back(aux);
-	}
+			final_radial_wavefunction_list[ki][li][ri] = final_state->Radial_Wavefunction(r_values_and_weights[ri][0], k_grid[ki], li);
 	l_final_max[ki] = l_final;
 }
 void Radial_Integrator::Tabulate_Bessel_Function(int Lmax, int qi)
 {
 	for(int L = L_max[qi] + 1; L <= Lmax; L++)
-	{
-		std::vector<double> aux(r_points, 0.0);
 		for(unsigned int ri = 0; ri < r_points; ri++)
-			aux[ri] = Spherical_Bessel_jL(L, q_grid[qi] * r_values_and_weights[ri][0]);
-		bessel_function_list[qi].push_back(aux);
-	}
+			bessel_function_list[qi][L][ri] = Spherical_Bessel_jL(L, q_grid[qi] * r_values_and_weights[ri][0]);
 	L_max[qi] = Lmax;
 }
 
-void Radial_Integrator::Use_Tabulated_Functions(unsigned int rpoints, const std::vector<double>& k_list, const std::vector<double>& q_list)
+void Radial_Integrator::Use_Tabulated_Functions(unsigned int rpoints, const std::vector<double>& k_list, const std::vector<double>& q_list, int threads)
 {
 	using_function_tabulation = true;
 	k_grid					  = k_list;
@@ -132,9 +124,23 @@ void Radial_Integrator::Use_Tabulated_Functions(unsigned int rpoints, const std:
 		initial_radial_wavefunction_derivative_list[ri] = initial_state.Radial_Wavefunction_Derivative(r_values_and_weights[ri][0]);
 	}
 	// 2. Initiate final radial wavefunctions and Bessel function list
-	final_radial_wavefunction_list = std::vector<std::vector<std::vector<double>>>(k_grid.size(), std::vector<std::vector<double>>(0));
-	bessel_function_list		   = std::vector<std::vector<std::vector<double>>>(q_grid.size(), std::vector<std::vector<double>>(0));
+	final_radial_wavefunction_list = std::vector<std::vector<std::vector<double>>>(k_grid.size(), std::vector<std::vector<double>>(300, std::vector<double>(r_points, 0.0)));
+	bessel_function_list		   = std::vector<std::vector<std::vector<double>>>(q_grid.size(), std::vector<std::vector<double>>(300, std::vector<double>(r_points, 0.0)));
 }
+
+// void Radial_Integrator::Initial_Tabulation(int lfinal_max, int threads)
+// {
+// 	// 1. Final radial wavefunctions
+// #pragma omp parallel for schedule(dynamic) num_threads(threads)
+// 	for(unsigned int ki = 0; ki < k_grid.size(); ki++)
+// 		Tabulate_Final_Wavefunction(lfinal_max, ki);
+
+// 	// 2. Bessel function
+// 	int Lmax = lfinal_max + 2;
+// #pragma omp parallel for schedule(dynamic) num_threads(threads)
+// 	for(unsigned int qi = 0; qi < q_grid.size(); qi++)
+// 		Tabulate_Bessel_Function(Lmax, qi);
+// }
 
 double Radial_Integrator::Radial_Integral(int integral_index, double k_final, double q, int l_final, int L)
 {
