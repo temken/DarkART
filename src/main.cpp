@@ -53,15 +53,30 @@ int main(int argc, char* argv[])
 			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
 			Final_Electron_State_Hydrogenic final_state(initial_state.Z_eff);
 
+			if(!cfg.overwrite_old_tables)
+			{
+				bool atomic_shell_finished = true;
+				for(auto& response : cfg.atomic_responses)
+					atomic_shell_finished *= libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt");
+				if(atomic_shell_finished)
+				{
+					counter += cfg.atomic_responses.size();
+					std::cout << "\t" << initial_state.Orbital_Name() << ": All responses of were already tabulated." << std::endl;
+					continue;
+				}
+			}
+
 			radial_integrator.Set_New_States(initial_state, final_state);
 
 			for(auto& response : cfg.atomic_responses)
 			{
-				std::cout << counter++ << "/" << num_responses << ")" << std::endl;
+				counter++;
 				if(!cfg.overwrite_old_tables && libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt"))
-					std::cout << "\tResponse " << response << " of " << initial_state.Orbital_Name() << " was already tabulated.\n\tTo re-calculate this response, remove the corresponding files from the /results/ folder." << std::endl;
+					std::cout << "\t" << initial_state.Orbital_Name() << ": Response " << response << " was already tabulated." << std::endl;
 				else
 				{
+					std::cout << "\n"
+							  << counter - 1 << " / " << num_responses << ":" << std::endl;
 					tabulator.Tabulate(response, radial_integrator, cfg.threads);
 					tabulator.Export_Tables(cfg.results_path);
 				}
