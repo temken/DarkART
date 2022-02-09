@@ -48,6 +48,41 @@ double Radial_Integrator::Radial_Integral_Adaptive(unsigned int integral_index, 
 	return integral;
 }
 
+void Radial_Integrator::Tabulate_Initial_Wavefunction()
+{
+	for(unsigned int ri = 0; ri < r_points; ri++)
+	{
+		initial_radial_wavefunction_list[ri]			= initial_state.Radial_Wavefunction(r_values_and_weights[ri][0]);
+		initial_radial_wavefunction_derivative_list[ri] = initial_state.Radial_Wavefunction_Derivative(r_values_and_weights[ri][0]);
+	}
+}
+
+void Radial_Integrator::Tabulate_Final_Wavefunction(int l_final, int ki)
+{
+	if(l_final >= l_final_max_max)
+	{
+		std::cerr << "Error in Radial_Integrator::Tabulate_Final_Wavefunction(): l_final_max_max = " << l_final_max_max << " exceeded." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+	for(int li = l_final_max[ki] + 1; li <= l_final; li++)
+		for(unsigned int ri = 0; ri < r_points; ri++)
+			final_radial_wavefunction_list[ki][li][ri] = final_state->Radial_Wavefunction(r_values_and_weights[ri][0], k_grid[ki], li);
+	l_final_max[ki] = l_final;
+}
+
+void Radial_Integrator::Tabulate_Bessel_Function(int Lmax, int qi)
+{
+	if(Lmax >= l_final_max_max + 2)
+	{
+		std::cerr << "Error in Radial_Integrator::Tabulate_Bessel_Function(): L_max_max = " << l_final_max_max + 2 << " exceeded." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+	for(int L = L_max[qi] + 1; L <= Lmax; L++)
+		for(unsigned int ri = 0; ri < r_points; ri++)
+			bessel_function_list[qi][L][ri] = Spherical_Bessel_jL(L, q_grid[qi] * r_values_and_weights[ri][0]);
+	L_max[qi] = Lmax;
+}
+
 double Radial_Integrator::Radial_Integral_Table(unsigned int integral_index, double k_final, double q, int l_final, int L)
 {
 	// Identify ki and qi
@@ -82,35 +117,23 @@ double Radial_Integrator::Radial_Integral_Table(unsigned int integral_index, dou
 	return integral;
 }
 
+Radial_Integrator::Radial_Integrator()
+: using_function_tabulation(false), initial_state("Xe", 1, 0)
+{
+}
+
 Radial_Integrator::Radial_Integrator(const Initial_Electron_State& ini_state, const Final_Electron_State& fin_state)
 : using_function_tabulation(false), initial_state(ini_state)
 {
 	final_state = fin_state.Clone();
 }
 
-void Radial_Integrator::Tabulate_Final_Wavefunction(int l_final, int ki)
+double Radial_Integrator::Radial_Integral(int integral_index, double k_final, double q, int l_final, int L)
 {
-	if(l_final >= l_final_max_max)
-	{
-		std::cerr << "Error in Radial_Integrator::Tabulate_Final_Wavefunction(): l_final_max_max = " << l_final_max_max << " exceeded." << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-	for(int li = l_final_max[ki] + 1; li <= l_final; li++)
-		for(unsigned int ri = 0; ri < r_points; ri++)
-			final_radial_wavefunction_list[ki][li][ri] = final_state->Radial_Wavefunction(r_values_and_weights[ri][0], k_grid[ki], li);
-	l_final_max[ki] = l_final;
-}
-void Radial_Integrator::Tabulate_Bessel_Function(int Lmax, int qi)
-{
-	if(Lmax >= l_final_max_max + 2)
-	{
-		std::cerr << "Error in Radial_Integrator::Tabulate_Bessel_Function(): L_max_max = " << l_final_max_max + 2 << " exceeded." << std::endl;
-		std::exit(EXIT_FAILURE);
-	}
-	for(int L = L_max[qi] + 1; L <= Lmax; L++)
-		for(unsigned int ri = 0; ri < r_points; ri++)
-			bessel_function_list[qi][L][ri] = Spherical_Bessel_jL(L, q_grid[qi] * r_values_and_weights[ri][0]);
-	L_max[qi] = Lmax;
+	if(using_function_tabulation)
+		return Radial_Integral_Table(integral_index, k_final, q, l_final, L);
+	else
+		return Radial_Integral_Adaptive(integral_index, k_final, q, l_final, L);
 }
 
 void Radial_Integrator::Use_Tabulated_Functions(unsigned int rpoints, const std::vector<double>& k_list, const std::vector<double>& q_list)
@@ -125,25 +148,30 @@ void Radial_Integrator::Use_Tabulated_Functions(unsigned int rpoints, const std:
 	r_max				 = 50.0 * Bohr_Radius;
 	r_values_and_weights = Compute_Gauss_Legendre_Roots_and_Weights(r_points, 0.0, r_max);
 
-	// 1.  Tabulate initial radial wavefunctions
 	initial_radial_wavefunction_list			= std::vector<double>(r_points, 0.0);
 	initial_radial_wavefunction_derivative_list = std::vector<double>(r_points, 0.0);
-	for(unsigned int ri = 0; ri < r_points; ri++)
-	{
-		initial_radial_wavefunction_list[ri]			= initial_state.Radial_Wavefunction(r_values_and_weights[ri][0]);
-		initial_radial_wavefunction_derivative_list[ri] = initial_state.Radial_Wavefunction_Derivative(r_values_and_weights[ri][0]);
-	}
+	Tabulate_Initial_Wavefunction();
+
 	// 2. Initiate final radial wavefunctions and Bessel function list
 	final_radial_wavefunction_list = std::vector<std::vector<std::vector<double>>>(k_grid.size(), std::vector<std::vector<double>>(l_final_max_max, std::vector<double>(r_points, 0.0)));
 	bessel_function_list		   = std::vector<std::vector<std::vector<double>>>(q_grid.size(), std::vector<std::vector<double>>(l_final_max_max + 2, std::vector<double>(r_points, 0.0)));
 }
 
-double Radial_Integrator::Radial_Integral(int integral_index, double k_final, double q, int l_final, int L)
+void Radial_Integrator::Set_New_States(const Initial_Electron_State& new_initial_state, const Final_Electron_State& new_final_state)
 {
+	// New states
+	initial_state = new_initial_state;
+	final_state	  = new_final_state.Clone();
+
 	if(using_function_tabulation)
-		return Radial_Integral_Table(integral_index, k_final, q, l_final, L);
-	else
-		return Radial_Integral_Adaptive(integral_index, k_final, q, l_final, L);
+	{
+		// 1. Tabulate initial radial wavefunction
+		Tabulate_Initial_Wavefunction();
+
+		// 2. Reset the final state wavefunction lists
+		l_final_max					   = std::vector<int>(k_grid.size(), -1);
+		final_radial_wavefunction_list = std::vector<std::vector<std::vector<double>>>(k_grid.size(), std::vector<std::vector<double>>(l_final_max_max, std::vector<double>(r_points, 0.0)));
+	}
 }
 
 }	// namespace DarkARC

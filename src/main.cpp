@@ -42,42 +42,29 @@ int main(int argc, char* argv[])
 		Response_Tabulator tabulator(cfg.k_min, cfg.k_max, cfg.q_min, cfg.q_max);
 		tabulator.Resize_Grid(cfg.k_gridpoints, cfg.q_gridpoints);
 
+		Radial_Integrator radial_integrator;
+		if(cfg.tabulate_radial_functions)
+			radial_integrator.Use_Tabulated_Functions(cfg.r_gridpoints, k_grid, q_grid);
+
 		int counter		  = 1;
 		int num_responses = cfg.atomic_responses.size() * cfg.atomic_shell_list.size();
-
 		for(auto& atomic_shell_name : cfg.atomic_shell_list)
 		{
 			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
 			Final_Electron_State_Hydrogenic final_state(initial_state.Z_eff);
 
-			// Check if tables exist already
-			if(!cfg.overwrite_old_tables)
-			{
-				bool all_tables_exist = true;
-				for(auto& response : cfg.atomic_responses)
-				{
-					bool table_exists = libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt");
-					all_tables_exist *= table_exists;
-					if(table_exists)
-						counter++;
-				}
-				if(all_tables_exist)
-				{
-					std::cout << "\nResponses for " << initial_state.Orbital_Name() << " were already tabulated." << std::endl;
-					continue;
-				}
-			}
-
-			Radial_Integrator radial_integrator(initial_state, final_state);
-			if(cfg.tabulate_radial_functions)
-				radial_integrator.Use_Tabulated_Functions(cfg.r_gridpoints, k_grid, q_grid);
+			radial_integrator.Set_New_States(initial_state, final_state);
 
 			for(auto& response : cfg.atomic_responses)
 			{
-				std::cout << std::endl
-						  << counter++ << "/" << num_responses << ")" << std::endl;
-				tabulator.Tabulate(response, radial_integrator, cfg.threads);
-				tabulator.Export_Tables(cfg.results_path);
+				std::cout << counter++ << "/" << num_responses << ")" << std::endl;
+				if(!cfg.overwrite_old_tables && libphysica::File_Exists(cfg.results_path + initial_state.Orbital_Name() + "_" + std::to_string(response) + "_Table.txt"))
+					std::cout << "\tResponse " << response << " of " << initial_state.Orbital_Name() << " was already tabulated.\n\tTo re-calculate this response, remove the corresponding files from the /results/ folder." << std::endl;
+				else
+				{
+					tabulator.Tabulate(response, radial_integrator, cfg.threads);
+					tabulator.Export_Tables(cfg.results_path);
+				}
 			}
 		}
 	}
