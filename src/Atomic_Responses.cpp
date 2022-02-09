@@ -28,10 +28,10 @@ std::complex<double> Scalar_Atomic_Formfactor(double q, Radial_Integrator& radia
 	return sqrt(4.0 * M_PI) * f_12;
 }
 
-std::complex<double> Vectorial_Atomic_Formfactor(int component, double q, Radial_Integrator& radial_integrator, int m, double k_final, int l_final, int m_final)
+std::vector<std::complex<double>> Vectorial_Atomic_Formfactor(double q, Radial_Integrator& radial_integrator, int m, double k_final, int l_final, int m_final)
 {
-	std::complex<double> f_12 = 0.0;
-	int l					  = radial_integrator.initial_state.l;
+	std::vector<std::complex<double>> f_12(3, 0.0);
+	int l = radial_integrator.initial_state.l;
 
 	for(int l_hat : {l - 1, l + 1})
 		for(int L = std::fabs(l_hat - l_final); L <= l_hat + l_final; L++)
@@ -39,37 +39,43 @@ std::complex<double> Vectorial_Atomic_Formfactor(int component, double q, Radial
 			double radial_integral_2 = radial_integrator.Radial_Integral(2, k_final, q, l_final, L);
 			double radial_integral_3 = radial_integrator.Radial_Integral(3, k_final, q, l_final, L);
 			for(int m_hat = m - 1; m_hat < m + 2; m_hat++)
-				f_12 += std::pow(1.0i, L) * (VSH_Y_Component(component, l, m, l_hat, m_hat) * radial_integral_2 + VSH_Psi_Component(component, l, m, l_hat, m_hat) * radial_integral_3) * std::pow(-1.0, m_final) * sqrt(4.0 * M_PI * (2.0 * L + 1.0)) * Gaunt_Coefficient(l_hat, l_final, L, m_hat, -m_final, 0);
+				for(int component = 0; component < 3; component++)
+					f_12[component] += 1.0i / mElectron * std::pow(1.0i, L) * (VSH_Y_Component(component, l, m, l_hat, m_hat) * radial_integral_2 + VSH_Psi_Component(component, l, m, l_hat, m_hat) * radial_integral_3) * std::pow(-1.0, m_final) * sqrt(4.0 * M_PI * (2.0 * L + 1.0)) * Gaunt_Coefficient(l_hat, l_final, L, m_hat, -m_final, 0);
 		}
-	return 1.0i / mElectron * f_12;
+	return f_12;
 }
 
 // double Transition_Response_Function(response,element,n,l,m,kPrime,lPrime,mPrime,q):
 double Transition_Response_Function(double k_final, double q, Radial_Integrator& radial_integrator, int m, unsigned int l_final, int m_final, unsigned int response)
 {
 	double W_12;
-	std::complex<double> f, f_1, f_2, f_3;
 	switch(response)
 	{
 		case 1:
-			f	 = Scalar_Atomic_Formfactor(q, radial_integrator, m, k_final, l_final, m_final);
-			W_12 = std::norm(f);
+		{
+			std::complex<double> f = Scalar_Atomic_Formfactor(q, radial_integrator, m, k_final, l_final, m_final);
+			W_12				   = std::norm(f);
 			break;
+		}
 		case 2:
-			f	 = Scalar_Atomic_Formfactor(q, radial_integrator, m, k_final, l_final, m_final);
-			f_3	 = Vectorial_Atomic_Formfactor(2, q, radial_integrator, m, k_final, l_final, m_final);
-			W_12 = (q / mElectron * f * std::conj(f_3)).real();
+		{
+			std::complex<double> f	 = Scalar_Atomic_Formfactor(q, radial_integrator, m, k_final, l_final, m_final);
+			std::complex<double> f_3 = Vectorial_Atomic_Formfactor(q, radial_integrator, m, k_final, l_final, m_final)[2];
+			W_12					 = (q / mElectron * f * std::conj(f_3)).real();
 			break;
+		}
 		case 3:
-			f_1	 = Vectorial_Atomic_Formfactor(0, q, radial_integrator, m, k_final, l_final, m_final);
-			f_2	 = Vectorial_Atomic_Formfactor(1, q, radial_integrator, m, k_final, l_final, m_final);
-			f_3	 = Vectorial_Atomic_Formfactor(2, q, radial_integrator, m, k_final, l_final, m_final);
-			W_12 = std::norm(f_1) + std::norm(f_2) + std::norm(f_3);
+		{
+			std::vector<std::complex<double>> f_vec = Vectorial_Atomic_Formfactor(q, radial_integrator, m, k_final, l_final, m_final);
+			W_12									= std::norm(f_vec[0]) + std::norm(f_vec[1]) + std::norm(f_vec[2]);
 			break;
+		}
 		case 4:
-			f_3	 = Vectorial_Atomic_Formfactor(2, q, radial_integrator, m, k_final, l_final, m_final);
-			W_12 = q * q / mElectron / mElectron * std::norm(f_3);
+		{
+			std::complex<double> f_3 = Vectorial_Atomic_Formfactor(q, radial_integrator, m, k_final, l_final, m_final)[2];
+			W_12					 = q * q / mElectron / mElectron * std::norm(f_3);
 			break;
+		}
 		default:
 			std::cerr << "Error in Transition_Response_Function(): Response " << response << " out of bound." << std::endl;
 			std::exit(EXIT_FAILURE);
