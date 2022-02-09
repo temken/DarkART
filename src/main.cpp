@@ -36,15 +36,19 @@ int main(int argc, char* argv[])
 
 	if(cfg.run_modus == "Tabulation")
 	{
-		auto k_grid = libphysica::Log_Space(cfg.k_min, cfg.k_max, cfg.k_gridpoints);
-		auto q_grid = libphysica::Log_Space(cfg.q_min, cfg.q_max, cfg.q_gridpoints);
+
+		std::cout << "\nTabulate atomic responses for " << cfg.element << std::endl;
 
 		Response_Tabulator tabulator(cfg.k_min, cfg.k_max, cfg.q_min, cfg.q_max);
 		tabulator.Resize_Grid(cfg.k_gridpoints, cfg.q_gridpoints);
 
 		Radial_Integrator radial_integrator;
 		if(cfg.tabulate_radial_functions)
+		{
+			auto k_grid = libphysica::Log_Space(cfg.k_min, cfg.k_max, cfg.k_gridpoints);
+			auto q_grid = libphysica::Log_Space(cfg.q_min, cfg.q_max, cfg.q_gridpoints);
 			radial_integrator.Use_Tabulated_Functions(cfg.r_gridpoints, k_grid, q_grid);
+		}
 
 		int counter		  = 1;
 		int num_responses = cfg.atomic_responses.size() * cfg.atomic_shell_list.size();
@@ -61,7 +65,7 @@ int main(int argc, char* argv[])
 				if(atomic_shell_finished)
 				{
 					counter += cfg.atomic_responses.size();
-					std::cout << "\t" << initial_state.Orbital_Name() << ": All responses of were already tabulated." << std::endl;
+					std::cout << "\t" << initial_state.Orbital_Name() << ": All responses were already tabulated." << std::endl;
 					continue;
 				}
 			}
@@ -75,21 +79,21 @@ int main(int argc, char* argv[])
 					std::cout << "\t" << initial_state.Orbital_Name() << ": Response " << response << " was already tabulated." << std::endl;
 				else
 				{
-					std::cout << "\n"
-							  << counter - 1 << " / " << num_responses << ":" << std::endl;
+					std::cout << counter - 1 << " / " << num_responses << ":\t";
 					tabulator.Tabulate(response, radial_integrator, cfg.threads);
 					tabulator.Export_Tables(cfg.results_path);
+					std::cout << std::endl
+							  << SEPARATOR << std::endl;
 				}
 			}
 		}
 	}
 	else if(cfg.run_modus == "Evaluation")
 	{
-		std::cout << "Evaluate atomic responses for k' = " << cfg.k_prime / keV << " and q = " << cfg.q / keV << " keV" << std::endl;
+		std::cout << "Evaluate atomic responses for k' = " << cfg.k_prime / keV << " and q = " << cfg.q / keV << " keV\n"
+				  << std::endl;
 		for(auto& atomic_shell_name : cfg.atomic_shell_list)
 		{
-			std::cout << std::endl;
-
 			Initial_Electron_State initial_state(cfg.element, atomic_shell_name);
 			Final_Electron_State_Hydrogenic final_state(initial_state.Z_eff);
 			Radial_Integrator radial_integrator(initial_state, final_state);
@@ -101,7 +105,7 @@ int main(int argc, char* argv[])
 			{
 				int l_convergence;
 				double W = Atomic_Response_Function(response, cfg.k_prime, cfg.q, radial_integrator, l_convergence);
-				std::cout << "\t" << initial_state.Orbital_Name() << "\tW_" << response << "(k',q) = " << W << "\t(maximum l' = " << l_convergence << ")" << std::endl;
+				std::cout << "\t" << initial_state.Orbital_Name() << "\tW_" << response << "(k',q) = " << W << "\t(l' ≤ " << l_convergence << ")" << std::endl;
 			}
 		}
 	}

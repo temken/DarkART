@@ -166,10 +166,12 @@ void Configuration::Print_Summary(int MPI_rank)
 		if(run_modus != "Evaluation")
 			std::cout << "Threads:\t" << threads << std::endl
 					  << "k' grid [keV]:\t" << k_min / keV << " - " << k_max / keV << "\t(" << k_gridpoints << " points)" << std::endl
-					  << "q grid [keV]:\t" << q_min / keV << " - " << q_max / keV << "\t(" << q_gridpoints << " points)" << std::endl;
+					  << "q grid [keV]:\t" << q_min / keV << " - " << q_max / keV << "\t(" << q_gridpoints << " points)" << std::endl
+					  << std::endl;
 		if(run_modus != "Tabulation")
 			std::cout << "k' [keV]:\t" << k_prime / keV << std::endl
-					  << "q [keV]:\t" << q / keV << std::endl;
+					  << "q [keV]:\t" << q / keV << std::endl
+					  << std::endl;
 		std::cout << SEPARATOR << std::endl;
 	}
 }
