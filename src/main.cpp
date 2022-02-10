@@ -37,7 +37,8 @@ int main(int argc, char* argv[])
 	if(cfg.run_modus == "Tabulation")
 	{
 
-		std::cout << "\nTabulate atomic responses for " << cfg.element << std::endl;
+		std::cout << "\nTabulate atomic responses for " << cfg.element << std::endl
+				  << std::endl;
 
 		Response_Tabulator tabulator(cfg.k_min, cfg.k_max, cfg.q_min, cfg.q_max);
 		tabulator.Resize_Grid(cfg.k_gridpoints, cfg.q_gridpoints);

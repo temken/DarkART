@@ -132,7 +132,6 @@ extern double Atomic_Response_Function(unsigned int response, double k_final, do
 double Atomic_Response_Function(unsigned int response, double k_final, double q, const Initial_Electron_State& bound_electron, const Final_Electron_State& final_state, int& l_convergence)
 {
 	Radial_Integrator radial_integrator(bound_electron, final_state);
-	// radial_integrator.Use_Tabulated_Functions(10000, {k_final}, {q}, 1);
 	return Atomic_Response_Function(response, k_final, q, radial_integrator, l_convergence);
 }
 
