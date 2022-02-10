@@ -1,5 +1,6 @@
 #include "DarkARC/Special_Functions.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 #include <gsl/gsl_errno.h>
@@ -223,6 +224,67 @@ double Coulomb_Wave(int L, double eta, double rho)
 	if(status != 0 || std::isnan(cw))
 		cw = Coulomb_Wave_ARB(L, eta, rho);
 	return cw;
+}
+
+std::vector<std::vector<double>> Compute_Gauss_Legendre_Roots_and_Weights(unsigned int n, double x_min, double x_max)
+{
+	std::vector<std::vector<double>> roots_and_weights(n, std::vector<double>(2, 0.0));
+
+	double eps			= 1.0e-14;
+	int m				= (n + 1) / 2;
+	double x_middle		= 0.5 * (x_max + x_min);
+	double x_half_width = 0.5 * (x_max - x_min);
+
+	for(int i = 0; i < m; i++)
+	{
+		double pp;
+		double z = cos(M_PI * (i + 0.75) / (n + 0.5));
+		while(true)
+		{
+			double p1 = 1.0;
+			double p2 = 0.0;
+			for(int j = 0; j < n; j++)
+			{
+				double p3 = p2;
+				p2		  = p1;
+				p1		  = ((2.0 * j + 1.0) * z * p2 - j * p3) / (j + 1.0);
+			}
+			pp		  = n * (z * p1 - p2) / (z * z - 1.0);
+			double z1 = z;
+			z		  = z1 - p1 / pp;
+			if(std::fabs(z - z1) <= eps)
+				break;
+		}
+		roots_and_weights[i][0]			= x_middle - x_half_width * z;
+		roots_and_weights[n - i - 1][0] = x_middle + x_half_width * z;
+		roots_and_weights[i][1]			= 2.0 * x_half_width / ((1.0 - z * z) * pp * pp);
+		roots_and_weights[n - i - 1][1] = roots_and_weights[i][1];
+	}
+	return roots_and_weights;
+}
+
+unsigned int Locate_Closest_Location(const std::vector<double>& list, double target)
+{
+	auto const it = std::upper_bound(list.begin(), list.end(), target);
+	if(it == list.end())
+		return list.size() - 1;
+	else
+	{
+		int index = std::distance(list.begin(), it);
+		if(index == 0)
+			return 0;
+		else if(index == list.size())
+			return list.size() - 1;
+		else
+		{
+			double diff1 = std::fabs(list[index - 1] - target);
+			double diff2 = std::fabs(list[index] - target);
+			if(diff1 < diff2)
+				return index - 1;
+			else
+				return index;
+		}
+	}
 }
 
 }	// namespace DarkARC

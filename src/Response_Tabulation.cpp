@@ -37,24 +37,18 @@ void Response_Tabulator::Resize_Grid(int k_points, int q_points)
 	Initialize_Lists(k_points, q_points);
 }
 
-void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bound_electron, int threads)
+void Response_Tabulator::Tabulate(int response, Radial_Integrator& radial_integrator, int threads)
 {
 	tabulated_response = response;
-	electron_orbital   = bound_electron.Orbital_Name();
+	electron_orbital   = radial_integrator.initial_state.Orbital_Name();
 
-	std::cout << "\nTabulation of atomic response" << std::endl
-			  << "\t- Electron orbital:\t\t" << bound_electron.Orbital_Name() << std::endl
-			  << "\t- Response:\t\t\t" << response << std::endl
-			  << "\t- Final momentum k'[keV]:\t[" << libphysica::Round(In_Units(k_min, keV)) << "," << libphysica::Round(In_Units(k_max, keV)) << "]" << std::endl
-			  << "\t- Momentum transfer q[keV]:\t[" << libphysica::Round(In_Units(q_min, keV)) << "," << libphysica::Round(In_Units(q_max, keV)) << "]" << std::endl
-			  << "\t- Grid size:\t\t\t" << k_grid.size() << "x" << q_grid.size() << std::endl
-			  << "\t- Number of threads:\t\t" << threads << std::endl
+	std::cout << "\n\t- orbital:\t" << electron_orbital << std::endl
+			  << "\t- response:\t" << response << std::endl
 			  << std::endl;
 
 	int counter		  = 0;
 	int counter_max	  = k_grid.size() * q_grid.size();
 	double start_time = omp_get_wtime();
-	int thread_id	  = omp_get_thread_num();
 	unsigned int Nq	  = q_grid.size();
 	unsigned int Nk	  = k_grid.size();
 
@@ -69,17 +63,24 @@ void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bo
 		double k = k_grid[ki];
 		double q = q_grid[qi];
 		int l_convergence;
-		response_table[ki][qi] = Atomic_Response_Function(k, q, bound_electron, response, l_convergence);
+		response_table[ki][qi] = Atomic_Response_Function(response, k, q, radial_integrator, l_convergence);
 		l_prime_table[ki][qi]  = l_convergence;
 		counter++;
-		if(thread_id == 0 && counter % 5 == 0)
-		{
-			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, thread_id, 40, omp_get_wtime() - start_time);
-			std::cout << " [" << counter << " / " << counter_max << "] [" << ki << "," << qi << "] (l' <= " << l_convergence << ")" << std::flush;
-		}
+
+		if(counter % 10 == 0)
+			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, omp_get_thread_num(), 49);
 	}
+	libphysica::Print_Progress_Bar(1.0, omp_get_thread_num(), 49, omp_get_wtime() - start_time);
 	std::cout << std::endl
 			  << std::endl;
+}
+
+void Response_Tabulator::Tabulate(int response, const Initial_Electron_State& bound_electron, Final_Electron_State& final_state, bool use_tables, int threads)
+{
+	Radial_Integrator radial_integrator(bound_electron, final_state);
+	if(use_tables)
+		radial_integrator.Use_Tabulated_Functions(5000, k_grid, q_grid);
+	return Tabulate(response, radial_integrator, threads);
 }
 
 void Response_Tabulator::Export_Tables(const std::string& path)
@@ -90,8 +91,11 @@ void Response_Tabulator::Export_Tables(const std::string& path)
 		std::exit(EXIT_FAILURE);
 	}
 	std::ofstream f_table, f_list;
-	std::string path_table = path + electron_orbital + "_" + std::to_string(tabulated_response) + "_Table.txt";
-	std::string path_list  = path + electron_orbital + "_" + std::to_string(tabulated_response) + "_List.txt";
+	std::string file_table = electron_orbital + "_" + std::to_string(tabulated_response) + "_Table.txt";
+	std::string file_list  = electron_orbital + "_" + std::to_string(tabulated_response) + "_List.txt";
+
+	std::string path_table = path + file_table;
+	std::string path_list  = path + file_list;
 	f_table.open(path_table);
 	f_list.open(path_list);
 
@@ -119,10 +123,9 @@ void Response_Tabulator::Export_Tables(const std::string& path)
 
 	f_table.close();
 	f_list.close();
-	std::cout << "\n\nExported response W_" << tabulated_response << "(k',q) for " << electron_orbital << " as list and table to" << std::endl
-			  << "\t" << path_list << std::endl
-			  << "\t" << path_table << std::endl
-			  << std::endl;
+	std::cout << "Exported response W_" << tabulated_response << "(k',q) for " << electron_orbital << " as list and table to" << std::endl
+			  << "\t→ " << file_list << std::endl
+			  << "\t→ " << file_table << std::endl;
 }
 
 }	// namespace DarkARC

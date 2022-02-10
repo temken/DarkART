@@ -20,9 +20,11 @@
 	add_library(libdarkarc STATIC
 	    Atomic_Responses.cpp
 	    Configuration.cpp
+	    Radial_Integrator.cpp
 	    Response_Tabulation.cpp
 	    Special_Functions.cpp
-	    Wavefunctions.cpp)
+	    Wavefunctions_Final.cpp
+	    Wavefunctions_Initial.cpp)
 
 	set_target_properties(libdarkarc PROPERTIES PREFIX "")
 

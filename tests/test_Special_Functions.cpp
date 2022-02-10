@@ -132,3 +132,32 @@ TEST(TestSpecialFunction, TestCoulombWave)
 	EXPECT_FLOAT_EQ(Coulomb_Wave(L, eta, 0.0), 0.0);
 	EXPECT_FLOAT_EQ(Coulomb_Wave(0, 0.0, rho), sin(rho));
 }
+
+TEST(TestSpecialFunction, TestGaussLegendre)
+{
+	// ARRANGE
+	int n = 4;
+	std::vector<double> roots {-0.86113631, -0.33998104, 0.33998104, 0.86113631};
+	std::vector<double> weights {0.34785485, 0.65214515, 0.65214515, 0.34785485};
+
+	// ACT
+	auto roots_and_weights = Compute_Gauss_Legendre_Roots_and_Weights(n);
+
+	// ASSERT
+	for(int i = 0; i < n; i++)
+	{
+		EXPECT_FLOAT_EQ(roots_and_weights[i][0], roots[i]);
+		EXPECT_FLOAT_EQ(roots_and_weights[i][1], weights[i]);
+	}
+}
+
+TEST(TestSpecialFunction, TestLocateClosestLocation)
+{
+	// ARRANGE
+	std::vector<double> x			 = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+	std::vector<double> targets		 = {-10.0, 0.4, 0.6, 0.9, 1.1, 1.55, 3.7, 4.0, 4.6, 8.1, 8.6, 9.0, 9.1, 10.9, 1e4};
+	std::vector<unsigned int> result = {0, 0, 1, 1, 1, 2, 4, 4, 5, 8, 9, 9, 9, 9, 9};
+	// ACT & ASSERT
+	for(int i = 0; i < targets.size(); i++)
+		EXPECT_EQ(Locate_Closest_Location(x, targets[i]), result[i]);
+}

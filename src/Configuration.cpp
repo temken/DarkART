@@ -83,6 +83,26 @@ void Configuration::Initialize_Parameters()
 
 	try
 	{
+		tabulate_radial_functions = config.lookup("tabulate_radial_functions");
+	}
+	catch(const SettingNotFoundException& nfex)
+	{
+		std::cerr << "Error in Configuration::Initialize_Parameters(): No 'tabulate_radial_functions' setting in configuration file." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	try
+	{
+		r_gridpoints = config.lookup("r_points");
+	}
+	catch(const SettingNotFoundException& nfex)
+	{
+		std::cerr << "Error in Configuration::Initialize_Parameters(): No 'r_points' setting in configuration file." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	try
+	{
 		k_min		 = config.lookup("k_min");
 		k_max		 = config.lookup("k_max");
 		k_gridpoints = config.lookup("k_points");
@@ -138,14 +158,20 @@ void Configuration::Print_Summary(int MPI_rank)
 		std::cout << "Atomic responses:\t";
 		for(unsigned int i = 0; i < atomic_responses.size(); i++)
 			std::cout << atomic_responses[i] << ((i < atomic_responses.size() - 1) ? ", " : "\n");
+		std::cout << "\nTabulate radial functions:\t" << ((tabulate_radial_functions) ? "[x]" : "[ ]") << std::endl;
+		if(tabulate_radial_functions)
+			std::cout << "\tR grid points:\t\t" << r_gridpoints << std::endl;
+		std::cout << "Overwrite old files:\t\t" << ((overwrite_old_tables) ? "[x]" : "[ ]") << std::endl;
 		std::cout << "\nRun modus:\t" << run_modus << std::endl;
 		if(run_modus != "Evaluation")
 			std::cout << "Threads:\t" << threads << std::endl
 					  << "k' grid [keV]:\t" << k_min / keV << " - " << k_max / keV << "\t(" << k_gridpoints << " points)" << std::endl
-					  << "q grid [keV]:\t" << q_min / keV << " - " << q_max / keV << "\t(" << q_gridpoints << " points)" << std::endl;
+					  << "q grid [keV]:\t" << q_min / keV << " - " << q_max / keV << "\t(" << q_gridpoints << " points)" << std::endl
+					  << std::endl;
 		if(run_modus != "Tabulation")
 			std::cout << "k' [keV]:\t" << k_prime / keV << std::endl
-					  << "q [keV]:\t" << q / keV << std::endl;
+					  << "q [keV]:\t" << q / keV << std::endl
+					  << std::endl;
 		std::cout << SEPARATOR << std::endl;
 	}
 }

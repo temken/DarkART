@@ -1,5 +1,5 @@
-#ifndef __Wavefunctions_hpp_
-#define __Wavefunctions_hpp_
+#ifndef __Wavefunctions_Initial_hpp_
+#define __Wavefunctions_Initial_hpp_
 
 #include <string>
 #include <vector>
@@ -33,9 +33,6 @@ class Initial_Electron_State
 
 	void Print_Summary(unsigned int mpi_rank = 0) const;
 };
-
-// 2. Final state: Positive energy continuum solution of Schroedinger equation with hydrogenic potential
-extern double Radial_Wavefunction_Final(double k_final, unsigned l_prime, double Z_eff, double r);
 
 }	// namespace DarkARC
 

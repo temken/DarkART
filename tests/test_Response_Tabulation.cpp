@@ -5,7 +5,7 @@
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "DarkARC/Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions_Initial.hpp"
 #include "version.hpp"
 
 using namespace DarkARC;
@@ -22,12 +22,13 @@ TEST(TestTabulator, TestTabulator)
 	auto k_grid	 = libphysica::Log_Space(k_min, k_max, gridsize);
 	auto q_grid	 = libphysica::Log_Space(q_min, q_max, gridsize);
 	Initial_Electron_State Xenon_5s("Xe", 5, 0);
+	Final_Electron_State_Hydrogenic final_state(Xenon_5s.Z_eff);
 	std::string filepath_1 = TOP_LEVEL_DIR "tests/Xe_5s_1_Table.txt";
 	std::string filepath_2 = TOP_LEVEL_DIR "tests/Xe_5s_1_List.txt";
 	// ACT
 	Response_Tabulator tabulator(k_min, k_max, q_min, q_max);
 	tabulator.Resize_Grid(gridsize, gridsize);
-	tabulator.Tabulate(1, Xenon_5s, 1);
+	tabulator.Tabulate(1, Xenon_5s, final_state, 1);
 	tabulator.Export_Tables(TOP_LEVEL_DIR "tests/");
 	// ASSERT
 	EXPECT_TRUE(libphysica::File_Exists(filepath_1));
