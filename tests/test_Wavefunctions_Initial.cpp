@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "DarkARC/Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions_Initial.hpp"
 
 #include <cmath>
 
@@ -19,7 +19,6 @@ TEST(TestWavefunctions, TestConstructor)
 	int l				= 0;
 	// ACT
 	Initial_Electron_State Xe5p(element, n, l);
-	Xe5p.Print_Summary();
 	// ASSERT
 	EXPECT_EQ(Xe5p.Orbital_Name(), "Xe_5s");
 	EXPECT_EQ(Xe5p.n, 5);
@@ -87,13 +86,14 @@ TEST(TestWavefunctions, TestNormalization)
 		EXPECT_NEAR(electron.Normalization(), 1.0, tol);
 }
 
-TEST(TestWavefunctions, TestRadialWavefunctionFinal)
+TEST(TestWavefunctions, TestPrintSummary)
 {
 	// ARRANGE
-	double k_final = 10.0 * eV;
-	int l_final	   = 3;
-	double Z_eff   = 1.0;
-	double r	   = Bohr_Radius;
-	// ACT & ASSERT
-	ASSERT_FLOAT_EQ(Radial_Wavefunction_Final(k_final, l_final, Z_eff, r), 0.74927193);
+	std::string element = "Xe";
+	int n				= 5;
+	int l				= 0;
+	// ACT
+	Initial_Electron_State Xe5p(element, n, l);
+	// ASSERT
+	Xe5p.Print_Summary();
 }

@@ -1,5 +1,6 @@
 #include "DarkARC/Special_Functions.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 #include <gsl/gsl_errno.h>
@@ -13,122 +14,9 @@
 
 namespace DarkARC
 {
-using namespace std::complex_literals;
+// using namespace std::complex_literals;
 
-// 1. Spherical Harmonics
-std::complex<double> Spherical_Harmonics(int l, int m, double theta, double phi)
-{
-	return boost::math::spherical_harmonic(l, m, theta, phi);
-}
-
-std::complex<double> VSH_Y_Component(int component, int l, int m, int l_hat, int m_hat)
-{
-	switch(component)
-	{
-		case 0:
-			if((l_hat != l - 1 && l_hat != l + 1) || (m_hat != m - 1 && m_hat != m + 1))
-				return 0.0;
-			else if(l_hat == l + 1 && m_hat == m + 1)
-				return -1.0 / 2.0 * std::sqrt(1.0 * (l + m + 1) * (l + m + 2) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l + 1 && m_hat == m - 1)
-				return 1.0 / 2.0 * std::sqrt(1.0 * (l - m + 1) * (l - m + 2) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l - 1 && m_hat == m + 1)
-				return 1.0 / 2.0 * std::sqrt(1.0 * (l - m - 1) * (l - m) / (2 * l - 1) / (2 * l + 1));
-			else if(l_hat == l - 1 && m_hat == m - 1)
-				return -1.0 / 2.0 * std::sqrt(1.0 * (l + m - 1) * (l + m) / (2 * l - 1) / (2 * l + 1));
-			break;
-		case 1:
-			if((l_hat != l - 1 && l_hat != l + 1) || (m_hat != m - 1 && m_hat != m + 1))
-				return 0.0;
-			else if(l_hat == l + 1 && m_hat == m + 1)
-				return 1.0i / 2.0 * std::sqrt(1.0 * (l + m + 1) * (l + m + 2) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l + 1 && m_hat == m - 1)
-				return 1.0i / 2.0 * std::sqrt(1.0 * (l - m + 1) * (l - m + 2) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l - 1 && m_hat == m + 1)
-				return -1.0i / 2.0 * std::sqrt(1.0 * (l - m - 1) * (l - m) / (2 * l - 1) / (2 * l + 1));
-			else if(l_hat == l - 1 && m_hat == m - 1)
-				return -1.0i / 2.0 * std::sqrt(1.0 * (l + m - 1) * (l + m) / (2 * l - 1) / (2 * l + 1));
-			break;
-		case 2:
-			if((l_hat != l - 1 && l_hat != l + 1) || (m_hat != m))
-				return 0.0;
-			else if(l_hat == l + 1)
-				return 1.0 * std::sqrt(1.0 * (l - m + 1) * (l + m + 1) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l - 1)
-				return 1.0 * std::sqrt(1.0 * (l - m) * (l + m) / (2 * l - 1) / (2 * l + 1));
-			break;
-		default:
-			std::cerr << "Error in VSH_Y_Component(): Component " << component << " out of bound." << std::endl;
-			std::exit(EXIT_FAILURE);
-	}
-	return 0.0;
-}
-
-std::vector<std::complex<double>> Vector_Spherical_Harmonics_Y(int l, int m, double theta, double phi)
-{
-	std::vector<std::complex<double>> Y(3, 0.0);
-	for(unsigned int i = 0; i < 3; i++)
-		for(int l_hat = l - 1; l_hat < l + 2; l_hat += 2)
-			for(int m_hat = m - 1; m_hat < m + 2; m_hat++)
-				if(std::abs(m_hat) <= l_hat)
-					Y[i] += VSH_Y_Component(i, l, m, l_hat, m_hat) * Spherical_Harmonics(l_hat, m_hat, theta, phi);
-	return Y;
-}
-
-std::complex<double> VSH_Psi_Component(int component, int l, int m, int l_hat, int m_hat)
-{
-	switch(component)
-	{
-		case 0:
-			if((l_hat != l - 1 && l_hat != l + 1) || (m_hat != m - 1 && m_hat != m + 1))
-				return 0.0;
-			else if(l_hat == l + 1 and m_hat == m + 1)
-				return l / 2.0 * std::sqrt(1.0 * (l + m + 1) * (l + m + 2) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l + 1 and m_hat == m - 1)
-				return -l / 2.0 * std::sqrt(1.0 * (l - m + 1) * (l - m + 2) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l - 1 and m_hat == m + 1)
-				return (l + 1) / 2.0 * std::sqrt(1.0 * (l - m - 1) * (l - m) / (2 * l - 1) / (2 * l + 1));
-			else if(l_hat == l - 1 and m_hat == m - 1)
-				return -(l + 1) / 2.0 * std::sqrt(1.0 * (l + m - 1) * (l + m) / (2 * l - 1) / (2 * l + 1));
-			break;
-		case 1:
-			if((l_hat != l - 1 && l_hat != l + 1) || (m_hat != m - 1 && m_hat != m + 1))
-				return 0.0;
-			else if(l_hat == l + 1 and m_hat == m + 1)
-				return -1.0i / 2.0 * std::sqrt(1.0 * l * l * (l + m + 1) * (l + m + 2) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l + 1 and m_hat == m - 1)
-				return -1.0i / 2.0 * std::sqrt(1.0 * l * l * (l - m + 1) * (l - m + 2) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l - 1 and m_hat == m + 1)
-				return -1.0i / 2.0 * std::sqrt(1.0 * (l + 1) * (l + 1) * (l - m - 1) * (l - m) / (2 * l - 1) / (2 * l + 1));
-			else if(l_hat == l - 1 and m_hat == m - 1)
-				return -1.0i / 2.0 * std::sqrt(1.0 * (l + 1) * (l + 1) * (l + m - 1) * (l + m) / (2 * l - 1) / (2 * l + 1));
-			break;
-		case 2:
-			if((l_hat != l - 1 && l_hat != l + 1) || (m_hat != m))
-				return 0.0;
-			else if(l_hat == l + 1)
-				return -l * std::sqrt(1.0 * (l - m + 1) * (l + m + 1) / (2 * l + 3) / (2 * l + 1));
-			else if(l_hat == l - 1)
-				return (1 + l) * std::sqrt(1.0 * (l - m) * (l + m) / (2 * l - 1) / (2 * l + 1));
-			break;
-		default:
-			std::cerr << "Error in VSH_Psi_Component(): Component " << component << " out of bound." << std::endl;
-			std::exit(EXIT_FAILURE);
-	}
-	return 0.0;
-}
-
-std::vector<std::complex<double>> Vector_Spherical_Harmonics_Psi(int l, int m, double theta, double phi)
-{
-	std::vector<std::complex<double>> Psi(3, 0.0);
-	for(unsigned int i = 0; i < 3; i++)
-		for(int l_hat = l - 1; l_hat < l + 2; l_hat += 2)
-			for(int m_hat = m - 1; m_hat < m + 2; m_hat++)
-				if(std::abs(m_hat) <= l_hat)
-					Psi[i] += VSH_Psi_Component(i, l, m, l_hat, m_hat) * Spherical_Harmonics(l_hat, m_hat, theta, phi);
-	return Psi;
-}
-
+// 1. Gaunt coefficients
 double Gaunt_Coefficient(int j1, int j2, int j3, int m1, int m2, int m3)
 {
 	return sqrt((2.0 * j1 + 1.0) * (2.0 * j2 + 1.0) * (2.0 * j3 + 1.0)) / sqrt(4.0 * M_PI) * gsl_sf_coupling_3j(2 * j1, 2 * j2, 2 * j3, 0, 0, 0) * gsl_sf_coupling_3j(2 * j1, 2 * j2, 2 * j3, 2 * m1, 2 * m2, 2 * m3);

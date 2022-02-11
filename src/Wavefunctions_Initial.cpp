@@ -1,4 +1,4 @@
-#include "DarkARC/Wavefunctions.hpp"
+#include "DarkARC/Wavefunctions_Initial.hpp"
 
 #include <cmath>
 #include <complex>
@@ -10,7 +10,7 @@
 #include "libphysica/Natural_Units.hpp"
 
 #include "DarkARC/Special_Functions.hpp"
-#include "version.hpp"
+#include "DarkARC/version.hpp"
 
 namespace DarkARC
 {
@@ -136,14 +136,6 @@ void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const
 		for(unsigned int i = 0; i < C_nlj.size(); i++)
 			std::cout << n_lj[i] << "\t" << Z_lj[i] << "\t" << C_nlj[i] << std::endl;
 	}
-}
-
-// 2. Final electron state wavefunction
-double Radial_Wavefunction_Final(double k_final, unsigned l_final, double Z_eff, double r)
-{
-	double eta = -Z_eff / k_final / a0;
-	double rho = k_final * r;
-	return 4.0 * M_PI / rho * Coulomb_Wave(l_final, eta, rho);
 }
 
 }	// namespace DarkARC

@@ -39,11 +39,77 @@ The included folders are:
 - [arb](https://arblib.org/)
 - [boost](https://www.boost.org/)
 - [CMake](https://cmake.org/)
-- [codecov](https://codecov.io/).
-- [googletest](https://github.com/google/googletest)
 - [GSL](https://www.gnu.org/software/gsl/)
 - [libphysica](https://github.com/temken/libphysica)
 - [openmp](https://www.openmp.org/)
+
+
+<details><summary>Installation of boost</summary>
+<p>
+
+```
+>brew install boost
+```
+
+or alternatively with APT:
+
+```
+>sudo apt-get install libboost-all-dev
+```
+
+</p>
+</details>
+
+<details><summary>Installation of libconfig</summary>
+<p>
+On Macs, it can be on installed using [homebrew](https://brew.sh/)
+
+```
+>brew install libconfig
+```
+
+or using APT on Linux machines
+
+```
+>sudo apt-get update -y
+>sudo apt-get install -y libconfig-dev
+```
+
+Alternatively, it can be built from the source files via
+
+```
+>wget https://hyperrealm.github.io/libconfig/dist/libconfig-1.7.2.tar.gz
+>tar -xvzf libconfig-1.7.2.tar.gz
+>pushd libconfig-1.7.2
+>./configure
+>make
+>sudo make install
+>popd
+```
+
+</p>
+</details>
+
+## DOWNLOAD & INSTALLATION
+
+The DarkARC++ source code can be downloaded by cloning this git repository:
+
+```
+>git clone https://github.com/temken/DarkARCplusplus.git 
+>cd DarkARCplusplus
+```
+
+The code is compiled and the executable is created using CMake.
+
+```
+>cmake -E make_directory build
+>cd build
+>cmake -DCMAKE_BUILD_TYPE=Release -DCODE_COVERAGE=OFF ..
+>cmake --build . --config Release
+>cmake --install .
+```
+
+If everything worked well, there should be the executable *DarkARC++* in the */bin/* folder.
 
 ## CITING THIS CODE
 
