@@ -1,3 +1,7 @@
+# 0. Test executable
+add_test(NAME test_DarkARC_Executable COMMAND DarkARC++ .test.cfg
+	WORKING_DIRECTORY ${BIN_DIR})
+
 # 1. Unit tests: Atomic_Responses
 add_executable(test_Atomic_Responses
 	test_Atomic_Responses.cpp)
