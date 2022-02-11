@@ -5,6 +5,7 @@
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
+#include "libphysica/Integration.hpp"
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
@@ -86,8 +87,8 @@ void Radial_Integrator::Tabulate_Bessel_Function(int Lmax, int qi)
 double Radial_Integrator::Radial_Integral_Table(unsigned int integral_index, double k_final, double q, int l_final, int L)
 {
 	// Identify ki and qi
-	int ki = Locate_Closest_Location(k_grid, k_final);
-	int qi = Locate_Closest_Location(q_grid, q);
+	int ki = libphysica::Locate_Closest_Location(k_grid, k_final);
+	int qi = libphysica::Locate_Closest_Location(q_grid, q);
 
 	// Check if the tables have been computed for l_final and L
 	if(l_final > l_final_max[ki])
@@ -146,7 +147,7 @@ void Radial_Integrator::Use_Tabulated_Functions(unsigned int rpoints, const std:
 
 	r_points			 = rpoints;
 	r_max				 = 50.0 * Bohr_Radius;
-	r_values_and_weights = Compute_Gauss_Legendre_Roots_and_Weights(r_points, 0.0, r_max);
+	r_values_and_weights = libphysica::Compute_Gauss_Legendre_Roots_and_Weights(r_points, 0.0, r_max);
 
 	initial_radial_wavefunction_list			= std::vector<double>(r_points, 0.0);
 	initial_radial_wavefunction_derivative_list = std::vector<double>(r_points, 0.0);

@@ -2,9 +2,8 @@
 
 #include <complex>
 
-#include <boost/math/quadrature/gauss_kronrod.hpp>
-
 #include "libphysica/Natural_Units.hpp"
+#include "libphysica/Special_Functions.hpp"
 #include "libphysica/Statistics.hpp"
 
 #include "DarkARC/Special_Functions.hpp"
@@ -40,7 +39,7 @@ std::vector<std::complex<double>> Vectorial_Atomic_Formfactor(double q, Radial_I
 			double radial_integral_3 = radial_integrator.Radial_Integral(3, k_final, q, l_final, L);
 			for(int m_hat = m - 1; m_hat < m + 2; m_hat++)
 				for(int component = 0; component < 3; component++)
-					f_12[component] += 1.0i / mElectron * std::pow(1.0i, L) * (VSH_Y_Component(component, l, m, l_hat, m_hat) * radial_integral_2 + VSH_Psi_Component(component, l, m, l_hat, m_hat) * radial_integral_3) * std::pow(-1.0, m_final) * sqrt(4.0 * M_PI * (2.0 * L + 1.0)) * Gaunt_Coefficient(l_hat, l_final, L, m_hat, -m_final, 0);
+					f_12[component] += 1.0i / mElectron * std::pow(1.0i, L) * (libphysica::VSH_Y_Component(component, l, m, l_hat, m_hat) * radial_integral_2 + libphysica::VSH_Psi_Component(component, l, m, l_hat, m_hat) * radial_integral_3) * std::pow(-1.0, m_final) * sqrt(4.0 * M_PI * (2.0 * L + 1.0)) * Gaunt_Coefficient(l_hat, l_final, L, m_hat, -m_final, 0);
 		}
 	return f_12;
 }
