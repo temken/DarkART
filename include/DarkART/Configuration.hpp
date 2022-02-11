@@ -5,7 +5,7 @@
 
 #include "libphysica/Utilities.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 
 class Configuration : public libphysica::Configuration
@@ -29,6 +29,6 @@ class Configuration : public libphysica::Configuration
 	virtual void Print_Summary(int MPI_rank = 0) override;
 };
 
-}	// namespace DarkARC
+}	// namespace DarkART
 
 #endif

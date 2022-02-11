@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace DarkARC
+namespace DarkART
 {
 
 // 1. Initial state: Roothaan-Hartree-Fock Ground-State Atomic Wave Functions
@@ -34,6 +34,6 @@ class Initial_Electron_State
 	void Print_Summary(unsigned int mpi_rank = 0) const;
 };
 
-}	// namespace DarkARC
+}	// namespace DarkART
 
 #endif

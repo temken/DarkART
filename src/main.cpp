@@ -6,16 +6,16 @@
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "DarkARC/Atomic_Responses.hpp"
-#include "DarkARC/Configuration.hpp"
-#include "DarkARC/Radial_Integrator.hpp"
-#include "DarkARC/Response_Tabulation.hpp"
-#include "DarkARC/Special_Functions.hpp"
-#include "DarkARC/Wavefunctions_Final.hpp"
-#include "DarkARC/Wavefunctions_Initial.hpp"
-#include "DarkARC/version.hpp"
+#include "DarkART/Atomic_Responses.hpp"
+#include "DarkART/Configuration.hpp"
+#include "DarkART/Radial_Integrator.hpp"
+#include "DarkART/Response_Tabulation.hpp"
+#include "DarkART/Special_Functions.hpp"
+#include "DarkART/Wavefunctions_Final.hpp"
+#include "DarkART/Wavefunctions_Initial.hpp"
+#include "DarkART/version.hpp"
 
-using namespace DarkARC;
+using namespace DarkART;
 using namespace libphysica::natural_units;
 
 int main(int argc, char* argv[])
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 			  << LOGO << std::endl;
 	////////////////////////////////////////////////////////////////////////
 
-	DarkARC::Configuration cfg(argv[1]);
+	DarkART::Configuration cfg(argv[1]);
 	cfg.Print_Summary();
 
 	if(cfg.run_modus == "Tabulation")

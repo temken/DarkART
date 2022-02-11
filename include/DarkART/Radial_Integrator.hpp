@@ -1,10 +1,10 @@
 #ifndef __Radial_Integrator_hpp__
 #define __Radial_Integrator_hpp__
 
-#include "DarkARC/Wavefunctions_Final.hpp"
-#include "DarkARC/Wavefunctions_Initial.hpp"
+#include "DarkART/Wavefunctions_Final.hpp"
+#include "DarkART/Wavefunctions_Initial.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 
 class Radial_Integrator
@@ -46,6 +46,6 @@ class Radial_Integrator
 	void Set_New_States(const Initial_Electron_State& ini_state, const Final_Electron_State& fin_state);
 };
 
-}	// namespace DarkARC
+}	// namespace DarkART
 
 #endif

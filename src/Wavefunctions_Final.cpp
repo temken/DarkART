@@ -1,13 +1,13 @@
-#include "DarkARC/Wavefunctions_Final.hpp"
+#include "DarkART/Wavefunctions_Final.hpp"
 
 #include <cmath>
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "DarkARC/Special_Functions.hpp"
-#include "DarkARC/version.hpp"
+#include "DarkART/Special_Functions.hpp"
+#include "DarkART/version.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 using namespace libphysica::natural_units;
 
@@ -41,4 +41,4 @@ Final_Electron_State_Hydrogenic* Final_Electron_State_Hydrogenic::Clone() const
 	return new Final_Electron_State_Hydrogenic(*this);
 }
 
-}	// namespace DarkARC
+}	// namespace DarkART

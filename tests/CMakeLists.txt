@@ -1,5 +1,5 @@
 # 0. Test executable
-add_test(NAME test_DarkARC_Executable COMMAND DarkARC++ .test.cfg
+add_test(NAME test_DarkART_Executable COMMAND DarkART .test.cfg
 	WORKING_DIRECTORY ${BIN_DIR})
 
 # 1. Unit tests: Atomic_Responses
@@ -8,7 +8,7 @@ add_executable(test_Atomic_Responses
 
 target_link_libraries(test_Atomic_Responses 
 	PRIVATE
-		libdarkarc
+		libdarkart
 		gtest_main ) #contains the main function
 
 target_include_directories(test_Atomic_Responses
@@ -28,7 +28,7 @@ test_Configuration.cpp)
 
 target_link_libraries(test_Configuration 
 PRIVATE
-	libdarkarc
+	libdarkart
 	gtest_main ) #contains the main function
 
 target_include_directories(test_Configuration
@@ -49,7 +49,7 @@ add_executable(test_Radial_Integrator
 
 target_link_libraries(test_Radial_Integrator 
 	PRIVATE
-		libdarkarc
+		libdarkart
 		gtest_main ) #contains the main function
 
 target_include_directories(test_Radial_Integrator
@@ -69,7 +69,7 @@ add_executable(test_Response_Tabulation
 
 target_link_libraries(test_Response_Tabulation 
 	PRIVATE
-		libdarkarc
+		libdarkart
 		gtest_main ) #contains the main function
 
 target_include_directories(test_Response_Tabulation
@@ -89,7 +89,7 @@ test_Special_Functions.cpp)
 
 target_link_libraries(test_Special_Functions 
 PRIVATE
-	libdarkarc
+	libdarkart
 	gtest_main ) #contains the main function
 
 target_include_directories(test_Special_Functions
@@ -109,7 +109,7 @@ add_executable(test_Wavefunctions_Final
 
 target_link_libraries(test_Wavefunctions_Final 
 	PRIVATE
-		libdarkarc
+		libdarkart
 		gtest_main ) #contains the main function
 
 target_include_directories(test_Wavefunctions_Final
@@ -129,7 +129,7 @@ add_executable(test_Wavefunctions_Initial
 
 target_link_libraries(test_Wavefunctions_Initial 
 	PRIVATE
-		libdarkarc
+		libdarkart
 		gtest_main ) #contains the main function
 
 target_include_directories(test_Wavefunctions_Initial

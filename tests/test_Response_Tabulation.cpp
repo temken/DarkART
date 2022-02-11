@@ -1,14 +1,14 @@
 #include "gtest/gtest.h"
 
-#include "DarkARC/Response_Tabulation.hpp"
+#include "DarkART/Response_Tabulation.hpp"
 
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "DarkARC/Wavefunctions_Initial.hpp"
-#include "DarkARC/version.hpp"
+#include "DarkART/Wavefunctions_Initial.hpp"
+#include "DarkART/version.hpp"
 
-using namespace DarkARC;
+using namespace DarkART;
 using namespace libphysica::natural_units;
 
 TEST(TestTabulator, TestTabulator)

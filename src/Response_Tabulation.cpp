@@ -1,4 +1,4 @@
-#include "DarkARC/Response_Tabulation.hpp"
+#include "DarkART/Response_Tabulation.hpp"
 
 #include <omp.h>
 
@@ -6,10 +6,10 @@
 #include "libphysica/Special_Functions.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "DarkARC/Atomic_Responses.hpp"
-#include "DarkARC/version.hpp"
+#include "DarkART/Atomic_Responses.hpp"
+#include "DarkART/version.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 
 using namespace libphysica::natural_units;
@@ -128,4 +128,4 @@ void Response_Tabulator::Export_Tables(const std::string& path)
 			  << "\t→ " << file_table << std::endl;
 }
 
-}	// namespace DarkARC
+}	// namespace DarkART

@@ -4,9 +4,9 @@
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "DarkARC/Radial_Integrator.hpp"
+#include "DarkART/Radial_Integrator.hpp"
 
-using namespace DarkARC;
+using namespace DarkART;
 using namespace libphysica::natural_units;
 
 TEST(TestRadialIntegrator, TestIntegrator)

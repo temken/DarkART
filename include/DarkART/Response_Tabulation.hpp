@@ -5,7 +5,7 @@
 #include "Wavefunctions_Final.hpp"
 #include "Wavefunctions_Initial.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 
 class Response_Tabulator
@@ -32,6 +32,6 @@ class Response_Tabulator
 	void Export_Tables(const std::string& path);
 };
 
-}	// namespace DarkARC
+}	// namespace DarkART
 
 #endif

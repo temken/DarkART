@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
 
-#include "DarkARC/Wavefunctions_Initial.hpp"
+#include "DarkART/Wavefunctions_Initial.hpp"
 
 #include <cmath>
 
 #include "libphysica/Natural_Units.hpp"
 
-using namespace DarkARC;
+using namespace DarkART;
 using namespace libphysica::natural_units;
 
 double au = 27.211386245988 * eV;
