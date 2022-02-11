@@ -4,7 +4,7 @@
 
 # Dark Atomic Response Tabulator (DarkART)
 
-[![DOI](https://zenodo.org/badge/XXXXXXX.svg)](https://zenodo.org/badge/latestdoi/XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6046224.svg)](https://doi.org/10.5281/zenodo.6046224)
 [![PRR](https://img.shields.io/badge/Phys.Rev.Research-2(2020),033195-255773.svg)](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.033195)
 [![arXiv](https://img.shields.io/badge/arXiv-1912.08204-B31B1B.svg)](https://arxiv.org/abs/1912.08204)
 
@@ -115,7 +115,7 @@ If everything worked well, there should be the executable *DarkART* in the */bin
 
 If you decide to use this code, please cite the latest archived version,
 
-> [[DOI:10.5281/zenodo.XXXXX]](https://doi.org/10.5281/zenodo.XXXXX)
+> [[DOI:10.5281/zenodo.6046225]](https://doi.org/10.5281/zenodo.6046225)
 
 <details><summary>Bibtex entry</summary>
 <p>
@@ -127,8 +127,8 @@ If you decide to use this code, please cite the latest archived version,
   year         = {2021},
   publisher    = {Zenodo},
   version      = {v0.1.0},
-  doi          = {DOI:10.5281/zenodo.xxxxxx},
-  url          = {https://doi.org/10.5281/zenodo.xxxxxx},
+  doi          = {DOI:10.5281/zenodo.6046225},
+  url          = {https://doi.org/10.5281/zenodo.6046225},
   howpublished={The code can be found under \url{https://github.com/temken/darkart}.}
 }
 ```
