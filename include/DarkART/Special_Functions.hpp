@@ -1,7 +1,7 @@
-#ifndef __DarkARC_Special_Functions_hpp_
-#define __DarkARC_Special_Functions_hpp_
+#ifndef __DarkART_Special_Functions_hpp_
+#define __DarkART_Special_Functions_hpp_
 
-namespace DarkARC
+namespace DarkART
 {
 
 // 1. Gaunt coefficients
@@ -13,6 +13,6 @@ extern double Spherical_Bessel_jL(int L, double x);
 // 3. Coulomb wave
 extern double Coulomb_Wave(int L, double eta, double rho);
 
-}	// namespace DarkARC
+}	// namespace DarkART
 
 #endif

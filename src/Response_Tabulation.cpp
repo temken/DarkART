@@ -1,4 +1,4 @@
-#include "DarkARC/Response_Tabulation.hpp"
+#include "DarkART/Response_Tabulation.hpp"
 
 #include <omp.h>
 
@@ -6,10 +6,10 @@
 #include "libphysica/Special_Functions.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "DarkARC/Atomic_Responses.hpp"
-#include "DarkARC/version.hpp"
+#include "DarkART/Atomic_Responses.hpp"
+#include "DarkART/version.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 
 using namespace libphysica::natural_units;
@@ -68,9 +68,9 @@ void Response_Tabulator::Tabulate(int response, Radial_Integrator& radial_integr
 		counter++;
 
 		if(counter % 10 == 0)
-			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, omp_get_thread_num(), 49);
+			libphysica::Print_Progress_Bar(1.0 * counter / counter_max, omp_get_thread_num(), 67);
 	}
-	libphysica::Print_Progress_Bar(1.0, omp_get_thread_num(), 49, omp_get_wtime() - start_time);
+	libphysica::Print_Progress_Bar(1.0, omp_get_thread_num(), 50, omp_get_wtime() - start_time);
 	std::cout << std::endl
 			  << std::endl;
 }
@@ -128,4 +128,4 @@ void Response_Tabulator::Export_Tables(const std::string& path)
 			  << "\t→ " << file_table << std::endl;
 }
 
-}	// namespace DarkARC
+}	// namespace DarkART

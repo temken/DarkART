@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace DarkARC
+namespace DarkART
 {
 // 1. Base class for final state wave function
 class Final_Electron_State
@@ -33,6 +33,6 @@ class Final_Electron_State_Hydrogenic : public Final_Electron_State
 	virtual Final_Electron_State_Hydrogenic* Clone() const override;
 };
 
-}	// namespace DarkARC
+}	// namespace DarkART
 
 #endif

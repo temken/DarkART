@@ -1,4 +1,4 @@
-#include "DarkARC/Atomic_Responses.hpp"
+#include "DarkART/Atomic_Responses.hpp"
 
 #include <complex>
 
@@ -6,10 +6,10 @@
 #include "libphysica/Special_Functions.hpp"
 #include "libphysica/Statistics.hpp"
 
-#include "DarkARC/Special_Functions.hpp"
-#include "DarkARC/Wavefunctions_Final.hpp"
+#include "DarkART/Special_Functions.hpp"
+#include "DarkART/Wavefunctions_Final.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 using namespace std::complex_literals;
 using namespace libphysica::natural_units;
@@ -140,4 +140,4 @@ double Atomic_Response_Function(unsigned int response, double k_final, double q,
 	return Atomic_Response_Function(response, k_final, q, bound_electron, final_state, l_convergence);
 }
 
-}	// namespace DarkARC
+}	// namespace DarkART

@@ -2,10 +2,10 @@
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "DarkARC/Configuration.hpp"
-#include "DarkARC/version.hpp"
+#include "DarkART/Configuration.hpp"
+#include "DarkART/version.hpp"
 
-using namespace DarkARC;
+using namespace DarkART;
 using namespace libphysica::natural_units;
 
 TEST(TestConfiguration, TestConfiguration)

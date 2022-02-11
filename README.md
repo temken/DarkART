@@ -1,14 +1,14 @@
-[![Build Status](https://github.com/temken/DarkARCplusplus/workflows/Build%20Status/badge.svg)](https://github.com/temken/DarkARCplusplus/actions)
-[![codecov](https://codecov.io/gh/temken/DarkARCplusplus/branch/master/graph/badge.svg)](https://codecov.io/gh/temken/DarkARCplusplus)
+[![Build Status](https://github.com/temken/DarkART/workflows/Build%20Status/badge.svg)](https://github.com/temken/DarkART/actions)
+[![codecov](https://codecov.io/gh/temken/DarkART/branch/main/graph/badge.svg)](https://codecov.io/gh/temken/DarkART)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-# Dark Matter-induced Atomic Response Code in C++ (DarkARC++)
+# Dark Atomic Response Tabulator (DarkART)
 
 [![DOI](https://zenodo.org/badge/XXXXXXX.svg)](https://zenodo.org/badge/latestdoi/XXXXXXX)
 [![PRR](https://img.shields.io/badge/Phys.Rev.Research-2(2020),033195-255773.svg)](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.033195)
 [![arXiv](https://img.shields.io/badge/arXiv-1912.08204-B31B1B.svg)](https://arxiv.org/abs/1912.08204)
 
-DarkARC++ is a tool for the computation and tabulation of atomic response functions for direct sub-GeV dark matter (DM) searches.
+DarkART is a C++ tool for the computation and tabulation of atomic response functions for direct sub-GeV dark matter (DM) searches.
 It replaces the previous python tool [DarkARC](https://github.com/temken/DarkARC) for better performance and improved software design.
 
 <img src="https://user-images.githubusercontent.com/29034913/70995423-d0683c80-20d0-11ea-85bd-fdcb91d972eb.png" width="800">
@@ -26,9 +26,9 @@ The included folders are:
 - *bin/*: This folder contains the executable after successful installation together with the configuration files.
 - *data/*: Contains files including the RHF coefficients of the initial electron wavefunctions.
 - *external/*: This folder will only be created and filled during the build with CMake and will contain the [libphysica](https://github.com/temken/libphysica) library.
-- *include/*: All header files of DarkARC++ can be found here.
-- *results/*: Each run of DarkARC++ generates result files in a dedicated sub-folder named after the run's ID, which is specified in the configuration file.
-- *src/*: Here you find the source code of DarkARC++.
+- *include/*: All header files of DarkART can be found here.
+- *results/*: Each run of DarkART generates result files in a dedicated sub-folder named after the run's ID, which is specified in the configuration file.
+- *src/*: Here you find the source code of DarkART.
 - *tests/*: All code and executable files of the unit tests are stored here.
 
 </p>
@@ -92,11 +92,11 @@ Alternatively, it can be built from the source files via
 
 ## DOWNLOAD & INSTALLATION
 
-The DarkARC++ source code can be downloaded by cloning this git repository:
+The DarkART source code can be downloaded by cloning this git repository:
 
 ```
->git clone https://github.com/temken/DarkARCplusplus.git 
->cd DarkARCplusplus
+>git clone https://github.com/temken/DarkART.git 
+>cd DarkART
 ```
 
 The code is compiled and the executable is created using CMake.
@@ -109,7 +109,7 @@ The code is compiled and the executable is created using CMake.
 >cmake --install .
 ```
 
-If everything worked well, there should be the executable *DarkARC++* in the */bin/* folder.
+If everything worked well, there should be the executable *DarkART* in the */bin/* folder.
 
 ## CITING THIS CODE
 
@@ -121,15 +121,15 @@ If you decide to use this code, please cite the latest archived version,
 <p>
 
 ```
-@software{DarkARCpp,
+@software{DarkART,
   author = {Emken, Timon},
-  title = {{Dark Matter-induced Atomic Response Code in C++ (DarkARC++)[Code, v0.1.0]}},
+  title = {{Dark Atomic Response Tabulator (DarkART)[Code, v0.1.0]}},
   year         = {2021},
   publisher    = {Zenodo},
   version      = {v0.1.0},
   doi          = {DOI:10.5281/zenodo.xxxxxx},
   url          = {https://doi.org/10.5281/zenodo.xxxxxx},
-  howpublished={The code can be found under \url{https://github.com/temken/darkarcplusplus}.}
+  howpublished={The code can be found under \url{https://github.com/temken/darkart}.}
 }
 ```
 
@@ -144,13 +144,13 @@ as well as the original publications,
 
 ## VERSIONS
 
-- xx.xx.2021: Release of version 0.1.0
+- 11.02.2021: Release of version 0.1.0
 
 ## AUTHORS & CONTACT
 
 The author of this tool is Timon Emken.
 
-For questions, bug reports or other suggestions please contact [timon.emken@fysik.su.se](mailto:timon.emken@fysik.su.se) or, even better, open an [issue](https://github.com/temken/DarkARCplusplus/issues).
+For questions, bug reports or other suggestions please contact [timon.emken@fysik.su.se](mailto:timon.emken@fysik.su.se) or, even better, open an [issue](https://github.com/temken/DarkART/issues).
 
 ## LICENSE
 

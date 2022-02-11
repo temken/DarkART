@@ -1,4 +1,4 @@
-#include "DarkARC/Configuration.hpp"
+#include "DarkART/Configuration.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -7,9 +7,9 @@
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "DarkARC/version.hpp"
+#include "DarkART/version.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 
 using namespace libconfig;
@@ -149,7 +149,7 @@ void Configuration::Print_Summary(int MPI_rank)
 	if(MPI_rank == 0)
 	{
 		std::cout << SEPARATOR << std::endl
-				  << "DarkARC++ configuration summary" << std::endl
+				  << "DarkART configuration summary" << std::endl
 				  << "ID:\t" << ID << std::endl
 				  << "\nElement:\t\t" << element << std::endl
 				  << "Atomic shells:\t\t";
@@ -176,4 +176,4 @@ void Configuration::Print_Summary(int MPI_rank)
 	}
 }
 
-}	// namespace DarkARC
+}	// namespace DarkART

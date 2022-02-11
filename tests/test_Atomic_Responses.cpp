@@ -1,15 +1,15 @@
 #include "gtest/gtest.h"
 
-#include "DarkARC/Atomic_Responses.hpp"
+#include "DarkART/Atomic_Responses.hpp"
 
 #include <cmath>
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "DarkARC/Wavefunctions_Final.hpp"
-#include "DarkARC/Wavefunctions_Initial.hpp"
+#include "DarkART/Wavefunctions_Final.hpp"
+#include "DarkART/Wavefunctions_Initial.hpp"
 
-using namespace DarkARC;
+using namespace DarkART;
 using namespace libphysica::natural_units;
 
 TEST(TestAtomicResponse, TestDipoleApproximation)

@@ -1,4 +1,4 @@
-#include "DarkARC/Special_Functions.hpp"
+#include "DarkART/Special_Functions.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -12,7 +12,7 @@
 
 #include "arb_hypgeom.h"
 
-namespace DarkARC
+namespace DarkART
 {
 // using namespace std::complex_literals;
 
@@ -113,4 +113,4 @@ double Coulomb_Wave(int L, double eta, double rho)
 	return cw;
 }
 
-}	// namespace DarkARC
+}	// namespace DarkART
