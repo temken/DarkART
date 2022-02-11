@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
 
-#include "DarkARC/Wavefunctions_Final.hpp"
+#include "DarkART/Wavefunctions_Final.hpp"
 
 #include <cmath>
 
 #include "libphysica/Natural_Units.hpp"
 
-using namespace DarkARC;
+using namespace DarkART;
 using namespace libphysica::natural_units;
 
 TEST(TestWavefunctions, TestFinalElectronState)

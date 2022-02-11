@@ -1,4 +1,4 @@
-#include "DarkARC/Wavefunctions_Initial.hpp"
+#include "DarkART/Wavefunctions_Initial.hpp"
 
 #include <cmath>
 #include <complex>
@@ -9,10 +9,10 @@
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "DarkARC/Special_Functions.hpp"
-#include "DarkARC/version.hpp"
+#include "DarkART/Special_Functions.hpp"
+#include "DarkART/version.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 using namespace std::complex_literals;
 using namespace libphysica::natural_units;
@@ -138,4 +138,4 @@ void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const
 	}
 }
 
-}	// namespace DarkARC
+}	// namespace DarkART

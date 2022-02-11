@@ -1,4 +1,4 @@
-#include "DarkARC/Radial_Integrator.hpp"
+#include "DarkART/Radial_Integrator.hpp"
 
 #include <cmath>
 #include <functional>
@@ -9,9 +9,9 @@
 #include "libphysica/Natural_Units.hpp"
 #include "libphysica/Utilities.hpp"
 
-#include "DarkARC/Special_Functions.hpp"
+#include "DarkART/Special_Functions.hpp"
 
-namespace DarkARC
+namespace DarkART
 {
 
 using namespace libphysica::natural_units;
@@ -175,4 +175,4 @@ void Radial_Integrator::Set_New_States(const Initial_Electron_State& new_initial
 	}
 }
 
-}	// namespace DarkARC
+}	// namespace DarkART

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(DarkARC++ VERSION "0.1.0")
+project(DarkART VERSION "0.1.0")
 
 # Use C++-14
 set(CMAKE_CXX_STANDARD 14)
@@ -84,8 +84,8 @@ execute_process( # Git commit hash
 )
 
 configure_file(
-  ${INCLUDE_DIR}/DarkARC/version.hpp.in
-  ${GENERATED_DIR}/DarkARC/version.hpp
+  ${INCLUDE_DIR}/DarkART/version.hpp.in
+  ${GENERATED_DIR}/DarkART/version.hpp
 )
 
 # Source and include directories

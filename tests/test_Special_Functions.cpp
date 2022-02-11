@@ -3,11 +3,11 @@
 #include <cmath>
 #include <complex>
 
-#include "DarkARC/Special_Functions.hpp"
+#include "DarkART/Special_Functions.hpp"
 
 #include "libphysica/Natural_Units.hpp"
 
-using namespace DarkARC;
+using namespace DarkART;
 using namespace libphysica::natural_units;
 using namespace std::complex_literals;
 
