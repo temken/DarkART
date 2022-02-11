@@ -3,7 +3,7 @@
 #include "libphysica/Natural_Units.hpp"
 
 #include "DarkARC/Configuration.hpp"
-#include "version.hpp"
+#include "DarkARC/version.hpp"
 
 using namespace DarkARC;
 using namespace libphysica::natural_units;

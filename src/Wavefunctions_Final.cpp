@@ -1,9 +1,11 @@
 #include "DarkARC/Wavefunctions_Final.hpp"
 
+#include <cmath>
+
 #include "libphysica/Natural_Units.hpp"
 
 #include "DarkARC/Special_Functions.hpp"
-#include "version.hpp"
+#include "DarkARC/version.hpp"
 
 namespace DarkARC
 {

@@ -7,7 +7,7 @@
 
 #include "libphysica/Natural_Units.hpp"
 
-#include "version.hpp"
+#include "DarkARC/version.hpp"
 
 namespace DarkARC
 {

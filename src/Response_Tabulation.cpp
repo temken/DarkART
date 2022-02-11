@@ -7,7 +7,7 @@
 #include "libphysica/Utilities.hpp"
 
 #include "DarkARC/Atomic_Responses.hpp"
-#include "version.hpp"
+#include "DarkARC/version.hpp"
 
 namespace DarkARC
 {
