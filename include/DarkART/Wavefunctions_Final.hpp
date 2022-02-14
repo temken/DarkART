@@ -38,12 +38,13 @@ class Final_Electron_State_Hydrogenic : public Final_Electron_State
 };
 
 // 3. Positive energy continuum solution of Schroedinger equation for a given potential Z_eff(r)
+
 class Final_Electron_State_Schroedinger : Final_Electron_State
 {
   protected:
 	Initial_Electron_State initial_state;
 	double r_min, r_max;
-	libphysica::Interpolation Z_effective_interpolation;
+	libphysica::Interpolation Z_effective_interpolation, radial_wavefunction;
 
   public:
 	Final_Electron_State_Schroedinger(Initial_Electron_State& ini_state, double Z_eff = 1.0);
@@ -52,7 +53,7 @@ class Final_Electron_State_Schroedinger : Final_Electron_State
 
 	void Determine_Z_effective();
 
-	void Solve_Schroedinger_Equation();
+	void Solve_Schroedinger_Equation(double k_final, unsigned int l_final);
 
 	virtual double Radial_Wavefunction(double r, double k_final, unsigned int l_final) override;
 

@@ -1,11 +1,12 @@
 #include "DarkART/Wavefunctions_Initial.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <complex>
 #include <fstream>
 #include <stdlib.h>
 
-#include <boost/math/quadrature/gauss_kronrod.hpp>
+#include <boost/math/special_functions/factorials.hpp>
 
 #include "libphysica/Integration.hpp"
 #include "libphysica/Natural_Units.hpp"
@@ -18,7 +19,6 @@ namespace DarkART
 {
 using namespace std::complex_literals;
 using namespace libphysica::natural_units;
-using namespace boost::math::quadrature;
 using boost::math::factorial;
 
 double a0 = Bohr_Radius;
@@ -64,14 +64,24 @@ void Initial_Electron_State::Check_Normalization()
 	}
 }
 
+std::vector<std::string> element_names = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og"};
 Initial_Electron_State::Initial_Electron_State()
 : element_name("none"), n(0), l(0), binding_energy(0.0), Z_eff(0.0)
 {
 }
 
+Initial_Electron_State::Initial_Electron_State(int z, int N, int L)
+: element_name(element_names[z - 1]), Z(z), n(N), l(L)
+{
+	Import_RHF_Coefficients();
+	Check_Normalization();
+}
+
 Initial_Electron_State::Initial_Electron_State(const std::string& element, int N, int L)
 : element_name(element), n(N), l(L)
 {
+	auto const it = std::find(element_names.begin(), element_names.end(), element);
+	Z			  = std::distance(element_names.begin(), it) + 1;
 	Import_RHF_Coefficients();
 	Check_Normalization();
 }
@@ -79,7 +89,9 @@ Initial_Electron_State::Initial_Electron_State(const std::string& element, int N
 Initial_Electron_State::Initial_Electron_State(const std::string& element, std::string shell_name)
 : element_name(element)
 {
-	n = shell_name[0] - '0';
+	auto const it = std::find(element_names.begin(), element_names.end(), element);
+	Z			  = std::distance(element_names.begin(), it) + 1;
+	n			  = shell_name[0] - '0';
 	for(l = 0; l < l_orbital_names.size(); l++)
 		if(shell_name[1] == l_orbital_names[l][0])
 			break;
@@ -112,12 +124,17 @@ double Initial_Electron_State::Radial_Wavefunction_Derivative(double r) const
 
 double Initial_Electron_State::Normalization() const
 {
+<<<<<<< HEAD
 	std::function<double(double)> integrand = [this](double r) {
 		double R = Radial_Wavefunction(r);
 		return r * r * R * R;
 	};
 	// Integrate with Gauss Legendre
 	return libphysica::Integrate_Gauss_Legendre(integrand, 0.0, 50.0 * Bohr_Radius, 1000);
+=======
+	double r_max = 50.0 * Bohr_Radius;
+	return Radial_Integral(r_max);
+>>>>>>> c55d261 (Small extension to initial wavefunction class:)
 }
 
 double Initial_Electron_State::Radial_Integral(double r) const
@@ -126,7 +143,7 @@ double Initial_Electron_State::Radial_Integral(double r) const
 		double R = Radial_Wavefunction(rprime);
 		return rprime * rprime * R * R;
 	};
-	return gauss_kronrod<double, 31>::integrate(integrand, 0.0, r, 5, 1e-9);
+	return libphysica::Integrate_Gauss_Legendre(integrand, 0.0, r, 1000);
 }
 
 void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const

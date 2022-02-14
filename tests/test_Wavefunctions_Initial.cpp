@@ -11,18 +11,56 @@ using namespace libphysica::natural_units;
 
 double au = 27.211386245988 * eV;
 
-TEST(TestWavefunctions, TestConstructor)
+TEST(TestWavefunctions, TestConstructor1)
+{
+	// ARRANGE
+	int Z = 54;
+	int n = 5;
+	int l = 0;
+	// ACT
+	Initial_Electron_State Xe5p(Z, n, l);
+	// ASSERT
+	EXPECT_EQ(Xe5p.Z, Z);
+	EXPECT_EQ(Xe5p.Orbital_Name(), "Xe_5s");
+	EXPECT_EQ(Xe5p.n, n);
+	EXPECT_EQ(Xe5p.l, l);
+	EXPECT_FLOAT_EQ(Xe5p.binding_energy, -25.698624 * eV);
+	EXPECT_FLOAT_EQ(Xe5p.Z_eff, sqrt(-2.0 * Xe5p.binding_energy / au) * n);
+}
+
+TEST(TestWavefunctions, TestConstructor2)
 {
 	// ARRANGE
 	std::string element = "Xe";
+	int Z				= 54;
 	int n				= 5;
 	int l				= 0;
 	// ACT
 	Initial_Electron_State Xe5p(element, n, l);
 	// ASSERT
+	EXPECT_EQ(Xe5p.Z, Z);
 	EXPECT_EQ(Xe5p.Orbital_Name(), "Xe_5s");
-	EXPECT_EQ(Xe5p.n, 5);
-	EXPECT_EQ(Xe5p.l, 0);
+	EXPECT_EQ(Xe5p.n, n);
+	EXPECT_EQ(Xe5p.l, l);
+	EXPECT_FLOAT_EQ(Xe5p.binding_energy, -25.698624 * eV);
+	EXPECT_FLOAT_EQ(Xe5p.Z_eff, sqrt(-2.0 * Xe5p.binding_energy / au) * n);
+}
+
+TEST(TestWavefunctions, TestConstructor3)
+{
+	// ARRANGE
+	std::string element = "Xe";
+	std::string shell	= "5s";
+	int Z				= 54;
+	int n				= 5;
+	int l				= 0;
+	// ACT
+	Initial_Electron_State Xe5p(element, shell);
+	// ASSERT
+	EXPECT_EQ(Xe5p.Z, Z);
+	EXPECT_EQ(Xe5p.Orbital_Name(), "Xe_5s");
+	EXPECT_EQ(Xe5p.n, n);
+	EXPECT_EQ(Xe5p.l, l);
 	EXPECT_FLOAT_EQ(Xe5p.binding_energy, -25.698624 * eV);
 	EXPECT_FLOAT_EQ(Xe5p.Z_eff, sqrt(-2.0 * Xe5p.binding_energy / au) * n);
 }

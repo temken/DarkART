@@ -22,9 +22,11 @@ class Initial_Electron_State
 	void Check_Normalization();
 
   public:
-	int n, l;
+	int Z, n, l;
 	double binding_energy, Z_eff;
+
 	Initial_Electron_State();
+	Initial_Electron_State(int z, int N, int L);
 	Initial_Electron_State(const std::string& element, int N, int L);
 	Initial_Electron_State(const std::string& element, std::string shell_name);
 
