@@ -46,6 +46,8 @@ class Final_Electron_State_Schroedinger : Final_Electron_State
 	double r_min, r_max;
 	libphysica::Interpolation Z_effective_interpolation, radial_wavefunction;
 
+	std::vector<Initial_Electron_State> Import_All_States(const std::string& element);
+
   public:
 	Final_Electron_State_Schroedinger(Initial_Electron_State& ini_state, double Z_eff = 1.0);
 

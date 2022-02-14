@@ -44,20 +44,65 @@ Final_Electron_State_Hydrogenic* Final_Electron_State_Hydrogenic::Clone() const
 // 3. Positive energy continuum solution of Schroedinger equation for a given potential Z_eff(r)
 
 Final_Electron_State_Schroedinger::Final_Electron_State_Schroedinger(Initial_Electron_State& ini_state, double Z_eff)
-: initial_state(ini_state), r_min(0.0), r_max(51.0 * Bohr_Radius)
+: initial_state(ini_state), r_min(1e-3 * Bohr_Radius), r_max(51.0 * Bohr_Radius)
 {
-	std::vector<double> r_list = libphysica::Linear_Space(r_min, r_max, 5);
+	std::vector<double> r_list = libphysica::Log_Space(r_min, r_max, 5);
 	std::vector<double> Z_eff_list(r_list.size(), Z_eff);
 	Z_effective_interpolation = libphysica::Interpolation(r_list, Z_eff_list);
 }
 
 double Final_Electron_State_Schroedinger::Z_effective(double r)
 {
-	return Z_effective_interpolation(r);
+	if(r <= r_min)
+		return initial_state.Z;
+	else if(r >= r_max)
+		return 1.0;
+	else
+		return Z_effective_interpolation(r);
+}
+
+std::vector<Initial_Electron_State> Final_Electron_State_Schroedinger::Import_All_States(const std::string& element)
+{
+	// Import all wave functions of the element.
+	std::vector<Initial_Electron_State> all_states = {};
+	std::vector<std::string> l_orbital_names	   = {"s", "p", "d", "f", "g"};
+	for(int n = 1; n < 7; n++)
+	{
+		bool shell_data_found = false;
+		for(int l = 0; l < n; l++)
+		{
+			std::string path = TOP_LEVEL_DIR "data/" + initial_state.element_name + "_" + std::to_string(n) + l_orbital_names[l] + ".txt";
+			if(libphysica::File_Exists(path))
+			{
+				shell_data_found = true;
+				all_states.push_back(Initial_Electron_State(initial_state.element_name, n, l));
+				std::cout << all_states.back().Orbital_Name() << std::endl;
+			}
+			else
+				break;
+		}
+		if(!shell_data_found)
+			break;
+	}
+	return all_states;
 }
 
 void Final_Electron_State_Schroedinger::Determine_Z_effective()
 {
+	// 1. Tabulate Z_effective
+	auto all_states				   = Import_All_States(initial_state.element_name);
+	auto r_list					   = libphysica::Log_Space(r_min, r_max, 50);
+	std::vector<double> Z_eff_list = {};
+	for(auto& r : r_list)
+	{
+		double Z_eff = initial_state.Z;
+		for(auto& state : all_states)
+			Z_eff -= ((state.n == initial_state.n && state.l == initial_state.l) ? (4.0 * state.l + 1.0) : 2.0 * (2.0 * state.l + 1)) * state.Radial_Integral(r);
+		std::cout << r / Bohr_Radius << "\t" << Z_eff << std::endl;
+		Z_eff_list.push_back(Z_eff);
+	}
+	// 2. Interpolate Z_effective
+	Z_effective_interpolation = libphysica::Interpolation(r_list, Z_eff_list);
 }
 
 void Final_Electron_State_Schroedinger::Solve_Schroedinger_Equation(double k_final, unsigned int l_final)
