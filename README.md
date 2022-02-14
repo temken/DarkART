@@ -43,42 +43,40 @@ The included folders are:
 - [boost](https://www.boost.org/)
 - [CMake](https://cmake.org/)
 - [GSL](https://www.gnu.org/software/gsl/)
+- [libconfig](https://github.com/temken/libphysica)
 - [libphysica](https://github.com/temken/libphysica)
 - [openmp](https://www.openmp.org/)
 
+The *libphysica* library will be downloaded and built automatically using CMake.
+The other libraries need to be installed beforehand.
 
-<details><summary>Installation of boost</summary>
+<details><summary>Installation of dependencies</summary>
 <p>
 
+On macOS, you can install the dependencies using [homebrew](https://brew.sh/),
+
 ```
+>brew install arb
 >brew install boost
-```
-
-or alternatively with APT:
-
-```
->sudo apt-get install libboost-all-dev
-```
-
-</p>
-</details>
-
-<details><summary>Installation of libconfig</summary>
-<p>
-On Macs, it can be on installed using [homebrew](https://brew.sh/)
-
-```
+>brew install cmake
+>brew install gsl
 >brew install libconfig
+>brew install libomp
 ```
 
-or using APT on Linux machines
+or on a Linux machine with APT:
 
 ```
->sudo apt-get update -y
+>sudo apt-get update
+>sudo apt-get install arb
+>sudo apt-get install libboost-all-dev
+>sudo apt-get install cmake
+>sudo apt-get install libgsl-dev
 >sudo apt-get install -y libconfig-dev
+>sudo apt-get install libomp-dev
 ```
 
-Alternatively, it can be built from the source files via
+Alternatively, *libconfig* can be also built from the source files via
 
 ```
 >wget https://hyperrealm.github.io/libconfig/dist/libconfig-1.7.2.tar.gz
