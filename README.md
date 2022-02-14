@@ -8,15 +8,18 @@
 [![PRR](https://img.shields.io/badge/Phys.Rev.Research-2(2020),033195-255773.svg)](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.033195)
 [![arXiv](https://img.shields.io/badge/arXiv-1912.08204-B31B1B.svg)](https://arxiv.org/abs/1912.08204)
 
-DarkART is a C++ tool for the computation and tabulation of atomic response functions for direct sub-GeV dark matter (DM) searches.
-It replaces the previous python tool [DarkARC](https://github.com/temken/DarkARC) for better performance and improved software design.
 
-<img src="https://user-images.githubusercontent.com/29034913/70995423-d0683c80-20d0-11ea-85bd-fdcb91d972eb.png" width="800">
+<img src="https://github.com/temken/DarkART/blob/dev/logo.png?raw=true" width="400">
+
+DarkART is a C++ tool for the computation and tabulation of atomic response functions for direct sub-GeV dark matter (DM) searches.
+It supersedes the previous python tool [DarkARC](https://github.com/temken/DarkARC) for better performance and improved software design.
 
 ## GENERAL NOTES
 
-- This code computes the four atomic response functions introduced in the paper [[arXiv:1912.08204]](https://arxiv.org/abs/1912.08204).
+- This code computes the four atomic response functions introduced in the paper [[arXiv:1912.08204]](https://arxiv.org/abs/1912.08204). The first response function is also known as the ionization form factor.
 - The computations are performed in parallel using [*openmp*](https://www.openmp.org/) library.
+
+<img src="https://user-images.githubusercontent.com/29034913/70995423-d0683c80-20d0-11ea-85bd-fdcb91d972eb.png" width="600">
 
 <details><summary>Repository content</summary>
 <p>
