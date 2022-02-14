@@ -8,15 +8,18 @@
 [![PRR](https://img.shields.io/badge/Phys.Rev.Research-2(2020),033195-255773.svg)](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.033195)
 [![arXiv](https://img.shields.io/badge/arXiv-1912.08204-B31B1B.svg)](https://arxiv.org/abs/1912.08204)
 
-DarkART is a C++ tool for the computation and tabulation of atomic response functions for direct sub-GeV dark matter (DM) searches.
-It replaces the previous python tool [DarkARC](https://github.com/temken/DarkARC) for better performance and improved software design.
 
-<img src="https://user-images.githubusercontent.com/29034913/70995423-d0683c80-20d0-11ea-85bd-fdcb91d972eb.png" width="800">
+<img src="https://github.com/temken/DarkART/blob/dev/logo.png?raw=true" width="400">
+
+DarkART is a C++ tool for the computation and tabulation of atomic response functions for direct sub-GeV dark matter (DM) searches.
+It supersedes the previous python tool [DarkARC](https://github.com/temken/DarkARC) for better performance and improved software design.
 
 ## GENERAL NOTES
 
-- This code computes the four atomic response functions introduced in the paper [[arXiv:1912.08204]](https://arxiv.org/abs/1912.08204).
+- This code computes the four atomic response functions introduced in the paper [[arXiv:1912.08204]](https://arxiv.org/abs/1912.08204). The first response function is also known as the ionization form factor.
 - The computations are performed in parallel using [*openmp*](https://www.openmp.org/) library.
+
+<img src="https://user-images.githubusercontent.com/29034913/70995423-d0683c80-20d0-11ea-85bd-fdcb91d972eb.png" width="600">
 
 <details><summary>Repository content</summary>
 <p>
@@ -40,42 +43,40 @@ The included folders are:
 - [boost](https://www.boost.org/)
 - [CMake](https://cmake.org/)
 - [GSL](https://www.gnu.org/software/gsl/)
+- [libconfig](https://github.com/temken/libphysica)
 - [libphysica](https://github.com/temken/libphysica)
 - [openmp](https://www.openmp.org/)
 
+The *libphysica* library will be downloaded and built automatically using CMake.
+The other libraries need to be installed beforehand.
 
-<details><summary>Installation of boost</summary>
+<details><summary>Installation of dependencies</summary>
 <p>
 
+On macOS, you can install the dependencies using [homebrew](https://brew.sh/),
+
 ```
+>brew install arb
 >brew install boost
-```
-
-or alternatively with APT:
-
-```
->sudo apt-get install libboost-all-dev
-```
-
-</p>
-</details>
-
-<details><summary>Installation of libconfig</summary>
-<p>
-On Macs, it can be on installed using [homebrew](https://brew.sh/)
-
-```
+>brew install cmake
+>brew install gsl
 >brew install libconfig
+>brew install libomp
 ```
 
-or using APT on Linux machines
+or on a Linux machine with APT:
 
 ```
->sudo apt-get update -y
+>sudo apt-get update
+>sudo apt-get install arb
+>sudo apt-get install libboost-all-dev
+>sudo apt-get install cmake
+>sudo apt-get install libgsl-dev
 >sudo apt-get install -y libconfig-dev
+>sudo apt-get install libomp-dev
 ```
 
-Alternatively, it can be built from the source files via
+Alternatively, *libconfig* can be also built from the source files via
 
 ```
 >wget https://hyperrealm.github.io/libconfig/dist/libconfig-1.7.2.tar.gz
