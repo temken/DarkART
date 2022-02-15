@@ -122,6 +122,15 @@ double Initial_Electron_State::Radial_Wavefunction_Derivative(double r) const
 	return std::pow(a0, -1.5) * dR_dr;
 }
 
+double Initial_Electron_State::Radial_Wavefunction_Derivative_2(double r) const
+{
+	double dR2_dr2 = 0.0;
+	for(unsigned int j = 0; j < C_nlj.size(); j++)
+		dR2_dr2 += C_nlj[j] * std::pow(2.0 * Z_lj[j], n_lj[j] + 0.5) / sqrt(factorial<double>(2.0 * n_lj[j])) * std::exp(-Z_lj[j] * r / a0) * (std::pow(Z_lj[j] / a0, 2.0) * std::pow(r / a0, n_lj[j] - 1.0) - 2.0 * Z_lj[j] * (n_lj[j] - 1.0) / a0 / a0 * std::pow(r / a0, n_lj[j] - 2.0) + (n_lj[j] - 1.0) * (n_lj[j] - 2.0) / a0 / a0 * std::pow(r / a0, n_lj[j] - 3.0));
+
+	return std::pow(a0, -1.5) * dR2_dr2;
+}
+
 double Initial_Electron_State::Normalization() const
 {
 <<<<<<< HEAD

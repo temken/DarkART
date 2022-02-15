@@ -54,6 +54,7 @@ class Final_Electron_State_Schroedinger : Final_Electron_State
 	double Z_effective(double r);
 
 	void Determine_Z_effective();
+	void Determine_Z_effective_2();
 
 	void Solve_Schroedinger_Equation(double k_final, unsigned int l_final);
 

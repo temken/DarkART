@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "libphysica/Natural_Units.hpp"
+#include "libphysica/Special_Functions.hpp"
 #include "libphysica/Utilities.hpp"
 
 #include "DarkART/Special_Functions.hpp"
@@ -44,7 +45,7 @@ Final_Electron_State_Hydrogenic* Final_Electron_State_Hydrogenic::Clone() const
 // 3. Positive energy continuum solution of Schroedinger equation for a given potential Z_eff(r)
 
 Final_Electron_State_Schroedinger::Final_Electron_State_Schroedinger(Initial_Electron_State& ini_state, double Z_eff)
-: initial_state(ini_state), r_min(1e-3 * Bohr_Radius), r_max(51.0 * Bohr_Radius)
+: initial_state(ini_state), r_min(1e-4 * Bohr_Radius), r_max(51.0 * Bohr_Radius)
 {
 	std::vector<double> r_list = libphysica::Log_Space(r_min, r_max, 5);
 	std::vector<double> Z_eff_list(r_list.size(), Z_eff);
@@ -98,8 +99,36 @@ void Final_Electron_State_Schroedinger::Determine_Z_effective()
 		double Z_eff = initial_state.Z;
 		for(auto& state : all_states)
 			Z_eff -= ((state.n == initial_state.n && state.l == initial_state.l) ? (4.0 * state.l + 1.0) : 2.0 * (2.0 * state.l + 1)) * state.Radial_Integral(r);
-		std::cout << r / Bohr_Radius << "\t" << Z_eff << std::endl;
+		// std::cout << r / Bohr_Radius << "\t" << Z_eff << std::endl;
 		Z_eff_list.push_back(Z_eff);
+	}
+	// 2. Interpolate Z_effective
+	Z_effective_interpolation = libphysica::Interpolation(r_list, Z_eff_list);
+}
+
+void Final_Electron_State_Schroedinger::Determine_Z_effective_2()
+{
+	// 1. Tabulate Z_effective
+	auto r_list					   = libphysica::Log_Space(r_min, r_max, 50);
+	std::vector<double> Z_eff_list = {};
+	bool Z_eff_is_one			   = false;
+	for(auto& r : r_list)
+	{
+		int l		  = initial_state.l;
+		double EB	  = initial_state.binding_energy;
+		double R	  = initial_state.Radial_Wavefunction(r);
+		double dRdr	  = initial_state.Radial_Wavefunction_Derivative(r);
+		double d2Rdr2 = initial_state.Radial_Wavefunction_Derivative_2(r);
+
+		r  = r / Bohr_Radius;
+		EB = -EB / Rydberg;
+		R *= std::pow(Bohr_Radius, 1.5);
+		dRdr *= std::pow(Bohr_Radius, 2.5);
+		d2Rdr2 *= std::pow(Bohr_Radius, 3.5);
+		double Z_eff = Z_eff_is_one ? 1.0 : 1.0 + (-r / 2.0 * (-EB - l * (l + 1.0) / r / r + (2.0 * dRdr + r * d2Rdr2) / r / R) - 1.0) * (libphysica::StepFunction(5.0 - r) + libphysica::StepFunction(r - 5.0) * std::exp(-(r - 5.0) * (r - 5.0)));
+		Z_eff_list.push_back(Z_eff);
+		if(Z_eff_is_one == false && libphysica::Relative_Difference(Z_eff, 1.0) < 1e-6)
+			Z_eff_is_one = true;
 	}
 	// 2. Interpolate Z_effective
 	Z_effective_interpolation = libphysica::Interpolation(r_list, Z_eff_list);

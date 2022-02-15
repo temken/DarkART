@@ -30,8 +30,12 @@ class Initial_Electron_State
 	Initial_Electron_State(const std::string& element, std::string shell_name);
 
 	std::string Orbital_Name() const;
+
 	double Radial_Wavefunction(double r) const;
+
 	double Radial_Wavefunction_Derivative(double r) const;
+	double Radial_Wavefunction_Derivative_2(double r) const;
+
 	double Normalization() const;
 	double Radial_Integral(double r) const;
 
