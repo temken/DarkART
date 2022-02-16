@@ -6,6 +6,7 @@
 #include "libphysica/Special_Functions.hpp"
 #include "libphysica/Utilities.hpp"
 
+#include "DarkART/Schroedinger_Equation.hpp"
 #include "DarkART/Special_Functions.hpp"
 #include "DarkART/version.hpp"
 
