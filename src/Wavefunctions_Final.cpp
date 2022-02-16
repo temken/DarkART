@@ -136,9 +136,8 @@ void Final_Electron_State_Schroedinger::Determine_Z_effective_2()
 
 void Final_Electron_State_Schroedinger::Solve_Schroedinger_Equation(double k_final, unsigned int l_final)
 {
-	std::vector<double> r_list = libphysica::Linear_Space(r_min, r_max, 5);
-	std::vector<double> R_list(r_list.size(), 0.0);
-	radial_wavefunction = libphysica::Interpolation(r_list, R_list);
+	Schroedinger_Solver schroedinger_solution(k_final, l_final);
+	radial_wavefunction = schroedinger_solution.Solve_Radial_Equation();
 }
 
 double Final_Electron_State_Schroedinger::Radial_Wavefunction(double r, double k_final, unsigned int l_final)
