@@ -77,7 +77,6 @@ std::vector<Initial_Electron_State> Final_Electron_State_Schroedinger::Import_Al
 			{
 				shell_data_found = true;
 				all_states.push_back(Initial_Electron_State(initial_state.element_name, n, l));
-				std::cout << all_states.back().Orbital_Name() << std::endl;
 			}
 			else
 				break;
@@ -112,7 +111,7 @@ void Final_Electron_State_Schroedinger::Determine_Z_effective_2()
 	auto r_list					   = libphysica::Log_Space(r_min, r_max, 50);
 	std::vector<double> Z_eff_list = {};
 	bool Z_eff_is_one			   = false;
-	for(auto& r : r_list)
+	for(auto r : r_list)
 	{
 		int l		  = initial_state.l;
 		double EB	  = initial_state.binding_energy;

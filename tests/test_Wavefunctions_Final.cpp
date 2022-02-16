@@ -48,3 +48,41 @@ TEST(TestWavefunctions, TestRadialWavefunctionHydrogenic)
 	// ACT & ASSERT
 	ASSERT_FLOAT_EQ(Radial_Wavefunction_Hydrogenic(k_final, l_final, Z_eff, r), 0.74927193);
 }
+
+TEST(TestWavefunctions, TestFinalStateSchroedingerZeff1)
+{
+	// ARRANGE
+	std::vector<int> Zs = {18, 54};
+	double r_1			= 1e-4 * Bohr_Radius;
+	double r_2			= 50 * Bohr_Radius;
+	double tol			= 1e-3;
+
+	// ACT & ASSERT
+	for(auto& Z : Zs)
+	{
+		Initial_Electron_State initial_state(Z, 2, 0);
+		Final_Electron_State_Schroedinger final_state(initial_state);
+		final_state.Determine_Z_effective();
+		EXPECT_NEAR(final_state.Z_effective(r_1), Z, tol);
+		EXPECT_NEAR(final_state.Z_effective(r_2), 1.0, tol);
+	}
+}
+
+TEST(TestWavefunctions, TestFinalStateSchroedingerZeff2)
+{
+	// ARRANGE
+	std::vector<int> Zs = {18, 54};
+	double r_1			= 1e-3 * Bohr_Radius;
+	double r_2			= 50 * Bohr_Radius;
+	double tol			= 1e-3;
+
+	// ACT & ASSERT
+	for(auto& Z : Zs)
+	{
+		Initial_Electron_State initial_state(Z, 2, 0);
+		Final_Electron_State_Schroedinger final_state(initial_state);
+		final_state.Determine_Z_effective_2();
+		EXPECT_NEAR(final_state.Z_effective(r_1), Z, 0.5);
+		EXPECT_NEAR(final_state.Z_effective(r_2), 1.0, tol);
+	}
+}
