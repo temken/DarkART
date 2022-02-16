@@ -133,17 +133,12 @@ double Initial_Electron_State::Radial_Wavefunction_Derivative_2(double r) const
 
 double Initial_Electron_State::Normalization() const
 {
-<<<<<<< HEAD
 	std::function<double(double)> integrand = [this](double r) {
 		double R = Radial_Wavefunction(r);
 		return r * r * R * R;
 	};
 	// Integrate with Gauss Legendre
 	return libphysica::Integrate_Gauss_Legendre(integrand, 0.0, 50.0 * Bohr_Radius, 1000);
-=======
-	double r_max = 50.0 * Bohr_Radius;
-	return Radial_Integral(r_max);
->>>>>>> c55d261 (Small extension to initial wavefunction class:)
 }
 
 double Initial_Electron_State::Radial_Integral(double r) const
