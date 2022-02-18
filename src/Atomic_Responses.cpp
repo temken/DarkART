@@ -111,7 +111,7 @@ extern double Atomic_Response_Function(unsigned int response, double k_final, do
 		}
 	}
 	// One correction
-	if(response == 1)
+	if(response == 1 && radial_integrator.final_state->Is_Perpendicular_To_Initial_State() == false)
 	{
 		double radial_integral_1   = radial_integrator.Radial_Integral(1, k_final, q, l, 0);
 		double radial_integral_one = radial_integrator.Radial_Integral(1, k_final, 0.0, l, 0);

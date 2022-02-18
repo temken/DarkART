@@ -14,8 +14,13 @@ namespace DarkART
 class Final_Electron_State
 {
   protected:
+	bool is_perpendicular_to_initial_state;
+
   public:
-	Final_Electron_State() {};
+	Final_Electron_State()
+	: is_perpendicular_to_initial_state(false) {};
+
+	bool Is_Perpendicular_To_Initial_State() const;
 
 	virtual double Radial_Wavefunction(double r, double k_final, unsigned int l_final) { return 0.0; };
 

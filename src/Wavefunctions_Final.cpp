@@ -15,6 +15,11 @@ namespace DarkART
 using namespace libphysica::natural_units;
 
 // 1. Base class for final state wave function
+bool Final_Electron_State::Is_Perpendicular_To_Initial_State() const
+{
+	return is_perpendicular_to_initial_state;
+}
+
 Final_Electron_State* Final_Electron_State::Clone() const
 {
 	return new Final_Electron_State(*this);
