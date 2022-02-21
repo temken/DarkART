@@ -27,7 +27,19 @@ class Final_Electron_State
 	virtual Final_Electron_State* Clone() const;
 };
 
-// 2. Positive energy continuum solution of Schroedinger equation with hydrogenic potential (i.e. constant Z_eff)
+// 2. Free orthonormal spherical waves
+class Final_Electron_State_Free : public Final_Electron_State
+{
+  protected:
+  public:
+	Final_Electron_State_Free();
+
+	virtual double Radial_Wavefunction(double r, double k_final, unsigned int l_final) override;
+
+	virtual Final_Electron_State_Free* Clone() const override;
+};
+
+// 3. Positive energy continuum solution of Schroedinger equation with hydrogenic potential (i.e. constant Z_eff)
 extern double Radial_Wavefunction_Hydrogenic(double k_final, unsigned l_prime, double Z_eff, double r);
 
 class Final_Electron_State_Hydrogenic : public Final_Electron_State
@@ -42,7 +54,7 @@ class Final_Electron_State_Hydrogenic : public Final_Electron_State
 	virtual Final_Electron_State_Hydrogenic* Clone() const override;
 };
 
-// 3. Positive energy continuum solution of Schroedinger equation for a given potential Z_eff(r)
+// 4. Positive energy continuum solution of Schroedinger equation for a given potential Z_eff(r)
 
 class Final_Electron_State_Schroedinger : Final_Electron_State
 {

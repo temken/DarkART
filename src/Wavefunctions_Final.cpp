@@ -25,7 +25,23 @@ Final_Electron_State* Final_Electron_State::Clone() const
 	return new Final_Electron_State(*this);
 }
 
-// 2. Positive energy continuum solution of Schroedinger equation with hydrogenic potential (i.e. constant Z_eff)
+// 2. Free orthonormal spherical waves
+Final_Electron_State_Free::Final_Electron_State_Free()
+{
+	is_perpendicular_to_initial_state = false;
+}
+
+double Final_Electron_State_Free::Radial_Wavefunction(double r, double k_final, unsigned int l_final)
+{
+	return 4.0 * M_PI * Spherical_Bessel_jL(l_final, k_final * r);
+}
+
+Final_Electron_State_Free* Final_Electron_State_Free::Clone() const
+{
+	return new Final_Electron_State_Free(*this);
+}
+
+// 3. Positive energy continuum solution of Schroedinger equation with hydrogenic potential (i.e. constant Z_eff)
 double Radial_Wavefunction_Hydrogenic(double k_final, unsigned l_final, double Z_eff, double r)
 {
 	double eta = -Z_eff / k_final / Bohr_Radius;
@@ -36,6 +52,7 @@ double Radial_Wavefunction_Hydrogenic(double k_final, unsigned l_final, double Z
 Final_Electron_State_Hydrogenic::Final_Electron_State_Hydrogenic(double Z_eff)
 : Z_effective(Z_eff)
 {
+	is_perpendicular_to_initial_state = false;
 }
 
 double Final_Electron_State_Hydrogenic::Radial_Wavefunction(double r, double k_final, unsigned int l_final)
@@ -48,12 +65,13 @@ Final_Electron_State_Hydrogenic* Final_Electron_State_Hydrogenic::Clone() const
 	return new Final_Electron_State_Hydrogenic(*this);
 }
 
-// 3. Positive energy continuum solution of Schroedinger equation for a given potential Z_eff(r)
+// 4. Positive energy continuum solution of Schroedinger equation for a given potential Z_eff(r)
 
 Final_Electron_State_Schroedinger::Final_Electron_State_Schroedinger(Initial_Electron_State& ini_state, double Z_eff)
 : initial_state(ini_state), r_min(1e-4 * Bohr_Radius), r_max(51.0 * Bohr_Radius)
 {
-	std::vector<double> r_list = libphysica::Log_Space(r_min, r_max, 5);
+	is_perpendicular_to_initial_state = false;
+	std::vector<double> r_list		  = libphysica::Log_Space(r_min, r_max, 5);
 	std::vector<double> Z_eff_list(r_list.size(), Z_eff);
 	Z_effective_interpolation = libphysica::Interpolation(r_list, Z_eff_list);
 }
@@ -108,7 +126,8 @@ void Final_Electron_State_Schroedinger::Determine_Z_effective()
 		Z_eff_list.push_back(Z_eff);
 	}
 	// 2. Interpolate Z_effective
-	Z_effective_interpolation = libphysica::Interpolation(r_list, Z_eff_list);
+	is_perpendicular_to_initial_state = false;
+	Z_effective_interpolation		  = libphysica::Interpolation(r_list, Z_eff_list);
 }
 
 void Final_Electron_State_Schroedinger::Determine_Z_effective_2()
@@ -136,7 +155,8 @@ void Final_Electron_State_Schroedinger::Determine_Z_effective_2()
 			Z_eff_is_one = true;
 	}
 	// 2. Interpolate Z_effective
-	Z_effective_interpolation = libphysica::Interpolation(r_list, Z_eff_list);
+	is_perpendicular_to_initial_state = true;
+	Z_effective_interpolation		  = libphysica::Interpolation(r_list, Z_eff_list);
 }
 
 void Final_Electron_State_Schroedinger::Solve_Schroedinger_Equation(double k_final, unsigned int l_final)
