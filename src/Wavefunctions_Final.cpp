@@ -167,7 +167,10 @@ void Final_Electron_State_Schroedinger::Solve_Schroedinger_Equation(double k_fin
 
 double Final_Electron_State_Schroedinger::Radial_Wavefunction(double r, double k_final, unsigned int l_final)
 {
-	return radial_wavefunction(r);
+	if(r < radial_wavefunction.domain[0])
+		return 0.0;
+	else
+		return radial_wavefunction(r);
 }
 
 Final_Electron_State_Schroedinger* Final_Electron_State_Schroedinger::Clone() const
