@@ -17,14 +17,11 @@
 	install(TARGETS DarkART DESTINATION ${BIN_DIR})
 
 	# Static library
+	file(GLOB FILES "*.cpp")
+	list(REMOVE_ITEM FILES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+	
 	add_library(libdarkart STATIC
-	    Atomic_Responses.cpp
-	    Configuration.cpp
-	    Radial_Integrator.cpp
-	    Response_Tabulation.cpp
-	    Special_Functions.cpp
-	    Wavefunctions_Final.cpp
-	    Wavefunctions_Initial.cpp)
+    ${FILES})
 
 	set_target_properties(libdarkart PROPERTIES PREFIX "")
 
