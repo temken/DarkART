@@ -7,6 +7,7 @@
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 
+#include "libphysica/Integration.hpp"
 #include "libphysica/Natural_Units.hpp"
 
 #include "DarkART/Special_Functions.hpp"
@@ -51,6 +52,11 @@ void Initial_Electron_State::Import_RHF_Coefficients()
 		std::cout << "Error in Initial_Electron_State(): Normalization of " << element_name << " = " << norm << " != 1.0" << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
+}
+
+Initial_Electron_State::Initial_Electron_State()
+: element_name("none"), n(0), l(0), binding_energy(0.0), Z_eff(0.0)
+{
 }
 
 Initial_Electron_State::Initial_Electron_State(const std::string& element, int N, int L)
@@ -98,19 +104,8 @@ double Initial_Electron_State::Normalization() const
 		double R = Radial_Wavefunction(r);
 		return r * r * R * R;
 	};
-	// Integrate stepwise
-	double stepsize	 = Bohr_Radius;
-	double integral	 = 0.0;
-	double epsilon_1 = 1.0, epsilon_2 = 1.0;
-	double tolerance = 1.0e-6;
-	for(unsigned int i = 0; epsilon_1 > tolerance || epsilon_2 > tolerance; i++)
-	{
-		epsilon_2				= epsilon_1;
-		double new_contribution = gauss_kronrod<double, 31>::integrate(integrand, i * stepsize, (i + 1) * stepsize, 5, 1e-9);
-		integral += new_contribution;
-		epsilon_1 = std::fabs(new_contribution / integral);
-	}
-	return integral;
+	// Integrate with Gauss Legendre
+	return libphysica::Integrate_Gauss_Legendre(integrand, 0.0, 50.0 * Bohr_Radius, 1000);
 }
 
 double Initial_Electron_State::Radial_Integral(double r) const

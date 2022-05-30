@@ -59,7 +59,23 @@ TEST(TestWavefunctions, TestRadialWavefunctionDerivative)
 			EXPECT_LT(electron.Radial_Wavefunction(r + eps), electron.Radial_Wavefunction(r));
 }
 
-TEST(TestWavefunctions, TestNormalization)
+TEST(TestWavefunctions, TestNormalizationArgon)
+{
+	// ARRANGE
+	double tol									  = 1.0e-5;
+	std::vector<Initial_Electron_State> electrons = {
+		Initial_Electron_State("Ar", 3, 1),
+		Initial_Electron_State("Ar", 3, 0),
+		Initial_Electron_State("Ar", 2, 1),
+		Initial_Electron_State("Ar", 2, 0),
+		Initial_Electron_State("Ar", 1, 0),
+	};
+	// ACT & ASSERT
+	for(auto& electron : electrons)
+		EXPECT_NEAR(electron.Normalization(), 1.0, tol);
+}
+
+TEST(TestWavefunctions, TestNormalizationXenon)
 {
 	// ARRANGE
 	double tol									  = 1.0e-5;
@@ -75,11 +91,6 @@ TEST(TestWavefunctions, TestNormalization)
 		Initial_Electron_State("Xe", 2, 1),
 		Initial_Electron_State("Xe", 2, 0),
 		Initial_Electron_State("Xe", 1, 0),
-		Initial_Electron_State("Ar", 3, 1),
-		Initial_Electron_State("Ar", 3, 0),
-		Initial_Electron_State("Ar", 2, 1),
-		Initial_Electron_State("Ar", 2, 0),
-		Initial_Electron_State("Ar", 1, 0),
 	};
 	// ACT & ASSERT
 	for(auto& electron : electrons)
