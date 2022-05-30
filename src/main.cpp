@@ -30,7 +30,12 @@ int main(int argc, char* argv[])
 	std::cout << PROJECT_NAME << "-" << PROJECT_VERSION << "\tgit:" << GIT_BRANCH << "/" << GIT_COMMIT_HASH << std::endl
 			  << LOGO << std::endl;
 	////////////////////////////////////////////////////////////////////////
-
+	if(argc < 2)
+	{
+		std::cerr << "\nError: No configuration file provided." << std::endl
+				  << "\tCorrect usage:\t" << argv[0] << " <configuration file>" << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
 	DarkART::Configuration cfg(argv[1]);
 	cfg.Print_Summary();
 
