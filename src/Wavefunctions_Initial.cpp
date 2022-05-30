@@ -9,6 +9,7 @@
 
 #include "libphysica/Integration.hpp"
 #include "libphysica/Natural_Units.hpp"
+#include "libphysica/Utilities.hpp"
 
 #include "DarkART/Special_Functions.hpp"
 #include "DarkART/version.hpp"
@@ -28,6 +29,12 @@ double au = 27.211386245988 * eV;
 void Initial_Electron_State::Import_RHF_Coefficients()
 {
 	std::string filepath = TOP_LEVEL_DIR "data/" + Orbital_Name() + ".txt";
+	if(libphysica::File_Exists(filepath) == false)
+	{
+		std::cerr << "Error in Initial_Electron_State::Import_RHF_Coefficients(): Coefficient table for " << Orbital_Name() << " does not exist." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
 	std::ifstream f;
 	f.open(filepath);
 	if(f.is_open())
@@ -45,9 +52,12 @@ void Initial_Electron_State::Import_RHF_Coefficients()
 		f.close();
 	}
 	Z_eff = sqrt(-2.0 * binding_energy / au) * n;
+}
 
+void Initial_Electron_State::Check_Normalization()
+{
 	double norm = Normalization();
-	if(std::fabs(1.0 - norm) > 0.01)
+	if(std::fabs(1.0 - norm) > 1.0e-4)
 	{
 		std::cout << "Error in Initial_Electron_State(): Normalization of " << element_name << " = " << norm << " != 1.0" << std::endl;
 		std::exit(EXIT_FAILURE);
@@ -63,6 +73,7 @@ Initial_Electron_State::Initial_Electron_State(const std::string& element, int N
 : element_name(element), n(N), l(L)
 {
 	Import_RHF_Coefficients();
+	Check_Normalization();
 }
 
 Initial_Electron_State::Initial_Electron_State(const std::string& element, std::string shell_name)
@@ -73,6 +84,7 @@ Initial_Electron_State::Initial_Electron_State(const std::string& element, std::
 		if(shell_name[1] == l_orbital_names[l][0])
 			break;
 	Import_RHF_Coefficients();
+	Check_Normalization();
 }
 
 std::string Initial_Electron_State::Orbital_Name() const

@@ -19,6 +19,8 @@ class Initial_Electron_State
 
 	void Import_RHF_Coefficients();
 
+	void Check_Normalization();
+
   public:
 	int n, l;
 	double binding_energy, Z_eff;
