@@ -119,7 +119,7 @@ double Radial_Integrator::Radial_Integral_Table(unsigned int integral_index, dou
 }
 
 Radial_Integrator::Radial_Integrator()
-: using_function_tabulation(false), initial_state("Xe", 1, 0)
+: using_function_tabulation(false), initial_state()
 {
 }
 
