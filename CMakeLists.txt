@@ -4,57 +4,62 @@ project(DarkART VERSION "0.1.0")
 
 # Use C++-14
 set(CMAKE_CXX_STANDARD 14)
+
 # Require (at least) it
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Don't use e.g. GNU extension (like -std=gnu++11) for portability
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(BIN_DIR       ${PROJECT_SOURCE_DIR}/bin)
+set(BIN_DIR ${PROJECT_SOURCE_DIR}/bin)
 set(GENERATED_DIR ${PROJECT_BINARY_DIR}/generated)
-set(INCLUDE_DIR   ${PROJECT_SOURCE_DIR}/include)
-set(LIB_DIR       ${PROJECT_SOURCE_DIR}/lib)
-set(SRC_DIR       ${PROJECT_SOURCE_DIR}/src)
-set(TESTS_DIR     ${PROJECT_SOURCE_DIR}/tests)
-set(EXTERNAL_DIR  ${PROJECT_SOURCE_DIR}/external)
+set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+set(LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
+set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+set(TESTS_DIR ${PROJECT_SOURCE_DIR}/tests)
+set(EXTERNAL_DIR ${PROJECT_SOURCE_DIR}/external)
 
-#External projects
+# External projects
 find_library(ARB
   NAMES arb libarb flint-arb
-  PATHS  /usr/local/lib /usr/lib/ /usr/share/)
-find_package(Boost 1.65  REQUIRED )
-find_package(GSL REQUIRED) 
+  PATHS /usr/local/lib /usr/lib/ /usr/share/)
+find_package(Boost 1.65 REQUIRED)
+find_package(GSL REQUIRED)
 find_package(OpenMP REQUIRED)
+
 if(OPENMP_FOUND)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
 include(FetchContent)
+
 # libphysica
-set(LIBPHYSICA_DIR   ${EXTERNAL_DIR}/libphysica)
+set(LIBPHYSICA_DIR ${EXTERNAL_DIR}/libphysica)
 FetchContent_Declare(libphysica
-  GIT_REPOSITORY  https://github.com/temken/libphysica.git
-  GIT_TAG         v0.1.3
-  SOURCE_DIR     "${LIBPHYSICA_DIR}"
-  CMAKE_ARGS     "-DCMAKE_BUILD_TYPE=Release -DCODE_COVERAGE=OFF" )
+  GIT_REPOSITORY https://github.com/temken/libphysica.git
+  GIT_TAG origin/main
+  SOURCE_DIR "${LIBPHYSICA_DIR}"
+  CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release -DCODE_COVERAGE=OFF")
 FetchContent_GetProperties(libphysica)
+
 if(NOT libphysica_POPULATED)
-    FetchContent_Populate(libphysica)
-    add_subdirectory( ${libphysica_SOURCE_DIR} )
+  FetchContent_Populate(libphysica)
+  add_subdirectory(${libphysica_SOURCE_DIR})
 endif()
 
 # Googletest
-set(GTEST_DIR   ${EXTERNAL_DIR}/googletest)
+set(GTEST_DIR ${EXTERNAL_DIR}/googletest)
 FetchContent_Declare(googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        release-1.10.0
-  SOURCE_DIR     "${GTEST_DIR}/src"
-  BINARY_DIR     "${GTEST_DIR}/build"
+  GIT_TAG release-1.10.0
+  SOURCE_DIR "${GTEST_DIR}/src"
+  BINARY_DIR "${GTEST_DIR}/build"
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-  TEST_COMMAND      "" )
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ""
+  TEST_COMMAND "")
 
 # Version header
 execute_process( # Git commit hash
@@ -89,10 +94,10 @@ configure_file(
 )
 
 # Source and include directories
-include_directories( 
+include_directories(
   ${INCLUDE_DIR}
   ${Boost_INCLUDE_DIR})
-add_subdirectory( ${SRC_DIR} )
+add_subdirectory(${SRC_DIR})
 
 # Code Coverage Configuration
 if(NOT TARGET coverage_config)
@@ -100,13 +105,15 @@ if(NOT TARGET coverage_config)
 endif()
 
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
+
 if(CODE_COVERAGE)
   # Add required flags (GCC & LLVM/Clang)
   target_compile_options(coverage_config INTERFACE
-    -O0        # no optimization
-    -g         # generate debug info
+    -O0 # no optimization
+    -g # generate debug info
     --coverage # sets all required flags
   )
+
   if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
     target_link_options(coverage_config INTERFACE --coverage)
   else()
@@ -114,18 +121,21 @@ if(CODE_COVERAGE)
   endif()
 endif(CODE_COVERAGE)
 
-option (BUILD_TESTING "Build the testing tree." ON)
+option(BUILD_TESTING "Build the testing tree." ON)
+
 # Only build tests if we are the top-level project
 # Allows this to be used by super projects with `add_subdirectory`
-if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
+if(BUILD_TESTING AND(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
   enable_testing()
   FetchContent_GetProperties(googletest)
+
   if(NOT googletest_POPULATED)
     FetchContent_Populate(googletest)
     add_subdirectory(
-      ${googletest_SOURCE_DIR} 
+      ${googletest_SOURCE_DIR}
       ${googletest_BINARY_DIR}
       EXCLUDE_FROM_ALL)
   endif()
+
   add_subdirectory(${TESTS_DIR})
 endif()

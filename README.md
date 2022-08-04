@@ -47,7 +47,7 @@ The included folders are:
 - [libphysica](https://github.com/temken/libphysica)
 - [openmp](https://www.openmp.org/)
 
-The *libphysica* library will be downloaded and built automatically using CMake.
+The *libphysica* and *libconfig* libraries will be downloaded and built automatically using CMake (if not already installed).
 The other libraries need to be installed beforehand.
 
 <details><summary>Installation of dependencies</summary>
@@ -87,6 +87,8 @@ Alternatively, *libconfig* can be also built from the source files via
 >sudo make install
 >popd
 ```
+
+The installation of *libconfig* is not strictly necessary as the library will also be build during the libphysica build if CMake cannot locate *libconfig* elsewhere.
 
 </p>
 </details>
