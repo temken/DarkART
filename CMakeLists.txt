@@ -49,6 +49,15 @@ if(NOT libphysica_POPULATED)
   add_subdirectory(${libphysica_SOURCE_DIR})
 endif()
 
+# When installing, CMake will clear the RPATH of these targets so they are installed with an empty RPATH.
+# This setting avoids the clearing of the libconfig path.
+set(LIBCONFIG_DIR ${EXTERNAL_DIR}/libphysica/external/libconfig)
+
+if(IS_DIRECTORY "${LIBCONFIG_DIR}")
+  message(STATUS "Libconfig was downloaded by libphysica. Setting RPATH manually for libconfig.")
+  list(APPEND CMAKE_INSTALL_RPATH "${LIBCONFIG_DIR}/lib")
+endif()
+
 # Googletest
 set(GTEST_DIR ${EXTERNAL_DIR}/googletest)
 FetchContent_Declare(googletest

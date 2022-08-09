@@ -68,14 +68,27 @@ jobs:
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCODE_COVERAGE=ON $GITHUB_WORKSPACE
+
     - name: Build
       working-directory: ${{runner.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
-    # TEST
-    - name: Test
+    - name: Install
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --install .
+
+    # TESTS
+    - name: Test installed executable
+      working-directory: ${{runner.workspace}}/DarkART/bin
+      shell: bash
+      # Execute the obscura executable from the /bin/ directory.
+      run: ./DarkART .test.cfg
+
+    - name: Unit tests
       working-directory: ${{runner.workspace}}/build
       shell: bash
       # Execute tests defined by the CMake configuration.  
