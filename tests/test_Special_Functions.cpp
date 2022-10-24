@@ -64,3 +64,18 @@ TEST(TestSpecialFunctions, TestHypergeometricFunction)
 	EXPECT_FLOAT_EQ(Hypergeometric_2F1(1.2, 32.2, 14.2, 1.2).real(), -16290.21576);
 	EXPECT_FLOAT_EQ(Hypergeometric_2F1(1.2, 32.2, 14.2, 1.2).imag(), 11835.53454);
 }
+
+TEST(TestSpecialFunctions, TestHypergeometricFunction2)
+{
+	// ARRANGE
+	double a0	  = Bohr_Radius;
+	double Z	  = 4.3;
+	double k	  = 0.5 * keV;
+	double a	  = 3.0;
+	double b	  = 3.5;
+	double c	  = 2.5;
+	double z	  = -k * k * a0 * a0 / Z / Z;
+	double result = -std::pow(Z, 6) / 5.0 * (k * k * a0 * a0 - 5.0 * Z * Z) / std::pow(k * k * a0 * a0 + Z * Z, 4);
+	// ACT & ASSERT
+	EXPECT_FLOAT_EQ(Hypergeometric_2F1(a, b, c, z).real(), result);
+}
