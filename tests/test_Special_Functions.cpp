@@ -50,3 +50,17 @@ TEST(TestSpecialFunctions, TestCoulombWave)
 	EXPECT_FLOAT_EQ(Coulomb_Wave(L, eta, 0.0), 0.0);
 	EXPECT_FLOAT_EQ(Coulomb_Wave(0, 0.0, rho), sin(rho));
 }
+
+TEST(TestSpecialFunctions, TestHypergeometricFunction)
+{
+	// ARRANGE
+	double a = 2.0;
+	double b = 3.0;
+	double z = 0.4;
+	// ACT & ASSERT
+	EXPECT_FLOAT_EQ(Hypergeometric_2F1(1, 1, 2, -z).real(), log(1.0 + z) / z);
+	EXPECT_FLOAT_EQ(Hypergeometric_2F1(a, b, b, z).real(), std::pow(1.0 - z, -a));
+	EXPECT_FLOAT_EQ(Hypergeometric_2F1(0.5, 0.5, 1.5, z * z).real(), asin(z) / z);
+	EXPECT_FLOAT_EQ(Hypergeometric_2F1(1.2, 32.2, 14.2, 1.2).real(), -16290.21576);
+	EXPECT_FLOAT_EQ(Hypergeometric_2F1(1.2, 32.2, 14.2, 1.2).imag(), 11835.53454);
+}

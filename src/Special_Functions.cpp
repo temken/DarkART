@@ -10,6 +10,7 @@
 
 #include <boost/math/special_functions/spherical_harmonic.hpp>
 
+#include "acb_hypgeom.h"
 #include "arb_hypgeom.h"
 
 namespace DarkART
@@ -111,6 +112,48 @@ double Coulomb_Wave(int L, double eta, double rho)
 	if(status != 0 || std::isnan(cw))
 		cw = Coulomb_Wave_ARB(L, eta, rho);
 	return cw;
+}
+
+std::complex<double> Hypergeometric_2F1(double a, double b, double c, double z)
+{
+	using namespace std::complex_literals;
+	std::complex<double> result;
+	slong prec;
+	acb_t F_arb, a_arb, b_arb, c_arb, z_arb;
+	acb_init(F_arb);
+	acb_init(a_arb);
+	acb_init(b_arb);
+	acb_init(c_arb);
+	acb_init(z_arb);
+	acb_set_d(a_arb, a);
+	acb_set_d(b_arb, b);
+	acb_set_d(c_arb, c);
+	acb_set_d(z_arb, z);
+	for(prec = 80;; prec *= 2)
+	{
+		acb_hypgeom_2f1(F_arb, a_arb, b_arb, c_arb, z_arb, false, prec);
+		if(acb_rel_accuracy_bits(F_arb) >= 53)
+		{
+			arb_t F_real, F_imag;
+			arb_init(F_real);
+			arb_init(F_imag);
+			acb_get_real(F_real, F_arb);
+			acb_get_imag(F_imag, F_arb);
+			result = arf_get_d(arb_midref(F_real), ARF_RND_NEAR) + 1i * arf_get_d(arb_midref(F_imag), ARF_RND_NEAR);
+			break;
+		}
+		else if(prec > 10000)
+		{
+			result = NAN;
+			break;
+		}
+	}
+	acb_clear(F_arb);
+	acb_clear(a_arb);
+	acb_clear(b_arb);
+	acb_clear(c_arb);
+	acb_clear(z_arb);
+	return result;
 }
 
 }	// namespace DarkART
