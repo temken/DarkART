@@ -1,6 +1,7 @@
 #ifndef __Wavefunctions_Initial_hpp_
 #define __Wavefunctions_Initial_hpp_
 
+#include <complex>
 #include <string>
 #include <vector>
 
@@ -33,6 +34,9 @@ class Initial_Electron_State
 	double Radial_Wavefunction_Derivative(double r) const;
 	double Normalization() const;
 	double Radial_Integral(double r) const;
+
+	std::complex<double> Radial_Wavefunction_Momentum(double p) const;
+	double Normalization_Momentum() const;
 
 	void Print_Summary(unsigned int mpi_rank = 0) const;
 };

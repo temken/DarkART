@@ -1,6 +1,8 @@
 #ifndef __DarkART_Special_Functions_hpp_
 #define __DarkART_Special_Functions_hpp_
 
+#include <complex>
+
 namespace DarkART
 {
 
@@ -12,6 +14,9 @@ extern double Spherical_Bessel_jL(int L, double x);
 
 // 3. Coulomb wave
 extern double Coulomb_Wave(int L, double eta, double rho);
+
+// 4. Hypergeometric functions
+extern std::complex<double> Hypergeometric_2F1(double a, double b, double c, double z);
 
 }	// namespace DarkART
 

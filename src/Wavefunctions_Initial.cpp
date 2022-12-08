@@ -129,6 +129,34 @@ double Initial_Electron_State::Radial_Integral(double r) const
 	return gauss_kronrod<double, 31>::integrate(integrand, 0.0, r, 5, 1e-9);
 }
 
+std::complex<double> Initial_Electron_State::Radial_Wavefunction_Momentum(double p) const
+{
+	using namespace std::complex_literals;
+	std::complex<double> R_nl = 0.0;
+	for(unsigned int j = 0; j < C_nlj.size(); j++)
+	{
+		// Hypergeometric function 2F1(a,b,c,z)
+		double a								= 0.5 * (2.0 + l + n_lj[j]);
+		double b								= 0.5 * (3.0 + l + n_lj[j]);
+		double c								= 1.5 + l;
+		double z								= -std::pow(p * Bohr_Radius / Z_lj[j], 2.0);
+		std::complex<double> hypergeometric_2F1 = Hypergeometric_2F1(a, b, c, z);
+
+		R_nl += std::pow(2.0 * M_PI * Bohr_Radius / Z_lj[j], 1.5) * C_nlj[j] * std::pow(2.0, -l + n_lj[j]) * factorial<double>(1.0 + n_lj[j] + l) / sqrt(factorial<double>(2.0 * n_lj[j])) * std::pow(1i * p * Bohr_Radius / Z_lj[j], l) * hypergeometric_2F1 / tgamma(1.5 + l);
+	}
+	return R_nl;
+}
+
+double Initial_Electron_State::Normalization_Momentum() const
+{
+	std::function<double(double)> integrand = [this](double k) {
+		std::complex<double> R = Radial_Wavefunction_Momentum(k);
+		return k * k * std::norm(R);
+	};
+	// Integrate with Gauss Legendre
+	return std::pow(2.0 * M_PI, -3) * libphysica::Integrate_Gauss_Legendre(integrand, 0.0, 3000.0 * keV, 1000);
+}
+
 void Initial_Electron_State::Print_Summary(unsigned int mpi_rank) const
 {
 	if(mpi_rank == 0)
