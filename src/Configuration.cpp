@@ -41,7 +41,7 @@ void Configuration::Initialize_Parameters()
 	{
 		int atomic_shell_count = config.lookup("atomic_shells").getLength();
 		for(int j = 0; j < atomic_shell_count; j++)
-			atomic_shell_list.push_back(config.lookup("atomic_shells")[j]);
+			atomic_shell_list.push_back(config.lookup("atomic_shells")[j].c_str());
 	}
 	catch(const SettingNotFoundException& nfex)
 	{
